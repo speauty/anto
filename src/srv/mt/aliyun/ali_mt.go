@@ -1,6 +1,7 @@
 package aliyun
 
 import (
+	"context"
 	"fmt"
 	alimt20181012 "github.com/alibabacloud-go/alimt-20181012/v2/client"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -8,6 +9,7 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/golang-module/carbon"
 	"gui.subtitle/src/srv/mt"
+	"gui.subtitle/src/util/lang"
 )
 
 type Cfg struct {
@@ -23,7 +25,7 @@ type ALiMT struct {
 	mtClient *alimt20181012.Client
 }
 
-func (m *ALiMT) Init(cfg interface{}) error {
+func (m *ALiMT) Init(_ context.Context, cfg interface{}) error {
 	if _, ok := cfg.(*Cfg); !ok {
 		return fmt.Errorf("the cfg's mismatched")
 	}
@@ -38,23 +40,27 @@ func (m *ALiMT) Init(cfg interface{}) error {
 }
 
 type TextBatchTranslateArg struct {
-	Scene      string
-	ApiType    string
-	SourceText string
-	TargetLang string
-	SourceLang string
+	Scene        string
+	ApiType      string
+	SourceText   string
+	ToLanguage   string
+	FromLanguage string
 }
 
 func (arg *TextBatchTranslateArg) New(text string) *TextBatchTranslateArg {
 	arg.Scene = "general"
 	arg.ApiType = "translate_standard"
 	arg.SourceText = text
-	arg.TargetLang = "zh"
-	arg.SourceLang = "en"
+	arg.ToLanguage = lang.ZH.ToString()
+	arg.FromLanguage = lang.EN.ToString()
 	return arg
 }
 
-func (m *ALiMT) TextBatchTranslate(args interface{}) ([]mt.TextTranslateResp, error) {
+func (m *ALiMT) TextTranslate(context.Context, interface{}) (*mt.TextTranslateResp, error) {
+	return nil, nil
+}
+
+func (m *ALiMT) TextBatchTranslate(_ context.Context, args interface{}) ([]mt.TextTranslateResp, error) {
 	if _, ok := args.(*TextBatchTranslateArg); !ok {
 		return nil, fmt.Errorf("the args for ALiMT.TextBatchTranslate mismatched")
 	}
@@ -62,7 +68,7 @@ func (m *ALiMT) TextBatchTranslate(args interface{}) ([]mt.TextTranslateResp, er
 		FormatType: tea.String("text"), Scene: tea.String(args.(*TextBatchTranslateArg).Scene),
 		ApiType:        tea.String(args.(*TextBatchTranslateArg).ApiType),
 		SourceText:     tea.String(args.(*TextBatchTranslateArg).SourceText),
-		TargetLanguage: tea.String(args.(*TextBatchTranslateArg).TargetLang), SourceLanguage: tea.String(args.(*TextBatchTranslateArg).SourceLang),
+		TargetLanguage: tea.String(args.(*TextBatchTranslateArg).ToLanguage), SourceLanguage: tea.String(args.(*TextBatchTranslateArg).FromLanguage),
 	}
 	runtime := &util.RuntimeOptions{}
 	resp, err := m.mtClient.GetBatchTranslateWithOptions(getBatchTranslateRequest, runtime)
@@ -75,11 +81,10 @@ func (m *ALiMT) TextBatchTranslate(args interface{}) ([]mt.TextTranslateResp, er
 	var funcResp []mt.TextTranslateResp
 	for blockIdx, blockTranslated := range resp.Body.TranslatedList {
 		if blockTranslated["code"].(string) != "200" && m.cfg.IsDebug {
-			fmt.Println(fmt.Errorf(
+			return nil, fmt.Errorf(
 				"[%s]%s, 错判翻译异常[%d], 索引: %s",
 				carbon.Now(), m.GetName(), blockIdx, blockTranslated["index"],
-			))
-			continue
+			)
 		}
 		funcResp = append(funcResp, mt.TextTranslateResp{
 			Idx:           blockTranslated["index"].(string),
@@ -89,8 +94,12 @@ func (m *ALiMT) TextBatchTranslate(args interface{}) ([]mt.TextTranslateResp, er
 	return funcResp, nil
 }
 
+func (m *ALiMT) GetId() mt.Id {
+	return mt.ALI
+}
+
 func (m *ALiMT) GetName() string {
-	return "阿里云-机器翻译"
+	return "阿里云机器翻译"
 }
 
 func (m *ALiMT) initClient() error {
