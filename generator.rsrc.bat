@@ -1,0 +1,1 @@
+rsrc -manifest subtitle.manifest -ico favicon.ico -o rsrc.syso
