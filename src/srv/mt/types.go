@@ -19,8 +19,9 @@ type MT interface {
 type Id string
 
 const (
-	IdALiYun Id = "ALi"
+	IdALiYun Id = "EngineALi"
 	IdBaiDu  Id = "EngineBaiDu"
+	IdYouDao Id = "EngineYouDao"
 )
 
 type Engine int
@@ -48,9 +49,11 @@ const (
 	EngineALiYun Engine = iota
 	// EngineBaiDu 百度翻译
 	EngineBaiDu
+	// EngineYouDao 有道翻译
+	EngineYouDao
 )
 
-var engineZHMaps = []string{"阿里云", "百度"}
+var engineZHMaps = []string{"阿里云", "百度", "有道"}
 
 const BlockSep string = "\n"
 const BlockIdxContentSep string = "@<"

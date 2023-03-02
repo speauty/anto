@@ -11,6 +11,7 @@ import (
 	"gui.subtitle/src/srv/mt"
 	"gui.subtitle/src/srv/mt/aliyun"
 	"gui.subtitle/src/srv/mt/bd"
+	"gui.subtitle/src/srv/mt/youdao"
 	"gui.subtitle/src/util/lang"
 	"os"
 	"path/filepath"
@@ -76,11 +77,11 @@ func (aw *AppWindow) newMainWindow() error {
 		Layout:   VBox{},
 		Children: []Widget{
 			Label{Text: "***** 翻译小助手 *****", Alignment: AlignHCenterVCenter, Font: Font{Bold: true, PointSize: 10}},
-			Label{Text: "版本号: 1.1.0  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
+			Label{Text: "版本号: 1.1.5  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
 			GroupBox{
 				Layout: HBox{},
 				Children: []Widget{
-					TextLabel{Text: "翻译引擎", ToolTipText: "机器翻译引擎, 当前支持阿里云、百度"},
+					TextLabel{Text: "翻译引擎", ToolTipText: "机器翻译引擎, 当前支持阿里云、百度、有道"},
 					ComboBox{
 						Name:    "mtEngineComboBox",
 						MinSize: Size{Width: 80}, MaxSize: Size{Width: 80, Height: 20},
@@ -122,8 +123,8 @@ func (aw *AppWindow) newMainWindow() error {
 				},
 			},
 			GroupBox{
-				MinSize: Size{Height: 100},
-				MaxSize: Size{Height: 100},
+				MinSize: Size{Height: 110},
+				MaxSize: Size{Height: 110},
 				Layout:  VBox{},
 				Visible: Bind("mtEngineComboBox.CurrentIndex == 1"),
 				Children: []Widget{
@@ -285,6 +286,7 @@ func (aw *AppWindow) newMainWindow() error {
 							defer func() { _ = bdKeyEdit.SetFocus() }()
 							return
 						}
+					} else if currentMTEngine == mt.EngineYouDao {
 					} else {
 						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
@@ -344,6 +346,8 @@ func (aw *AppWindow) newMainWindow() error {
 						cfg = &bd.Cfg{AppId: bdIdEdit.Text(), AppSecret: bdKeyEdit.Text()}
 						cfg.(*bd.Cfg).AppVersion = bd.GTApiStandard.FromInt(bdApiVersionComboBox.CurrentIndex())
 						mtEngine = new(bd.MT)
+					} else if currentMTEngine == mt.EngineYouDao {
+						mtEngine = new(youdao.MT)
 					} else {
 						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
@@ -375,7 +379,7 @@ func (aw *AppWindow) newMainWindow() error {
 			},
 			TextEdit{
 				AssignTo: &stateLabel, Visible: false, ReadOnly: true, VScroll: true,
-				MinSize: Size{Height: 60}, MaxSize: Size{Height: 60},
+				MinSize: Size{Height: 40}, MaxSize: Size{Height: 40},
 				Font: Font{PointSize: 8},
 			},
 			TextEdit{
