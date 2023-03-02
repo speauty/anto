@@ -86,7 +86,7 @@ func (aw *AppWindow) newMainWindow() error {
 						MinSize: Size{Width: 80}, MaxSize: Size{Width: 80, Height: 20},
 						AssignTo:     &mtEngineComboBox,
 						Model:        mt.EngineALiYun.GetZHArrays(),
-						CurrentIndex: 1,
+						CurrentIndex: 0,
 					},
 					HSpacer{},
 				},
@@ -130,14 +130,14 @@ func (aw *AppWindow) newMainWindow() error {
 					HSplitter{
 						Children: []Widget{
 							Label{Text: "访问身份", ToolTipText: "AppId"},
-							TextEdit{AssignTo: &bdIdEdit, Text: "2015063000000001"},
+							TextEdit{AssignTo: &bdIdEdit},
 							HSpacer{},
 						},
 					},
 					HSplitter{
 						Children: []Widget{
 							Label{Text: "访问密钥", ToolTipText: "AppSecret"},
-							TextEdit{AssignTo: &bdKeyEdit, Text: "12345678"},
+							TextEdit{AssignTo: &bdKeyEdit},
 							HSpacer{},
 						},
 					},
@@ -216,7 +216,7 @@ func (aw *AppWindow) newMainWindow() error {
 									_ = subtitleFileEdit.SetText(dlg.FilePath)
 								},
 							},
-							TextEdit{AssignTo: &subtitleFileEdit, ReadOnly: true, HScroll: true, Text: "E:\\工作空间\\小工具\\test.srt"},
+							TextEdit{AssignTo: &subtitleFileEdit, ReadOnly: true, HScroll: true},
 						},
 					},
 					HSplitter{
@@ -242,7 +242,7 @@ func (aw *AppWindow) newMainWindow() error {
 									_ = subtitleFileSave.SetText(dlg.FilePath)
 								},
 							},
-							TextEdit{AssignTo: &subtitleFileSave, ReadOnly: true, HScroll: true, Text: "E:\\OneDrive\\桌面"},
+							TextEdit{AssignTo: &subtitleFileSave, ReadOnly: true, HScroll: true},
 						},
 					},
 					VSpacer{},
