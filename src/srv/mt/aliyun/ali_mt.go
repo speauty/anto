@@ -39,6 +39,10 @@ func (m *ALiMT) Init(_ context.Context, cfg interface{}) error {
 	return m.initClient()
 }
 
+func (m *ALiMT) GetCfg() interface{} {
+	return m.cfg
+}
+
 type TextBatchTranslateArg struct {
 	Scene        string
 	ApiType      string
@@ -56,7 +60,7 @@ func (arg *TextBatchTranslateArg) New(text string) *TextBatchTranslateArg {
 	return arg
 }
 
-func (m *ALiMT) TextTranslate(context.Context, interface{}) (*mt.TextTranslateResp, error) {
+func (m *ALiMT) TextTranslate(context.Context, interface{}) ([]mt.TextTranslateResp, error) {
 	return nil, nil
 }
 
@@ -95,7 +99,7 @@ func (m *ALiMT) TextBatchTranslate(_ context.Context, args interface{}) ([]mt.Te
 }
 
 func (m *ALiMT) GetId() mt.Id {
-	return mt.ALI
+	return mt.IdALiYun
 }
 
 func (m *ALiMT) GetName() string {

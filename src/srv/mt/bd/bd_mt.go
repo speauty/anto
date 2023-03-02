@@ -18,8 +18,9 @@ import (
 var apiUrl = "http://api.fanyi.baidu.com/api/trans/vip/translate"
 
 type Cfg struct {
-	AppId     string
-	AppSecret string
+	AppId      string
+	AppSecret  string
+	AppVersion GenericTextApiVersion
 }
 
 type MT struct {
@@ -35,6 +36,10 @@ func (m *MT) Init(_ context.Context, cfg interface{}) error {
 	}
 	m.cfg = cfg.(*Cfg)
 	return nil
+}
+
+func (m *MT) GetCfg() interface{} {
+	return m.cfg
 }
 
 type TextTranslateArg struct {
@@ -61,7 +66,7 @@ type bdMTResp struct {
 	ErrorMsg  string `json:"error_msg,omitempty"`
 }
 
-func (m *MT) TextTranslate(_ context.Context, args interface{}) (*mt.TextTranslateResp, error) {
+func (m *MT) TextTranslate(_ context.Context, args interface{}) ([]mt.TextTranslateResp, error) {
 	if _, ok := args.(*TextTranslateArg); !ok {
 		return nil, fmt.Errorf("the args for BaiduMT.TextTranslateArg mismatched")
 	}
@@ -74,7 +79,11 @@ func (m *MT) TextTranslate(_ context.Context, args interface{}) (*mt.TextTransla
 		m.cfg.AppId, salt, sign,
 	)
 	httpResp, err := http.DefaultClient.Get(url)
-	defer func() { _ = httpResp.Body.Close() }()
+	defer func() {
+		if httpResp.Body != nil {
+			_ = httpResp.Body.Close()
+		}
+	}()
 	if err != nil {
 		return nil, fmt.Errorf("网络请求[%s]出现异常, 错误: %s", url, err.Error())
 	}
@@ -88,11 +97,14 @@ func (m *MT) TextTranslate(_ context.Context, args interface{}) (*mt.TextTransla
 	}
 
 	if bdMT.ErrorMsg != "" {
-		return nil, fmt.Errorf("翻译异常, 代码: %s, 错误: %s", bdMT.ErrorCode, bdMT.ErrorMsg)
+		return nil, fmt.Errorf("翻译异常, 代码: %s, 错误: %s[%s]", bdMT.ErrorCode, ErrSign.FromString(bdMT.ErrorCode).GetZH(), bdMT.ErrorMsg)
 	}
-	resp := &mt.TextTranslateResp{
-		Idx:           bdMT.TransResult[0].Src,
-		StrTranslated: bdMT.TransResult[0].Dst,
+	var resp []mt.TextTranslateResp
+	for _, translateRes := range bdMT.TransResult {
+		resp = append(resp, mt.TextTranslateResp{
+			Idx:           translateRes.Src,
+			StrTranslated: translateRes.Dst,
+		})
 	}
 	return resp, nil
 }
@@ -106,7 +118,7 @@ func (m *MT) GetName() string {
 }
 
 func (m *MT) GetId() mt.Id {
-	return mt.BAIDU
+	return mt.IdBaiDu
 }
 
 func (m *MT) GenSign(queryStr, saltStr string) string {

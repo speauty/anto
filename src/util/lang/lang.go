@@ -18,8 +18,7 @@ func (sl StrLang) GetCH() string {
 }
 
 func (sl StrLang) GetMaps() []string {
-	var chMaps []string
-	keys := []string{}
+	var chMaps, keys []string
 	for key, _ := range maps {
 		keys = append(keys, key.ToString())
 	}

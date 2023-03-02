@@ -8,7 +8,7 @@ import (
 	. "github.com/lxn/walk/declarative"
 	"github.com/lxn/win"
 	"gui.subtitle/src/logic/translate"
-	mt2 "gui.subtitle/src/srv/mt"
+	"gui.subtitle/src/srv/mt"
 	"gui.subtitle/src/srv/mt/aliyun"
 	"gui.subtitle/src/srv/mt/bd"
 	"gui.subtitle/src/util/lang"
@@ -18,8 +18,6 @@ import (
 )
 
 var isSpecialMode = walk.NewMutableCondition()
-
-var mtEngineValues = []string{"阿里云", "百度"}
 
 func init() {
 	MustRegisterCondition("isSpecialMode", isSpecialMode)
@@ -56,6 +54,7 @@ func (aw *AppWindow) newMainWindow() error {
 
 	var bdIdEdit *walk.TextEdit
 	var bdKeyEdit *walk.TextEdit
+	var bdApiVersionComboBox *walk.ComboBox
 
 	var fromLanguageComboBox *walk.ComboBox
 	var toLanguageComboBox *walk.ComboBox
@@ -77,7 +76,7 @@ func (aw *AppWindow) newMainWindow() error {
 		Layout:   VBox{},
 		Children: []Widget{
 			Label{Text: "***** 翻译小助手 *****", Alignment: AlignHCenterVCenter, Font: Font{Bold: true, PointSize: 10}},
-			Label{Text: "版本号: 1.0.5  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
+			Label{Text: "版本号: 1.1.0  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
 			GroupBox{
 				Layout: HBox{},
 				Children: []Widget{
@@ -86,8 +85,8 @@ func (aw *AppWindow) newMainWindow() error {
 						Name:    "mtEngineComboBox",
 						MinSize: Size{Width: 80}, MaxSize: Size{Width: 80, Height: 20},
 						AssignTo:     &mtEngineComboBox,
-						Model:        mtEngineValues,
-						CurrentIndex: 0,
+						Model:        mt.EngineALiYun.GetZHArrays(),
+						CurrentIndex: 1,
 					},
 					HSpacer{},
 				},
@@ -123,22 +122,43 @@ func (aw *AppWindow) newMainWindow() error {
 				},
 			},
 			GroupBox{
-				MinSize: Size{Height: 80},
-				MaxSize: Size{Height: 80},
+				MinSize: Size{Height: 100},
+				MaxSize: Size{Height: 100},
 				Layout:  VBox{},
 				Visible: Bind("mtEngineComboBox.CurrentIndex == 1"),
 				Children: []Widget{
 					HSplitter{
 						Children: []Widget{
-							Label{Text: "访问身份", ToolTipText: "AccessKeyId"},
-							TextEdit{AssignTo: &bdIdEdit},
+							Label{Text: "访问身份", ToolTipText: "AppId"},
+							TextEdit{AssignTo: &bdIdEdit, Text: "2015063000000001"},
 							HSpacer{},
 						},
 					},
 					HSplitter{
 						Children: []Widget{
-							Label{Text: "访问密钥", ToolTipText: "AccessKeySecret"},
-							TextEdit{AssignTo: &bdKeyEdit},
+							Label{Text: "访问密钥", ToolTipText: "AppSecret"},
+							TextEdit{AssignTo: &bdKeyEdit, Text: "12345678"},
+							HSpacer{},
+						},
+					},
+					HSplitter{
+						Children: []Widget{
+							Label{Text: "接口版本", ToolTipText: "百度翻译通用文本翻译接口主要分为三个版本，具体信息如下所示：\n" +
+								"1. 标准版: \n  QPS=1 支持28个语种互译 单次最长请求1000字符 免费调用量5万字符/月\n" +
+								"2. 高级版: \n  QPS=10 支持 28个语种互译 单次最长请求6000字符 免费调用量100万字符/月\n" +
+								"3. 尊享版: \n  QPS=100 支持200+语种互译 单次最长请求6000字符 免费调用量200万字符/月"},
+							ComboBox{
+								Name:    "bdApiVersionComboBox",
+								MinSize: Size{Width: 5}, MaxSize: Size{Width: 5},
+								AssignTo:     &bdApiVersionComboBox,
+								Model:        bd.GTApiStandard.GetZHArrays(),
+								CurrentIndex: 0,
+								OnCurrentIndexChanged: func() {
+									if bdApiVersionComboBox.CurrentIndex() == bd.GTApiEnjoy.ToInt() {
+										walk.MsgBox(aw, "提示", "请确保您的百度开发者类型为企业开发者，并且开通了尊享版服务，\n否则程序将会出现不可预知的意外情况", walk.MsgBoxIconWarning)
+									}
+								},
+							},
 							HSpacer{},
 						},
 					},
@@ -168,11 +188,6 @@ func (aw *AppWindow) newMainWindow() error {
 								AssignTo:     &toLanguageComboBox,
 								Model:        langVars,
 								CurrentIndex: 1,
-								OnCurrentIndexChanged: func() {
-									/*if toLanguageComboBox.CurrentIndex() == 0 { // 目标语言禁止自动
-										_ = toLanguageComboBox.SetCurrentIndex(1)
-									}*/
-								},
 							},
 							HSpacer{},
 						},
@@ -201,7 +216,7 @@ func (aw *AppWindow) newMainWindow() error {
 									_ = subtitleFileEdit.SetText(dlg.FilePath)
 								},
 							},
-							TextEdit{AssignTo: &subtitleFileEdit, ReadOnly: true, HScroll: true},
+							TextEdit{AssignTo: &subtitleFileEdit, ReadOnly: true, HScroll: true, Text: "E:\\工作空间\\小工具\\test.srt"},
 						},
 					},
 					HSplitter{
@@ -227,7 +242,7 @@ func (aw *AppWindow) newMainWindow() error {
 									_ = subtitleFileSave.SetText(dlg.FilePath)
 								},
 							},
-							TextEdit{AssignTo: &subtitleFileSave, ReadOnly: true, HScroll: true},
+							TextEdit{AssignTo: &subtitleFileSave, ReadOnly: true, HScroll: true, Text: "E:\\OneDrive\\桌面"},
 						},
 					},
 					VSpacer{},
@@ -246,9 +261,9 @@ func (aw *AppWindow) newMainWindow() error {
 					_ = stateLabel.SetText("")
 					_ = logLabel.SetText("")
 					timeStart := carbon.Now()
-					currentMTEngineName := getCurrentMTEngineName(mtEngineComboBox.CurrentIndex())
+					currentMTEngine := mt.EngineALiYun.FromInt(mtEngineComboBox.CurrentIndex())
 
-					if currentMTEngineName == "阿里云" {
+					if currentMTEngine == mt.EngineALiYun {
 						if aLiIdEdit.Text() == "" {
 							walk.MsgBox(aw, "警告", "请设置访问身份", walk.MsgBoxIconWarning)
 							defer func() { _ = aLiIdEdit.SetFocus() }()
@@ -259,7 +274,7 @@ func (aw *AppWindow) newMainWindow() error {
 							defer func() { _ = aLiKeyEdit.SetFocus() }()
 							return
 						}
-					} else if currentMTEngineName == "百度" {
+					} else if currentMTEngine == mt.EngineBaiDu {
 						if bdIdEdit.Text() == "" {
 							walk.MsgBox(aw, "警告", "请设置访问身份", walk.MsgBoxIconWarning)
 							defer func() { _ = bdIdEdit.SetFocus() }()
@@ -271,7 +286,7 @@ func (aw *AppWindow) newMainWindow() error {
 							return
 						}
 					} else {
-						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngineName), walk.MsgBoxIconWarning)
+						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
 					}
 
@@ -319,24 +334,25 @@ func (aw *AppWindow) newMainWindow() error {
 					}
 					fromLanguage := lang.ZH.GetLangByIdx(fromLanguageComboBox.CurrentIndex())
 					toLanguage := lang.ZH.GetLangByIdx(toLanguageComboBox.CurrentIndex())
-					var mt mt2.MT
+					var mtEngine mt.MT
 					var cfg interface{}
 
-					if currentMTEngineName == "阿里云" {
+					if currentMTEngine == mt.EngineALiYun {
 						cfg = &aliyun.Cfg{AccessKeyId: aLiIdEdit.Text(), AccessKeySecret: aLiKeyEdit.Text(), Location: aLiLocationEdit.Text()}
-						mt = new(aliyun.ALiMT)
-					} else if currentMTEngineName == "百度" {
+						mtEngine = new(aliyun.ALiMT)
+					} else if currentMTEngine == mt.EngineBaiDu {
 						cfg = &bd.Cfg{AppId: bdIdEdit.Text(), AppSecret: bdKeyEdit.Text()}
-						mt = new(bd.MT)
+						cfg.(*bd.Cfg).AppVersion = bd.GTApiStandard.FromInt(bdApiVersionComboBox.CurrentIndex())
+						mtEngine = new(bd.MT)
 					} else {
-						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngineName), walk.MsgBoxIconWarning)
+						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
 					}
-					if err := mt.Init(ctx, cfg); err != nil {
-						walk.MsgBox(aw, "错误", fmt.Sprintf("初始化%s服务异常, 错误: %s", mt.GetName(), err.Error()), walk.MsgBoxIconError)
+					if err := mtEngine.Init(ctx, cfg); err != nil {
+						walk.MsgBox(aw, "错误", fmt.Sprintf("初始化%s服务异常, 错误: %s", mtEngine.GetName(), err.Error()), walk.MsgBoxIconError)
 						return
 					}
-					results, cntError, _ := translate.Translate(ctx, mt, sts, fromLanguage, toLanguage)
+					results, cntError, _ := translate.Translate(ctx, mtEngine, sts, fromLanguage, toLanguage)
 					_ = logLabel.SetText(strings.Join(results, "\r\n"))
 					_cntWrite, err := translate.Writer(create, sts)
 					if err != nil {
@@ -370,13 +386,4 @@ func (aw *AppWindow) newMainWindow() error {
 			VSpacer{},
 		},
 	}.Create()
-}
-
-func getCurrentMTEngineName(idx int) string {
-	for i, val := range mtEngineValues {
-		if idx == i {
-			return val
-		}
-	}
-	return ""
 }
