@@ -9,6 +9,8 @@ require (
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.1
 	github.com/golang-module/carbon v1.7.3
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
+	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.608
 )
 
 require (
@@ -29,7 +31,6 @@ require (
 	github.com/gobuffalo/packr v1.30.1 // indirect
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
-	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.3.0 // indirect

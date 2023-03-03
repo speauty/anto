@@ -11,6 +11,7 @@ import (
 	"gui.subtitle/src/srv/mt"
 	"gui.subtitle/src/srv/mt/aliyun"
 	"gui.subtitle/src/srv/mt/bd"
+	"gui.subtitle/src/srv/mt/tencent"
 	"gui.subtitle/src/srv/mt/youdao"
 	"gui.subtitle/src/util/lang"
 	"os"
@@ -57,6 +58,10 @@ func (aw *AppWindow) newMainWindow() error {
 	var bdKeyEdit *walk.TextEdit
 	var bdApiVersionComboBox *walk.ComboBox
 
+	var tencentIdEdit *walk.TextEdit
+	var tencentKeyEdit *walk.TextEdit
+	var tencentRegionEdit *walk.TextEdit
+
 	var fromLanguageComboBox *walk.ComboBox
 	var toLanguageComboBox *walk.ComboBox
 	langVars := lang.ZH.GetMaps()
@@ -76,18 +81,18 @@ func (aw *AppWindow) newMainWindow() error {
 		MinSize:  Size{Width: 400, Height: 400},
 		Layout:   VBox{},
 		Children: []Widget{
-			Label{Text: "***** 翻译小助手 *****", Alignment: AlignHCenterVCenter, Font: Font{Bold: true, PointSize: 10}},
-			Label{Text: "版本号: 1.1.5  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
+			Label{Text: "***** 译名 *****", Alignment: AlignHCenterVCenter, Font: Font{Bold: true, PointSize: 10}},
+			Label{Text: "版本号: 1.1.8  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
 			GroupBox{
 				Layout: HBox{},
 				Children: []Widget{
-					TextLabel{Text: "翻译引擎", ToolTipText: "机器翻译引擎, 当前支持阿里云、百度、有道"},
+					TextLabel{Text: "翻译引擎", ToolTipText: "机器翻译引擎, 当前支持阿里云、百度、有道、腾讯"},
 					ComboBox{
 						Name:    "mtEngineComboBox",
 						MinSize: Size{Width: 80}, MaxSize: Size{Width: 80, Height: 20},
 						AssignTo:     &mtEngineComboBox,
 						Model:        mt.EngineALiYun.GetZHArrays(),
-						CurrentIndex: 0,
+						CurrentIndex: mt.EngineALiYun.ToInt(),
 					},
 					HSpacer{},
 				},
@@ -114,8 +119,8 @@ func (aw *AppWindow) newMainWindow() error {
 					},
 					HSplitter{
 						Children: []Widget{
-							Label{Text: "访问区域", ToolTipText: "AccessKeySecret"},
-							TextEdit{AssignTo: &aLiLocationEdit, Text: "cn-hangzhou"},
+							Label{Text: "访问地域", ToolTipText: "AccessKeySecret"},
+							TextEdit{AssignTo: &aLiLocationEdit},
 							HSpacer{},
 						},
 					},
@@ -160,6 +165,36 @@ func (aw *AppWindow) newMainWindow() error {
 									}
 								},
 							},
+							HSpacer{},
+						},
+					},
+					VSpacer{},
+				},
+			},
+			GroupBox{
+				MinSize: Size{Height: 110},
+				MaxSize: Size{Height: 110},
+				Layout:  VBox{},
+				Visible: Bind(fmt.Sprintf("mtEngineComboBox.CurrentIndex == %d", mt.EngineTencent)),
+				Children: []Widget{
+					HSplitter{
+						Children: []Widget{
+							Label{Text: "访问身份", ToolTipText: "AccessKeyId"},
+							TextEdit{AssignTo: &tencentIdEdit},
+							HSpacer{},
+						},
+					},
+					HSplitter{
+						Children: []Widget{
+							Label{Text: "访问密钥", ToolTipText: "AccessKeySecret"},
+							TextEdit{AssignTo: &tencentKeyEdit},
+							HSpacer{},
+						},
+					},
+					HSplitter{
+						Children: []Widget{
+							Label{Text: "访问地域", ToolTipText: "AccessKeySecret"},
+							TextEdit{AssignTo: &tencentRegionEdit},
 							HSpacer{},
 						},
 					},
@@ -287,6 +322,17 @@ func (aw *AppWindow) newMainWindow() error {
 							return
 						}
 					} else if currentMTEngine == mt.EngineYouDao {
+					} else if currentMTEngine == mt.EngineTencent {
+						if tencentIdEdit.Text() == "" {
+							walk.MsgBox(aw, "警告", "请设置访问身份", walk.MsgBoxIconWarning)
+							defer func() { _ = tencentIdEdit.SetFocus() }()
+							return
+						}
+						if tencentKeyEdit.Text() == "" {
+							walk.MsgBox(aw, "警告", "请设置访问密钥", walk.MsgBoxIconWarning)
+							defer func() { _ = tencentKeyEdit.SetFocus() }()
+							return
+						}
 					} else {
 						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
@@ -348,6 +394,9 @@ func (aw *AppWindow) newMainWindow() error {
 						mtEngine = new(bd.MT)
 					} else if currentMTEngine == mt.EngineYouDao {
 						mtEngine = new(youdao.MT)
+					} else if currentMTEngine == mt.EngineTencent {
+						cfg = &tencent.Cfg{SecretId: tencentIdEdit.Text(), SecretKey: tencentKeyEdit.Text(), Region: tencentRegionEdit.Text()}
+						mtEngine = new(tencent.MT)
 					} else {
 						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
 						return
@@ -356,6 +405,7 @@ func (aw *AppWindow) newMainWindow() error {
 						walk.MsgBox(aw, "错误", fmt.Sprintf("初始化%s服务异常, 错误: %s", mtEngine.GetName(), err.Error()), walk.MsgBoxIconError)
 						return
 					}
+
 					results, cntError, _ := translate.Translate(ctx, mtEngine, sts, fromLanguage, toLanguage)
 					_ = logLabel.SetText(strings.Join(results, "\r\n"))
 					_cntWrite, err := translate.Writer(create, sts)

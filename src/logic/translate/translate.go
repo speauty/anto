@@ -10,6 +10,7 @@ import (
 	"gui.subtitle/src/srv/mt"
 	aliyun2 "gui.subtitle/src/srv/mt/aliyun"
 	"gui.subtitle/src/srv/mt/bd"
+	"gui.subtitle/src/srv/mt/tencent"
 	"gui.subtitle/src/srv/mt/youdao"
 	"gui.subtitle/src/util"
 	"gui.subtitle/src/util/lang"
@@ -389,6 +390,110 @@ func Translate(ctx context.Context, mtEngine interface{}, contents []*Block, fro
 				}
 			}(ctx, coroutineCtrlCtx, coroutineCtrlCtxCancelFunc, wg, coroutineIdx, blockChan)
 		}
+	case mt.IdTencent:
+		blockChunked, cntBlockChunked := chunkBlocksForTencent(contents, 2000, fromLanguage)
+		if cntBlockChunked < maxCoroutine {
+			maxCoroutine = cntBlockChunked
+		}
+		if maxCoroutine > 4 { // TMT的QPS: 5
+			maxCoroutine = 4
+		}
+		blockChan := make(chan []string, maxCoroutine*3)
+		wg.Add(1)
+
+		go func(currentCtx context.Context, currentWG *sync.WaitGroup) {
+			defer currentWG.Done()
+			for _, block := range blockChunked {
+				blockChan <- block
+			}
+			close(blockChan)
+		}(ctx, wg)
+
+		for coroutineIdx := 0; coroutineIdx < maxCoroutine; coroutineIdx++ {
+			if util.IsCtxDone(coroutineCtrlCtx) {
+				results = append(results, fmt.Sprintf("[%s]%s失败, 错误: 协程出现中断信号, 停止继续创建协程", carbon.Now(), mtEngine.(mt.MT).GetName()))
+				break
+			}
+
+			wg.Add(1)
+			go func(localCtx context.Context, localCoroutineCtrlCtx context.Context, localCoroutineCtrlCtxCancelFunc context.CancelFunc, localWG *sync.WaitGroup, localCoroutineIdx int, localBlockChan chan []string) {
+				defer localWG.Done()
+				localCoroutineCntTranslated := 0
+				localCoroutineTimeStart := carbon.Now()
+				for {
+					select {
+					case block, isOpen := <-blockChan:
+						if !isOpen {
+							results = append(results, fmt.Sprintf(
+								"[%s]协程结束, 引擎: %s, 协程序号: %d, 处理字幕行数: %d, 运行时长(s): %d, 原因: 数据通道关闭, 无数据, 主动退出当前协程",
+								carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx,
+								localCoroutineCntTranslated, carbon.Now().DiffAbsInSeconds(localCoroutineTimeStart),
+							))
+							runtime.Goexit()
+							return
+						}
+						args := &tencent.TextBatchTranslateArg{
+							FromLanguage: fromLanguage.ToString(),
+							ToLanguage:   toLanguage.ToString(),
+							TextList:     block,
+						}
+						var translateResp []mt.TextTranslateResp
+						var err error
+
+						for failIdx := 0; failIdx < 3; failIdx++ {
+							translateResp, err = mtEngine.(mt.MT).TextBatchTranslate(ctx, args)
+							if err != nil || translateResp == nil {
+								err = fmt.Errorf("[%s]%s翻译失败, 协程序号: %d, 错误: %s", carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx, err)
+								time.Sleep(time.Second)
+								continue
+							}
+							break
+						}
+						if err != nil {
+							results = append(results, err.Error())
+							cntError.Add(1)
+							lastError = err
+
+							if bd.ErrSign.IsExit(err) {
+								localCoroutineCtrlCtxCancelFunc()
+								runtime.Goexit()
+								return
+							}
+						}
+						for _, translateRes := range translateResp {
+							for idx, content := range contents {
+								if fromLanguage == lang.ZH {
+									if content.TextZH == translateRes.Idx {
+										contents[idx].TextEN = translateRes.StrTranslated
+										cntBlockTranslated.Add(1)
+										localCoroutineCntTranslated++
+									}
+								} else if fromLanguage == lang.EN {
+									if content.TextEN == translateRes.Idx {
+										contents[idx].TextZH = translateRes.StrTranslated
+										cntBlockTranslated.Add(1)
+										localCoroutineCntTranslated++
+									}
+								}
+							}
+						}
+					default:
+						if util.IsCtxDone(localCoroutineCtrlCtx) {
+							results = append(results, fmt.Sprintf(
+								"[%s]协程结束, 引擎: %s, 协程序号: %d, 处理字幕行数: %d, 运行时长(s): %d, 错误: 协程出现中断信号, 强制退出",
+								carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx,
+								localCoroutineCntTranslated, carbon.Now().DiffAbsInSeconds(localCoroutineTimeStart),
+							))
+							runtime.Goexit()
+							return
+						}
+					}
+				}
+			}(ctx, coroutineCtrlCtx, coroutineCtrlCtxCancelFunc, wg, coroutineIdx, blockChan)
+		}
+	default:
+		lastError = fmt.Errorf("当前引擎[%s]暂未实现, 尽请期待", mtEngine.(mt.MT).GetName())
+		return nil, 0, lastError
 	}
 	wg.Wait()
 	resStr := "成功"
@@ -478,6 +583,28 @@ func chunkBlocksForBaiDu(contents []*Block, lenLimited int, fromLanguage lang.St
 		tmpStrStack = ""
 	}
 	return blockChunked, len(blockChunked)
+}
+
+// chunkBlocksForTencent 腾讯翻译的专属分包函数
+func chunkBlocksForTencent(contents []*Block, lenLimited int, fromLanguage lang.StrLang) (res [][]string, cnt int) {
+	var tmpStack []string
+	for _, content := range contents {
+		sourceText := content.TextEN
+		if fromLanguage == lang.ZH {
+			sourceText = content.TextZH
+		}
+		if len(strings.Join(tmpStack, ""))+len(sourceText) >= lenLimited {
+			res = append(res, tmpStack)
+			tmpStack = []string{}
+		}
+		tmpStack = append(tmpStack, sourceText)
+	}
+	if len(tmpStack) > 0 {
+		res = append(res, tmpStack)
+		tmpStack = []string{}
+	}
+	cnt = len(res)
+	return
 }
 
 func hasZH(str string) bool {
