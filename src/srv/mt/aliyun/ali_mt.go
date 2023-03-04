@@ -32,9 +32,7 @@ func (m *ALiMT) Init(_ context.Context, cfg interface{}) error {
 	if m.cfg != nil { // 拒绝重复初始化
 		return nil
 	}
-	if cfg.(*Cfg).Endpoint == "" { // 拼接域名
-		cfg.(*Cfg).Endpoint = fmt.Sprintf("mt.%s.aliyuncs.com", cfg.(*Cfg).Location)
-	}
+	cfg.(*Cfg).Endpoint = "mt.aliyuncs.com"
 	m.cfg = cfg.(*Cfg)
 	return m.initClient()
 }
@@ -103,7 +101,7 @@ func (m *ALiMT) GetId() mt.Id {
 }
 
 func (m *ALiMT) GetName() string {
-	return "阿里云机器翻译"
+	return mt.EngineALiYun.GetZH()
 }
 
 func (m *ALiMT) initClient() error {

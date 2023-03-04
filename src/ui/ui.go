@@ -14,6 +14,7 @@ import (
 	"gui.subtitle/src/srv/mt/tencent"
 	"gui.subtitle/src/srv/mt/youdao"
 	"gui.subtitle/src/util/lang"
+	"gui.subtitle/src/util/region"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,7 +53,6 @@ func (aw *AppWindow) newMainWindow() error {
 
 	var aLiIdEdit *walk.TextEdit
 	var aLiKeyEdit *walk.TextEdit
-	var aLiLocationEdit *walk.TextEdit
 
 	var bdIdEdit *walk.TextEdit
 	var bdKeyEdit *walk.TextEdit
@@ -60,7 +60,7 @@ func (aw *AppWindow) newMainWindow() error {
 
 	var tencentIdEdit *walk.TextEdit
 	var tencentKeyEdit *walk.TextEdit
-	var tencentRegionEdit *walk.TextEdit
+	var tencentRegionComboBox *walk.ComboBox
 
 	var fromLanguageComboBox *walk.ComboBox
 	var toLanguageComboBox *walk.ComboBox
@@ -82,7 +82,7 @@ func (aw *AppWindow) newMainWindow() error {
 		Layout:   VBox{},
 		Children: []Widget{
 			Label{Text: "***** 译名 *****", Alignment: AlignHCenterVCenter, Font: Font{Bold: true, PointSize: 10}},
-			Label{Text: "版本号: 1.1.8  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
+			Label{Text: "版本号: 1.1.9  作者: speauty  邮箱: speauty@163.com", Alignment: AlignHCenterVCenter},
 			GroupBox{
 				Layout: HBox{},
 				Children: []Widget{
@@ -98,8 +98,8 @@ func (aw *AppWindow) newMainWindow() error {
 				},
 			},
 			GroupBox{
-				MinSize: Size{Height: 110},
-				MaxSize: Size{Height: 110},
+				MinSize: Size{Height: 80},
+				MaxSize: Size{Height: 80},
 				Layout:  VBox{},
 				Visible: Bind("mtEngineComboBox.CurrentIndex == 0"),
 				Children: []Widget{
@@ -117,19 +117,12 @@ func (aw *AppWindow) newMainWindow() error {
 							HSpacer{},
 						},
 					},
-					HSplitter{
-						Children: []Widget{
-							Label{Text: "访问地域", ToolTipText: "AccessKeySecret"},
-							TextEdit{AssignTo: &aLiLocationEdit},
-							HSpacer{},
-						},
-					},
 					VSpacer{},
 				},
 			},
 			GroupBox{
-				MinSize: Size{Height: 110},
-				MaxSize: Size{Height: 110},
+				MinSize: Size{Height: 100},
+				MaxSize: Size{Height: 100},
 				Layout:  VBox{},
 				Visible: Bind("mtEngineComboBox.CurrentIndex == 1"),
 				Children: []Widget{
@@ -172,8 +165,8 @@ func (aw *AppWindow) newMainWindow() error {
 				},
 			},
 			GroupBox{
-				MinSize: Size{Height: 110},
-				MaxSize: Size{Height: 110},
+				MinSize: Size{Height: 100},
+				MaxSize: Size{Height: 100},
 				Layout:  VBox{},
 				Visible: Bind(fmt.Sprintf("mtEngineComboBox.CurrentIndex == %d", mt.EngineTencent)),
 				Children: []Widget{
@@ -193,8 +186,13 @@ func (aw *AppWindow) newMainWindow() error {
 					},
 					HSplitter{
 						Children: []Widget{
-							Label{Text: "访问地域", ToolTipText: "AccessKeySecret"},
-							TextEdit{AssignTo: &tencentRegionEdit},
+							Label{Text: "访问地域"},
+							ComboBox{
+								MinSize: Size{Width: 40}, MaxSize: Size{Width: 40},
+								AssignTo:     &tencentRegionComboBox,
+								Model:        region.T_AP_BeiJing.GetZhMaps(mt.IdTencent),
+								CurrentIndex: region.T_AP_BeiJing.ToInt(),
+							},
 							HSpacer{},
 						},
 					},
@@ -386,7 +384,7 @@ func (aw *AppWindow) newMainWindow() error {
 					var cfg interface{}
 
 					if currentMTEngine == mt.EngineALiYun {
-						cfg = &aliyun.Cfg{AccessKeyId: aLiIdEdit.Text(), AccessKeySecret: aLiKeyEdit.Text(), Location: aLiLocationEdit.Text()}
+						cfg = &aliyun.Cfg{AccessKeyId: aLiIdEdit.Text(), AccessKeySecret: aLiKeyEdit.Text()}
 						mtEngine = new(aliyun.ALiMT)
 					} else if currentMTEngine == mt.EngineBaiDu {
 						cfg = &bd.Cfg{AppId: bdIdEdit.Text(), AppSecret: bdKeyEdit.Text()}
@@ -395,7 +393,7 @@ func (aw *AppWindow) newMainWindow() error {
 					} else if currentMTEngine == mt.EngineYouDao {
 						mtEngine = new(youdao.MT)
 					} else if currentMTEngine == mt.EngineTencent {
-						cfg = &tencent.Cfg{SecretId: tencentIdEdit.Text(), SecretKey: tencentKeyEdit.Text(), Region: tencentRegionEdit.Text()}
+						cfg = &tencent.Cfg{SecretId: tencentIdEdit.Text(), SecretKey: tencentKeyEdit.Text(), Region: region.T_AP_BeiJing.FromInt(tencentRegionComboBox.CurrentIndex()).GetEn(mt.IdTencent)}
 						mtEngine = new(tencent.MT)
 					} else {
 						walk.MsgBox(aw, "提示", fmt.Sprintf("当前翻译引擎[%s]暂未接入, 尽情期待", currentMTEngine.GetZH()), walk.MsgBoxIconWarning)
@@ -429,12 +427,12 @@ func (aw *AppWindow) newMainWindow() error {
 			},
 			TextEdit{
 				AssignTo: &stateLabel, Visible: false, ReadOnly: true, VScroll: true,
-				MinSize: Size{Height: 40}, MaxSize: Size{Height: 40},
+				MinSize: Size{Height: 40, Width: 80}, MaxSize: Size{Height: 40, Width: 80},
 				Font: Font{PointSize: 8},
 			},
 			TextEdit{
 				Visible: false, ReadOnly: true, VScroll: true,
-				AssignTo: &logLabel, MinSize: Size{Height: 120, Width: 100}, MaxSize: Size{Height: 120, Width: 100},
+				AssignTo: &logLabel, MinSize: Size{Height: 120, Width: 80}, MaxSize: Size{Height: 120, Width: 80},
 			},
 
 			VSpacer{},
