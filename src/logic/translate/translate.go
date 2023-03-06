@@ -10,6 +10,7 @@ import (
 	"gui.subtitle/src/srv/mt"
 	aliyun2 "gui.subtitle/src/srv/mt/aliyun"
 	"gui.subtitle/src/srv/mt/bd"
+	"gui.subtitle/src/srv/mt/lingva"
 	"gui.subtitle/src/srv/mt/tencent"
 	"gui.subtitle/src/srv/mt/youdao"
 	"gui.subtitle/src/util"
@@ -459,6 +460,92 @@ func Translate(ctx context.Context, mtEngine interface{}, contents []*Block, fro
 								runtime.Goexit()
 								return
 							}
+						}
+						for _, translateRes := range translateResp {
+							for idx, content := range contents {
+								if fromLanguage == lang.ZH {
+									if content.TextZH == translateRes.Idx {
+										contents[idx].TextEN = translateRes.StrTranslated
+										cntBlockTranslated.Add(1)
+										localCoroutineCntTranslated++
+									}
+								} else if fromLanguage == lang.EN {
+									if content.TextEN == translateRes.Idx {
+										contents[idx].TextZH = translateRes.StrTranslated
+										cntBlockTranslated.Add(1)
+										localCoroutineCntTranslated++
+									}
+								}
+							}
+						}
+					default:
+						if util.IsCtxDone(localCoroutineCtrlCtx) {
+							results = append(results, fmt.Sprintf(
+								"[%s]协程结束, 引擎: %s, 协程序号: %d, 处理字幕行数: %d, 运行时长(s): %d, 错误: 协程出现中断信号, 强制退出",
+								carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx,
+								localCoroutineCntTranslated, carbon.Now().DiffAbsInSeconds(localCoroutineTimeStart),
+							))
+							runtime.Goexit()
+							return
+						}
+					}
+				}
+			}(ctx, coroutineCtrlCtx, coroutineCtrlCtxCancelFunc, wg, coroutineIdx, blockChan)
+		}
+	case mt.IdLingVa:
+		blockChunked, cntBlockChunked := chunkBlocksForBaiDu(contents, 3e3, fromLanguage)
+		if maxCoroutine > cntBlockChunked {
+			maxCoroutine = cntBlockChunked
+		}
+		blockChan := make(chan string, maxCoroutine*2)
+		go func() {
+			for _, block := range blockChunked {
+				blockChan <- block
+			}
+			close(blockChan)
+		}()
+		for coroutineIdx := 0; coroutineIdx < maxCoroutine; coroutineIdx++ {
+			if util.IsCtxDone(coroutineCtrlCtx) {
+				results = append(results, fmt.Sprintf("[%s]%s失败, 错误: 协程出现中断信号, 停止继续创建协程", carbon.Now(), mtEngine.(mt.MT).GetName()))
+				break
+			}
+			wg.Add(1)
+			go func(localCtx context.Context, localCoroutineCtrlCtx context.Context, localCoroutineCtrlCtxCancelFunc context.CancelFunc, localWG *sync.WaitGroup, localCoroutineIdx int, localBlockChan chan string) {
+				defer localWG.Done()
+				localCoroutineCntTranslated := 0
+				localCoroutineTimeStart := carbon.Now()
+				for {
+					select {
+					case block, isOpen := <-blockChan:
+						if !isOpen { // 当前通道已关闭, 并且没有残留数据
+							results = append(results, fmt.Sprintf(
+								"[%s]协程结束, 引擎: %s, 协程序号: %d, 处理字幕行数: %d, 运行时长(s): %d, 原因: 数据通道关闭, 无数据, 主动退出当前协程",
+								carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx,
+								localCoroutineCntTranslated, carbon.Now().DiffAbsInSeconds(localCoroutineTimeStart),
+							))
+							runtime.Goexit()
+							return
+						}
+						args := new(lingva.TextTranslateArg).New(block)
+						args.FromLanguage = fromLanguage.ToString()
+						args.ToLanguage = toLanguage.ToString()
+						var err error
+						var translateResp []mt.TextTranslateResp
+
+						for failIdx := 0; failIdx < maxRetry; failIdx++ {
+							translateResp, err = mtEngine.(mt.MT).TextTranslate(ctx, args)
+							if err != nil || translateResp == nil {
+								err = fmt.Errorf("[%s]%s翻译失败, 协程序号: %d, 错误: %s", carbon.Now(), mtEngine.(mt.MT).GetName(), localCoroutineIdx, err)
+								continue
+							}
+							break
+						}
+						if err != nil {
+							results = append(results, err.Error())
+							cntError.Add(1)
+							lastError = err
+							runtime.Goexit()
+							return
 						}
 						for _, translateRes := range translateResp {
 							for idx, content := range contents {

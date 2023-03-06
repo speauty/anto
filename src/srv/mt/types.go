@@ -23,6 +23,7 @@ const (
 	IdBaiDu   Id = "EngineBaiDu"
 	IdYouDao  Id = "EngineYouDao"
 	IdTencent Id = "EngineTencent"
+	IdLingVa  Id = "EngineLingVa"
 )
 
 type Engine int
@@ -54,9 +55,11 @@ const (
 	EngineYouDao
 	// EngineTencent 腾讯翻译
 	EngineTencent
+	// EngineLingVa lingva.ml 翻译
+	EngineLingVa
 )
 
-var engineZHMaps = []string{"阿里云", "百度", "有道", "腾讯"}
+var engineZHMaps = []string{"阿里云", "百度", "有道", "腾讯", "LingVa"}
 
 const BlockSep string = "\n"
 const BlockIdxContentSep string = "@<"
