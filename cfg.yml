@@ -1,2 +1,6 @@
 app:
   env: "debug" # 当前应用环境[debug-开发/调试(默认) release-发布]
+ui:
+  title: "Anto"                 # ui名称
+  icon: "favicon.ico"           # icon路径(相对于资源目录)
+  resource_dir: "./assets"      # 资源目录

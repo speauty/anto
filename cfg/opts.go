@@ -24,3 +24,10 @@ func (customC *Cfg) Load(cfgFilePath string) error {
 	}
 	return nil
 }
+
+func (customC *Cfg) Sync() error {
+	if err := viper.WriteConfig(); err != nil {
+		return fmt.Errorf("写入配置失败, 错误: %s", err)
+	}
+	return nil
+}
