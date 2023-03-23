@@ -1,0 +1,2 @@
+app:
+  env: "debug" # 当前应用环境[debug-开发/调试(默认) release-发布]

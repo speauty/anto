@@ -1,14 +1,17 @@
 package main
 
 import (
-	"gui.subtitle/src/ui"
+	"fmt"
+	"translator/cfg"
+	"translator/tst/tt_log"
 )
 
 func main() {
-	cfg := new(ui.AppWindowCfg)
-	cfg.Title = "字幕先生-Speauty出品"
-	err := new(ui.AppWindow).Start(cfg)
-	if err != nil {
-		return
+
+	if err := cfg.GetInstance().Load(""); err != nil {
+		panic(err)
 	}
+
+	tt_log.GetInstance()
+	fmt.Println("hello world")
 }

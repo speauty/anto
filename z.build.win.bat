@@ -1,0 +1,1 @@
+go build "-ldflags=-w -s -H=windowsgui" -o .\bin\translator.exe translator&& upx -9 .\bin\translator.exe

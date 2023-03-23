@@ -1,1 +1,0 @@
-go build "-ldflags=-w -s -H=windowsgui"  -o .\bin\subtitle.exe gui.subtitle
