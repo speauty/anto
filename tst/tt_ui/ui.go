@@ -56,6 +56,7 @@ func (customG *Gui) genMainWindow() error {
 		Title:          customG.cfg.Title,
 		Icon:           customG.cfg.Icon,
 		Layout:         VBox{MarginsZero: true},
+		MenuItems:      customG.defaultMenu(),
 		StatusBarItems: customG.defaultStatusBars(),
 	}.Create()
 }
