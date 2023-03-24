@@ -3,24 +3,26 @@ package tt_ui
 import (
 	"fmt"
 	"github.com/lxn/walk"
+	. "github.com/lxn/walk/declarative"
 	"sync"
 )
 
 type IPage interface {
-	GetId() int
+	GetId() string
 	GetName() string
-	BindWindow(win walk.Form)
+	BindWindow(win *walk.MainWindow)
 	SetVisible(isVisible bool)
-	GetWidget() *walk.Widget
+	GetWidget() Widget
 	Reset()
 }
 
-type pageCtl struct {
+type PageCtl struct {
 	current IPage
 	pages   sync.Map
+	menus   []MenuItem
 }
 
-func (customPC *pageCtl) PushPages(pages ...IPage) {
+func (customPC *PageCtl) PushPages(pages ...IPage) {
 	for _, page := range pages {
 		if _, isExist := customPC.pages.Load(page.GetId()); isExist {
 			continue
@@ -29,7 +31,7 @@ func (customPC *pageCtl) PushPages(pages ...IPage) {
 	}
 }
 
-func (customPC *pageCtl) SetCurrent(pageId int) error {
+func (customPC *PageCtl) SetCurrent(pageId string) error {
 	currentPage, err := customPC.GetPageById(pageId)
 	if err != nil {
 		return err
@@ -39,7 +41,7 @@ func (customPC *pageCtl) SetCurrent(pageId int) error {
 	return nil
 }
 
-func (customPC *pageCtl) Render() {
+func (customPC *PageCtl) Render() {
 	customPC.pages.Range(func(pageId, currentPage any) bool {
 		currentPage.(IPage).SetVisible(currentPage.(IPage).GetId() == customPC.current.GetId())
 		currentPage.(IPage).Reset()
@@ -47,10 +49,27 @@ func (customPC *pageCtl) Render() {
 	})
 }
 
-func (customPC *pageCtl) GetPageById(pageId int) (IPage, error) {
+func (customPC *PageCtl) GetPageById(pageId string) (IPage, error) {
 	currentPage, isOk := customPC.pages.Load(pageId)
 	if !isOk {
-		return nil, fmt.Errorf("当前页面[%d]不存在", pageId)
+		return nil, fmt.Errorf("当前页面[%s]不存在", pageId)
 	}
 	return currentPage.(IPage), nil
+}
+
+func (customPC *PageCtl) Bind(win *walk.MainWindow) {
+	customPC.pages.Range(func(pageId, currentPage any) bool {
+		currentPage.(IPage).BindWindow(win)
+		return true
+	})
+	return
+}
+
+func (customPC *PageCtl) GetWidgets() []Widget {
+	var widgets []Widget
+	customPC.pages.Range(func(pageId, currentPage any) bool {
+		widgets = append(widgets, currentPage.(IPage).GetWidget())
+		return true
+	})
+	return widgets
 }

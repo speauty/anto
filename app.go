@@ -3,6 +3,8 @@ package main
 import (
 	"translator/cfg"
 	_const "translator/const"
+	"translator/menu"
+	"translator/page"
 	"translator/tst/tt_log"
 	"translator/tst/tt_ui"
 )
@@ -17,10 +19,16 @@ func main() {
 	tt_log.GetInstance()
 
 	cfg.GetInstance().UI.Title = cfg.GetInstance().NewUITitle()
+
+	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
+
+	tt_ui.GetInstance().RegisterPages(
+		page.GetTpl(),
+	)
+
 	if err := tt_ui.GetInstance().Init(cfg.GetInstance().UI); err != nil {
 		panic(err)
 	}
 
 	tt_ui.GetInstance().Run()
-
 }

@@ -19,7 +19,7 @@ var (
 func GetInstance() *Gui {
 	onceGui.Do(func() {
 		apiGui = new(Gui)
-		apiGui.pageCtl = new(pageCtl)
+		apiGui.pageCtl = new(PageCtl)
 	})
 	return apiGui
 }
@@ -27,7 +27,8 @@ func GetInstance() *Gui {
 type Gui struct {
 	win     *walk.MainWindow
 	cfg     *Cfg
-	pageCtl *pageCtl
+	menus   []MenuItem
+	pageCtl *PageCtl
 }
 
 func (customG *Gui) Init(cfg *Cfg) error {
@@ -39,7 +40,11 @@ func (customG *Gui) Init(cfg *Cfg) error {
 
 	customG.setWindowFlag()
 	customG.setWindowCenter()
+
+	customG.pageCtl.Bind(customG.GetWindow())
+
 	customG.GetWindow().SetVisible(true)
+
 	_ = customG.GetWindow().SetFocus()
 
 	return nil
@@ -53,6 +58,20 @@ func (customG *Gui) GetWindow() *walk.MainWindow {
 	return customG.win
 }
 
+func (customG *Gui) RegisterPages(pages ...IPage) {
+	customG.pageCtl.PushPages(pages...)
+	return
+}
+
+func (customG *Gui) GoPage(pageId string) error {
+	return customG.pageCtl.SetCurrent(pageId)
+}
+
+func (customG *Gui) RegisterMenus(menus []MenuItem) {
+	customG.menus = menus
+	return
+}
+
 func (customG *Gui) genMainWindow() error {
 	return MainWindow{
 		AssignTo:       &customG.win,
@@ -60,8 +79,9 @@ func (customG *Gui) genMainWindow() error {
 		Icon:           customG.cfg.Icon,
 		Visible:        false,
 		Layout:         VBox{MarginsZero: true},
-		MenuItems:      customG.defaultMenu(),
+		MenuItems:      customG.menus,
 		StatusBarItems: customG.defaultStatusBars(),
+		Children:       customG.pageCtl.GetWidgets(),
 	}.Create()
 }
 
