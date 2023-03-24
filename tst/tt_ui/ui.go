@@ -5,6 +5,7 @@ import (
 	. "github.com/lxn/walk/declarative"
 	"github.com/lxn/win"
 	"sync"
+	"translator/tst/tt_log"
 )
 
 const width = 800
@@ -18,13 +19,15 @@ var (
 func GetInstance() *Gui {
 	onceGui.Do(func() {
 		apiGui = new(Gui)
+		apiGui.pageCtl = new(pageCtl)
 	})
 	return apiGui
 }
 
 type Gui struct {
-	win *walk.MainWindow
-	cfg *Cfg
+	win     *walk.MainWindow
+	cfg     *Cfg
+	pageCtl *pageCtl
 }
 
 func (customG *Gui) Init(cfg *Cfg) error {
@@ -76,4 +79,8 @@ func (customG *Gui) setWindowCenter() {
 		Width:  width,
 		Height: height,
 	})
+}
+
+func (customG *Gui) log() *tt_log.TTLog {
+	return tt_log.GetInstance()
 }
