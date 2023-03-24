@@ -35,7 +35,11 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 			Text: "文件",
 			Items: []MenuItem{
 				Action{
-					Text: "首选项",
+					Text: "设置",
+					OnTriggered: func() {
+						currentPage := page.GetSettings()
+						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+					},
 				},
 				Separator{},
 				Action{
@@ -53,6 +57,10 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 		},
 		Action{
 			Text: "字幕翻译",
+			OnTriggered: func() {
+				currentPage := page.GetSubripTranslate()
+				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+			},
 		},
 		Menu{
 			Text: "帮助",
@@ -60,12 +68,16 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 				Action{
 					Text: "使用手册",
 					OnTriggered: func() {
-						currentPage := page.GetTpl()
+						currentPage := page.GetUsage()
 						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 					},
 				},
 				Action{
 					Text: "关于我们",
+					OnTriggered: func() {
+						currentPage := page.GetAboutUs()
+						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+					},
 				},
 			},
 		},

@@ -23,12 +23,14 @@ func main() {
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
 
 	tt_ui.GetInstance().RegisterPages(
-		page.GetTpl(),
+		page.GetAboutUs(), page.GetSettings(), page.GetUsage(), page.GetSubripTranslate(),
 	)
 
 	if err := tt_ui.GetInstance().Init(cfg.GetInstance().UI); err != nil {
 		panic(err)
 	}
+
+	_ = tt_ui.GetInstance().GoPage(page.GetAboutUs().GetId())
 
 	tt_ui.GetInstance().Run()
 }
