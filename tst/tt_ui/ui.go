@@ -36,7 +36,7 @@ func (customG *Gui) Init(cfg *Cfg) error {
 
 	customG.setWindowFlag()
 	customG.setWindowCenter()
-
+	customG.GetWindow().SetVisible(true)
 	_ = customG.GetWindow().SetFocus()
 
 	return nil
@@ -55,6 +55,7 @@ func (customG *Gui) genMainWindow() error {
 		AssignTo:       &customG.win,
 		Title:          customG.cfg.Title,
 		Icon:           customG.cfg.Icon,
+		Visible:        false,
 		Layout:         VBox{MarginsZero: true},
 		MenuItems:      customG.defaultMenu(),
 		StatusBarItems: customG.defaultStatusBars(),

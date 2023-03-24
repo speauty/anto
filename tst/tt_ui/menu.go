@@ -1,8 +1,10 @@
 package tt_ui
 
 import (
+	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
+	"translator/tst/tt_ui/msg"
 )
 
 var actionStatusBarHandle *walk.Action
@@ -12,6 +14,10 @@ func (customG *Gui) defaultMenu() []MenuItem {
 		Menu{
 			Text: "文件",
 			Items: []MenuItem{
+				Action{
+					Text: "首选项",
+				},
+				Separator{},
 				Action{
 					AssignTo:    &actionStatusBarHandle,
 					Text:        "状态栏",
@@ -25,10 +31,12 @@ func (customG *Gui) defaultMenu() []MenuItem {
 				},
 			},
 		},
+		Action{
+			Text: "字幕翻译",
+		},
 		Menu{
 			Text: "帮助",
 			Items: []MenuItem{
-
 				Action{
 					Text: "使用手册",
 				},
@@ -48,5 +56,8 @@ func (customG *Gui) eventActionStatusBar() {
 }
 
 func (customG *Gui) eventActionQuit() {
-	_ = customG.GetWindow().Close()
+	isOk, _ := msg.Confirm(customG.GetWindow(), fmt.Sprintf("即将退出当前应用，是否确认？"))
+	if isOk {
+		_ = customG.GetWindow().Close()
+	}
 }
