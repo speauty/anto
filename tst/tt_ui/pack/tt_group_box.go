@@ -62,17 +62,11 @@ func (customT *TTGroupBoxArgs) SetLayout(layout Layout) *TTGroupBoxArgs {
 	customT.layout = layout
 	return customT
 }
-func (customT *TTGroupBoxArgs) SetLayoutZeroHBox() *TTGroupBoxArgs {
-	return customT.SetLayout(HBox{MarginsZero: true})
+func (customT *TTGroupBoxArgs) SetLayoutHBox(flagMarginsZero bool) *TTGroupBoxArgs {
+	return customT.SetLayout(HBox{MarginsZero: flagMarginsZero})
 }
-func (customT *TTGroupBoxArgs) SetLayoutHBox() *TTGroupBoxArgs {
-	return customT.SetLayout(HBox{})
-}
-func (customT *TTGroupBoxArgs) SetLayoutZeroVBox() *TTGroupBoxArgs {
-	return customT.SetLayout(VBox{MarginsZero: true})
-}
-func (customT *TTGroupBoxArgs) SetLayoutVBox() *TTGroupBoxArgs {
-	return customT.SetLayout(VBox{})
+func (customT *TTGroupBoxArgs) SetLayoutVBox(flagMarginsZero bool) *TTGroupBoxArgs {
+	return customT.SetLayout(VBox{MarginsZero: flagMarginsZero})
 }
 func (customT *TTGroupBoxArgs) SetWidgets(widgets []Widget) *TTGroupBoxArgs {
 	customT.widgets = widgets

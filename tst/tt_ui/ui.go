@@ -40,6 +40,7 @@ func (customG *Gui) Init(cfg *Cfg) error {
 
 	customG.setWindowFlag()
 	customG.setWindowCenter()
+	customG.setWindowMinAndMaxSize()
 
 	customG.pageCtl.Bind(customG.GetWindow())
 
@@ -78,6 +79,7 @@ func (customG *Gui) genMainWindow() error {
 		Title:          customG.cfg.Title,
 		Icon:           customG.cfg.Icon,
 		Visible:        false,
+		Persistent:     true,
 		Layout:         VBox{MarginsZero: true},
 		MenuItems:      customG.menus,
 		StatusBarItems: customG.defaultStatusBars(),
@@ -99,6 +101,11 @@ func (customG *Gui) setWindowCenter() {
 		Width:  width,
 		Height: height,
 	})
+}
+
+func (customG *Gui) setWindowMinAndMaxSize() {
+	minMaxSize := walk.Size{Width: width, Height: height}
+	_ = customG.GetWindow().SetMinMaxSize(minMaxSize, minMaxSize)
 }
 
 func (customG *Gui) log() *tt_log.TTLog {

@@ -49,7 +49,19 @@ func (customPage *AboutUs) SetVisible(isVisible bool) {
 
 func (customPage *AboutUs) GetWidget() Widget {
 	return StdRootWidget(&customPage.rootWidget,
-		pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("神秘代码：关于我们")),
+		pack.TTGroupBox(
+			pack.NewTTGroupBoxArgs(nil).
+				SetTitle("关于我们").SetVisible(true).SetLayoutVBox(false).
+				SetWidgets(
+					pack.NewWidgetGroup().Append(
+						pack.TTTextLabel(pack.NewTTTextLabelArgs(nil).
+							SetCustomSize(Size{Width: 100, Height: 300}).
+							SetText(
+								`    你好，欢迎使用字幕翻译工具（以下简称：Anto），我是Anto的研发人员。。。叭叭叭，还是不写了
+`)),
+					).AppendZeroVSpacer().GetWidgets(),
+				),
+		),
 	)
 }
 
