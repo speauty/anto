@@ -11,6 +11,8 @@ func TTComboBox(args *TTComboBoxArgs) Widget {
 		Model:                 args.model,
 		CurrentIndex:          args.currentIdx,
 		OnCurrentIndexChanged: args.onCurrentIdxChangedFn,
+		DisplayMember:         args.displayMember,
+		BindingMember:         args.bindingMember,
 	}
 }
 
@@ -21,8 +23,20 @@ func NewTTComboBoxArgs(assignTo **walk.ComboBox) *TTComboBoxArgs {
 type TTComboBoxArgs struct {
 	assignTo              **walk.ComboBox
 	model                 interface{}
-	currentIdx            int
+	currentIdx            interface{}
 	onCurrentIdxChangedFn walk.EventHandler
+	displayMember         string
+	bindingMember         string
+}
+
+func (customT *TTComboBoxArgs) SetDisplayMember(displayMember string) *TTComboBoxArgs {
+	customT.displayMember = displayMember
+	return customT
+}
+
+func (customT *TTComboBoxArgs) SetBindingMember(bindingMember string) *TTComboBoxArgs {
+	customT.bindingMember = bindingMember
+	return customT
 }
 
 func (customT *TTComboBoxArgs) SetAssignTo(assignTo **walk.ComboBox) *TTComboBoxArgs {
@@ -35,7 +49,7 @@ func (customT *TTComboBoxArgs) SetModel(model interface{}) *TTComboBoxArgs {
 	return customT
 }
 
-func (customT *TTComboBoxArgs) SetCurrentIdx(currentIdx int) *TTComboBoxArgs {
+func (customT *TTComboBoxArgs) SetCurrentIdx(currentIdx interface{}) *TTComboBoxArgs {
 	customT.currentIdx = currentIdx
 	return customT
 }
