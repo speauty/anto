@@ -69,10 +69,10 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译引擎")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrEngine).
 					SetModel(engines).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("来源语种")),
+				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionFrom.String())),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFromLang).
 					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("目标语种")),
+				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionTo.String())),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrToLang).
 					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
 			).AppendZeroHSpacer().GetWidgets(),
@@ -85,7 +85,7 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 					SetModel(_type.ModeFull.GetModes()).SetCurrentIdx(_type.ModeFull.GetIdx())),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出主轨道")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(nil).
-					SetModel([]string{"来源语种", "目标语种"}).SetCurrentIdx(0)),
+					SetModel(_type.LangDirectionFrom.GetDirections()).SetCurrentIdx(0)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 		VSpacer{},

@@ -29,3 +29,33 @@ func (customType TranslateMode) GetIdx() int {
 	}
 	return 0
 }
+
+const (
+	LangDirectionFrom LangDirection = "来源语种"
+	LangDirectionTo   LangDirection = "目标语种"
+)
+
+var langDirectionTypes = []LangDirection{LangDirectionFrom, LangDirectionTo}
+
+type LangDirection string
+
+func (customType LangDirection) String() string {
+	return string(customType)
+}
+
+func (customType LangDirection) GetDirections() []string { // ComboBox不支持typedef么?
+	var strLangDirections []string
+	for _, langDirection := range langDirectionTypes {
+		strLangDirections = append(strLangDirections, langDirection.String())
+	}
+	return strLangDirections
+}
+
+func (customType LangDirection) GetIdx() int {
+	for idx, langDirection := range langDirectionTypes {
+		if customType == langDirection {
+			return idx
+		}
+	}
+	return 0
+}
