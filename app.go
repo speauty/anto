@@ -3,9 +3,12 @@ package main
 import (
 	"translator/cfg"
 	_const "translator/const"
+	"translator/domain"
 	"translator/menu"
 	"translator/page"
 	"translator/tst/tt_log"
+	"translator/tst/tt_translator/ling_va"
+	"translator/tst/tt_translator/youdao"
 	"translator/tst/tt_ui"
 )
 
@@ -19,6 +22,10 @@ func main() {
 	tt_log.GetInstance()
 
 	cfg.GetInstance().UI.Title = cfg.GetInstance().NewUITitle()
+
+	domain.GetTranslators().Register(
+		ling_va.GetInstance(), youdao.GetInstance(),
+	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
 

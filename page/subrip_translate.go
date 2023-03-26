@@ -1,11 +1,14 @@
 package page
 
 import (
+	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
+	"translator/domain"
 	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_ui/pack"
+	_type "translator/type"
 	"translator/util"
 )
 
@@ -17,10 +20,7 @@ type LangItem struct {
 var (
 	apiSubripTranslate  *SubripTranslate
 	onceSubripTranslate sync.Once
-	languages           = []LangItem{
-		{"en", "英语"},
-		{"zh_cn", "中文"},
-	}
+	comboBoxModel       = new(_type.StdComboBoxModel)
 )
 
 func GetSubripTranslate() *SubripTranslate {
@@ -33,10 +33,13 @@ func GetSubripTranslate() *SubripTranslate {
 }
 
 type SubripTranslate struct {
-	id         string
-	name       string
-	mainWindow *walk.MainWindow
-	rootWidget *walk.Composite
+	id          string
+	name        string
+	mainWindow  *walk.MainWindow
+	rootWidget  *walk.Composite
+	ptrEngine   *walk.ComboBox
+	ptrFromLang *walk.ComboBox
+	ptrToLang   *walk.ComboBox
 }
 
 func (customPage *SubripTranslate) GetId() string {
@@ -58,20 +61,22 @@ func (customPage *SubripTranslate) SetVisible(isVisible bool) {
 }
 
 func (customPage *SubripTranslate) GetWidget() Widget {
-	var tmpCombo *walk.ComboBox
+	engines := domain.GetTranslators().GetNames()
+	fmt.Println(engines)
+
 	return StdRootWidget(&customPage.rootWidget,
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).
 			SetLayoutHBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译引擎")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(nil).
-					SetModel([]string{"阿里云", "百度云", "腾讯云", "ChatGPT"}).SetCurrentIdx(0)),
+				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrEngine).
+					SetModel(engines).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("来源语种")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(nil).
-					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember("Key").SetDisplayMember("Name").SetCurrentIdx(0)),
+				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFromLang).
+					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("目标语种")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&tmpCombo).
-					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember("Key").SetDisplayMember("Name").SetCurrentIdx(1)),
+				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrToLang).
+					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).
