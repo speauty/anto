@@ -14,3 +14,13 @@ func StdRootWidget(rootWidget **walk.Composite, widgets ...Widget) Widget {
 			SetWidgets(widgets),
 	)
 }
+
+func StdBrowserSelectorWidget(title string, btOnClickFn walk.EventHandler, echoTarget **walk.Label) Widget {
+	return pack.TTComposite(
+		pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(title)),
+				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("选择").SetOnClicked(btOnClickFn)),
+				pack.TTLabel(pack.NewTTLabelArgs(echoTarget).SetEnabled(false)),
+			).AppendZeroHSpacer().GetWidgets()))
+}
