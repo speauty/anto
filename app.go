@@ -37,7 +37,7 @@ func main() {
 		panic(err)
 	}
 
-	_ = tt_ui.GetInstance().GoPage(page.GetAboutUs().GetId())
+	_ = tt_ui.GetInstance().GoPage(page.GetSubripTranslate().GetId())
 
 	tt_ui.GetInstance().Run()
 }
