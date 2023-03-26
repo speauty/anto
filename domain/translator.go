@@ -20,7 +20,7 @@ func GetTranslators() *Translators {
 
 type Translators struct {
 	list  sync.Map
-	names []_type.StdComboBoxModel
+	names []*_type.StdComboBoxModel
 }
 
 func (customT *Translators) Register(translators ...tt_translator.ITranslator) {
@@ -41,14 +41,14 @@ func (customT *Translators) GetById(id string) tt_translator.ITranslator {
 	return obj.(tt_translator.ITranslator)
 }
 
-func (customT *Translators) GetNames() []_type.StdComboBoxModel {
+func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
 	return customT.names
 }
 
 func (customT *Translators) genNames2ComboBox() {
-	customT.names = []_type.StdComboBoxModel{}
+	customT.names = []*_type.StdComboBoxModel{}
 	customT.list.Range(func(idx, translator any) bool {
-		customT.names = append(customT.names, _type.StdComboBoxModel{
+		customT.names = append(customT.names, &_type.StdComboBoxModel{
 			Key:  translator.(tt_translator.ITranslator).GetId(),
 			Name: translator.(tt_translator.ITranslator).GetName(),
 		})

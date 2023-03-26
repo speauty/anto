@@ -1,20 +1,17 @@
 package page
 
 import (
+	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
 	"translator/domain"
 	"translator/tst/tt_translator/ling_va"
+	"translator/tst/tt_ui/msg"
 	"translator/tst/tt_ui/pack"
 	_type "translator/type"
 	"translator/util"
 )
-
-type LangItem struct {
-	Key  string
-	Name string
-}
 
 var (
 	apiSubripTranslate  *SubripTranslate
@@ -27,6 +24,8 @@ func GetSubripTranslate() *SubripTranslate {
 		apiSubripTranslate = new(SubripTranslate)
 		apiSubripTranslate.id = util.Uid()
 		apiSubripTranslate.name = "字幕翻译"
+		apiSubripTranslate.engines = domain.GetTranslators().GetNames()
+
 	})
 	return apiSubripTranslate
 }
@@ -34,6 +33,7 @@ func GetSubripTranslate() *SubripTranslate {
 type SubripTranslate struct {
 	id          string
 	name        string
+	engines     []*_type.StdComboBoxModel
 	mainWindow  *walk.MainWindow
 	rootWidget  *walk.Composite
 	ptrEngine   *walk.ComboBox
@@ -60,18 +60,16 @@ func (customPage *SubripTranslate) SetVisible(isVisible bool) {
 }
 
 func (customPage *SubripTranslate) GetWidget() Widget {
-	engines := domain.GetTranslators().GetNames()
-
 	return StdRootWidget(&customPage.rootWidget,
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).
 			SetLayoutHBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译引擎")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrEngine).
-					SetModel(engines).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
+					SetModel(apiSubripTranslate.engines).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0).SetOnCurrentIdxChangedFn(customPage.eventEngineOnChange)),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionFrom.String())),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFromLang).
-					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0)),
+					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionTo.String())),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrToLang).
 					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
@@ -94,4 +92,37 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 
 func (customPage *SubripTranslate) Reset() {
 
+}
+
+func (customPage *SubripTranslate) eventEngineOnChange() {
+	currentId := ""
+	for _, engine := range customPage.engines {
+		if engine.Name == customPage.ptrEngine.Text() {
+			currentId = engine.Key
+			break
+		}
+	}
+	if currentId == "" {
+		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎无效，请重新选择"))
+		_ = customPage.ptrEngine.SetCurrentIndex(-1)
+		customPage.setLangComboBox(customPage.ptrFromLang, nil, -1)
+		customPage.setLangComboBox(customPage.ptrToLang, nil, -1)
+		return
+	}
+	currentEngine := domain.GetTranslators().GetById(currentId)
+	if customPage.mainWindow != nil && currentEngine == nil {
+		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎未注册，请重新选择"))
+		_ = customPage.ptrEngine.SetCurrentIndex(-1)
+		customPage.setLangComboBox(customPage.ptrFromLang, nil, -1)
+		customPage.setLangComboBox(customPage.ptrToLang, nil, -1)
+		return
+	}
+	customPage.setLangComboBox(customPage.ptrFromLang, currentEngine.GetLangSupported(), 1)
+	customPage.setLangComboBox(customPage.ptrToLang, currentEngine.GetLangSupported(), 0)
+	return
+}
+
+func (customPage *SubripTranslate) setLangComboBox(ptr *walk.ComboBox, model interface{}, idx int) {
+	_ = ptr.SetModel(model)
+	_ = ptr.SetCurrentIndex(idx)
 }
