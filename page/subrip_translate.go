@@ -1,7 +1,6 @@
 package page
 
 import (
-	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
@@ -62,7 +61,6 @@ func (customPage *SubripTranslate) SetVisible(isVisible bool) {
 
 func (customPage *SubripTranslate) GetWidget() Widget {
 	engines := domain.GetTranslators().GetNames()
-	fmt.Println(engines)
 
 	return StdRootWidget(&customPage.rootWidget,
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).
@@ -84,7 +82,7 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 			pack.NewWidgetGroup().Append(
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译模式")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(nil).
-					SetModel([]string{"全量翻译", "增量翻译"}).SetCurrentIdx(0)),
+					SetModel(_type.ModeFull.GetModes()).SetCurrentIdx(_type.ModeFull.GetIdx())),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出主轨道")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(nil).
 					SetModel([]string{"来源语种", "目标语种"}).SetCurrentIdx(0)),
