@@ -11,6 +11,7 @@ func TTTextEdit(args *TextEditWrapperArgs) Widget {
 		MaxSize:       args.customSize,
 		AssignTo:      args.assignTo,
 		VScroll:       args.vScroll,
+		HScroll:       args.hScroll,
 		OnTextChanged: args.onTextChanged,
 		ReadOnly:      args.readOnly,
 	}

@@ -3,6 +3,7 @@ package page
 import (
 	"errors"
 	"fmt"
+	"github.com/golang-module/carbon"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"strings"
@@ -49,6 +50,8 @@ type SubripTranslate struct {
 
 	ptrSrtFile *walk.Label
 	ptrSrtDir  *walk.Label
+
+	ptrLog *walk.TextEdit
 }
 
 func (customPage *SubripTranslate) GetId() string {
@@ -100,6 +103,16 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 			pack.NewWidgetGroup().Append(
 				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
 			).AppendZeroHSpacer().GetWidgets(),
+		)),
+
+		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetVisible(true).SetTitle("日志").SetWidgets(
+					pack.NewWidgetGroup().Append(
+						pack.TTTextEdit(pack.NewTextEditWrapperArgs(&customPage.ptrLog).SetReadOnly(true).SetVScroll(true)),
+					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
+				)),
+			).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
 		)),
 
 		VSpacer{},
@@ -196,16 +209,35 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		SetFromLang(fromLang).SetToLang(toLang).
 		SetTranslateMode(_type.TranslateMode(mode)).SetMainTrackReport(_type.LangDirection(mainTrackExport)).
 		SetSrtFile(strFile).SetSrtDir(strDir)
-	msgList, err := tTranslate.Run()
-	if err != nil {
-		msg.Err(customPage.mainWindow, err)
-		return
-	}
-	msg.Info(customPage.mainWindow, strings.Join(msgList, "|"))
+	msg.Info(customPage.mainWindow, "投递任务成功")
+	customPage.appendToLog(fmt.Sprintf(
+		"投递任务成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
+		currentEngine.GetName(), fromLang, toLang, mode, mainTrackExport, strFile, strDir,
+	))
+	go func() {
+		msgList, err := tTranslate.Run()
+		if err != nil {
+			customPage.appendToLog(err.Error())
+		} else {
+			customPage.appendToLog(strings.Join(msgList, "\r\n"))
+		}
+	}()
 	return
 }
 
 func (customPage *SubripTranslate) setLangComboBox(ptr *walk.ComboBox, model interface{}, idx int) {
 	_ = ptr.SetModel(model)
 	_ = ptr.SetCurrentIndex(idx)
+}
+
+func (customPage *SubripTranslate) appendToLog(msg string) {
+	if customPage.ptrLog.Text() == "" {
+		_ = customPage.ptrLog.SetText(fmt.Sprintf("[%s] %s", carbon.Now().Layout(carbon.DateTimeLayout), msg))
+	} else {
+		_ = customPage.ptrLog.SetText(fmt.Sprintf("%s\r\n[%s] %s", customPage.ptrLog.Text(), carbon.Now().Layout(carbon.DateTimeLayout), msg))
+	}
+}
+
+func (customPage *SubripTranslate) flushLog() {
+	_ = customPage.ptrLog.SetText("")
 }
