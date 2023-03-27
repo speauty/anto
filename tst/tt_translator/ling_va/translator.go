@@ -73,14 +73,14 @@ func (customT *Translator) GetSep() string                          { return cus
 func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
-	var api = "https://lingva.ml/_next/data/3qibWAl7MIxaBNg9UDQ8q"
+	var api = "https://lingva.ml/_next/data/3qnDcUVykFKnSC3cdRX2t"
 	queryUrl := fmt.Sprintf(
 		"%s/%s/%s/%s.json", api,
-		args.FromLang, args.ToLang, url.PathEscape(args.ToLang),
+		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
 	)
 	httpResp, err := http.DefaultClient.Get(queryUrl)
 	defer func() {
-		if httpResp.Body != nil {
+		if httpResp != nil {
 			_ = httpResp.Body.Close()
 		}
 	}()
@@ -108,11 +108,11 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 	for textIdx, textSource := range textSourceList {
 		ret.Results = append(ret.Results, &tt_translator.TranslateResBlock{
 			Id:             textSource,
-			TextTranslated: textSourceList[textIdx],
+			TextTranslated: textTranslatedList[textIdx],
 		})
 	}
 
-	ret.TimeUsed = int(carbon.Now().DiffInSeconds(timeStart))
+	ret.TimeUsed = int(carbon.Now().DiffAbsInSeconds(timeStart))
 	return ret, nil
 
 }

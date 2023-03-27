@@ -22,7 +22,6 @@ func main() {
 	tt_log.GetInstance()
 
 	cfg.GetInstance().UI.Title = cfg.GetInstance().NewUITitle()
-
 	domain.GetTranslators().Register(
 		ling_va.GetInstance(), youdao.GetInstance(),
 	)

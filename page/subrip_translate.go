@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
+	"strings"
 	"sync"
 	"translator/domain"
+	"translator/task"
 	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_ui/handle"
 	"translator/tst/tt_ui/msg"
@@ -189,7 +191,17 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		msg.Err(customPage.mainWindow, errors.New("请选择字幕文件或目录, 优先使用字幕文件"))
 		return
 	}
-	fmt.Println(fromLang, toLang, mode, mainTrackExport, strFile, strDir)
+	tTranslate := new(task.Translate).
+		SetTranslator(currentEngine).
+		SetFromLang(fromLang).SetToLang(toLang).
+		SetTranslateMode(_type.TranslateMode(mode)).SetMainTrackReport(_type.LangDirection(mainTrackExport)).
+		SetSrtFile(strFile).SetSrtDir(strDir)
+	msgList, err := tTranslate.Run()
+	if err != nil {
+		msg.Err(customPage.mainWindow, err)
+		return
+	}
+	msg.Info(customPage.mainWindow, strings.Join(msgList, "|"))
 	return
 }
 

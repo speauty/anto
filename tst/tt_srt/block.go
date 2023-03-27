@@ -86,11 +86,10 @@ func (customB *SrtBlock) encode(flagInverse bool) []byte {
 		customB.SeqNo,
 		customB.TimeStart, customB.TimeSep, customB.TimeEnd,
 	)
-
-	if flagInverse {
-		blockBytes = fmt.Appendln(blockBytes, customB.SubTrack, customB.MainTrack)
+	if flagInverse && customB.SubTrack != "" {
+		blockBytes = fmt.Appendln(blockBytes, customB.SubTrack, "\n", customB.MainTrack)
 	} else {
-		blockBytes = fmt.Appendln(blockBytes, customB.MainTrack, customB.SubTrack)
+		blockBytes = fmt.Appendln(blockBytes, customB.MainTrack, "\n", customB.SubTrack)
 	}
 
 	return blockBytes
