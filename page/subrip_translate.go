@@ -212,7 +212,10 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 	msg.Info(customPage.mainWindow, "投递任务成功")
 	customPage.appendToLog(fmt.Sprintf(
 		"投递任务成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
-		currentEngine.GetName(), fromLang, toLang, mode, mainTrackExport, strFile, strDir,
+		currentEngine.GetName(),
+		currentEngine.GetLangSupported()[customPage.ptrFromLang.CurrentIndex()].Name,
+		currentEngine.GetLangSupported()[customPage.ptrToLang.CurrentIndex()].Name,
+		mode, mainTrackExport, strFile, strDir,
 	))
 	go func() {
 		msgList, err := tTranslate.Run()
