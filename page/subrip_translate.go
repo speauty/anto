@@ -6,7 +6,6 @@ import (
 	"github.com/golang-module/carbon"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"strings"
 	"sync"
 	"translator/domain"
 	"translator/task"
@@ -30,6 +29,8 @@ func GetSubripTranslate() *SubripTranslate {
 		apiSubripTranslate.id = util.Uid()
 		apiSubripTranslate.name = "字幕翻译"
 		apiSubripTranslate.engines = domain.GetTranslators().GetNames()
+		apiSubripTranslate.chanLog = make(chan string, 128)
+		apiSubripTranslate.cronSyncLog()
 
 	})
 	return apiSubripTranslate
@@ -38,6 +39,7 @@ func GetSubripTranslate() *SubripTranslate {
 type SubripTranslate struct {
 	id          string
 	name        string
+	chanLog     chan string
 	engines     []*_type.StdComboBoxModel
 	mainWindow  *walk.MainWindow
 	rootWidget  *walk.Composite
@@ -102,6 +104,7 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
 				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
+				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("清空日志").SetOnClicked(customPage.flushLog)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
@@ -204,26 +207,24 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		msg.Err(customPage.mainWindow, errors.New("请选择字幕文件或目录, 优先使用字幕文件"))
 		return
 	}
+	no := util.Uid()
 	tTranslate := new(task.Translate).
+		SetTaskNo(no).
 		SetTranslator(currentEngine).
 		SetFromLang(fromLang).SetToLang(toLang).
 		SetTranslateMode(_type.TranslateMode(mode)).SetMainTrackReport(_type.LangDirection(mainTrackExport)).
-		SetSrtFile(strFile).SetSrtDir(strDir)
+		SetSrtFile(strFile).SetSrtDir(strDir).
+		SetChanLog(customPage.chanLog)
 	msg.Info(customPage.mainWindow, "投递任务成功")
 	customPage.appendToLog(fmt.Sprintf(
-		"投递任务成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
-		currentEngine.GetName(),
+		"[%s] 投递任务[编号: %s]成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
+		carbon.Now().Layout(carbon.DateTimeLayout), no, currentEngine.GetName(),
 		currentEngine.GetLangSupported()[customPage.ptrFromLang.CurrentIndex()].Name,
 		currentEngine.GetLangSupported()[customPage.ptrToLang.CurrentIndex()].Name,
 		mode, mainTrackExport, strFile, strDir,
 	))
 	go func() {
-		msgList, err := tTranslate.Run()
-		if err != nil {
-			customPage.appendToLog(err.Error())
-		} else {
-			customPage.appendToLog(strings.Join(msgList, "\r\n"))
-		}
+		tTranslate.Run()
 	}()
 	return
 }
@@ -235,12 +236,25 @@ func (customPage *SubripTranslate) setLangComboBox(ptr *walk.ComboBox, model int
 
 func (customPage *SubripTranslate) appendToLog(msg string) {
 	if customPage.ptrLog.Text() == "" {
-		_ = customPage.ptrLog.SetText(fmt.Sprintf("[%s] %s", carbon.Now().Layout(carbon.DateTimeLayout), msg))
+		_ = customPage.ptrLog.SetText(fmt.Sprintf("%s", msg))
 	} else {
-		_ = customPage.ptrLog.SetText(fmt.Sprintf("%s\r\n[%s] %s", customPage.ptrLog.Text(), carbon.Now().Layout(carbon.DateTimeLayout), msg))
+		_ = customPage.ptrLog.SetText(fmt.Sprintf("%s\r\n%s", msg, customPage.ptrLog.Text()))
 	}
 }
 
 func (customPage *SubripTranslate) flushLog() {
 	_ = customPage.ptrLog.SetText("")
+}
+
+func (customPage *SubripTranslate) cronSyncLog() {
+	go func() {
+		for true {
+			select {
+			case logSrt := <-customPage.chanLog:
+				if logSrt != "" {
+					customPage.appendToLog(logSrt)
+				}
+			}
+		}
+	}()
 }
