@@ -2,6 +2,7 @@ package util
 
 import (
 	"os"
+	"os/exec"
 )
 
 func HasUTF8Dom(bytes []byte) bool {
@@ -28,4 +29,10 @@ func IsFileOrDirExisted(strFilepath string) error {
 		return err
 	}
 	return nil
+}
+
+// Redirect2DefaultBrowser 跳转到默认浏览器打开指定网址
+func Redirect2DefaultBrowser(strUrl string) error {
+	cmd := exec.Command("cmd", "/C", "start "+strUrl)
+	return cmd.Run()
 }
