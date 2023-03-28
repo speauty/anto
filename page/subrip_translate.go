@@ -215,6 +215,13 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		SetTranslateMode(_type.TranslateMode(mode)).SetMainTrackReport(_type.LangDirection(mainTrackExport)).
 		SetSrtFile(strFile).SetSrtDir(strDir).
 		SetChanLog(customPage.chanLog)
+	if customPage.ptrSrtFile != nil {
+		_ = customPage.ptrSrtFile.SetText("")
+	}
+
+	if customPage.ptrSrtDir != nil {
+		_ = customPage.ptrSrtDir.SetText("")
+	}
 	msg.Info(customPage.mainWindow, "投递任务成功")
 	customPage.appendToLog(fmt.Sprintf(
 		"[%s] 投递任务[编号: %s]成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
@@ -223,6 +230,7 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		currentEngine.GetLangSupported()[customPage.ptrToLang.CurrentIndex()].Name,
 		mode, mainTrackExport, strFile, strDir,
 	))
+
 	go func() {
 		tTranslate.Run()
 	}()

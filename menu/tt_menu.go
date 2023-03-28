@@ -31,7 +31,7 @@ type TTMenu struct {
 
 func (customM *TTMenu) GetMenus() []MenuItem {
 	return []MenuItem{
-		Menu{
+		/*Menu{
 			Text: "文件",
 			Items: []MenuItem{
 				Action{
@@ -54,6 +54,13 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 					OnTriggered: customM.eventActionQuit,
 				},
 			},
+		},*/
+		Action{
+			Text: "设置",
+			OnTriggered: func() {
+				currentPage := page.GetSettings()
+				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+			},
 		},
 		Action{
 			Text: "字幕翻译",
@@ -62,7 +69,7 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 			},
 		},
-		Menu{
+		/*Menu{
 			Text: "帮助",
 			Items: []MenuItem{
 				Action{
@@ -80,7 +87,7 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 					},
 				},
 			},
-		},
+		},*/
 	}
 }
 

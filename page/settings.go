@@ -17,7 +17,7 @@ func GetSettings() *Settings {
 	onceSettings.Do(func() {
 		apiSettings = new(Settings)
 		apiSettings.id = util.Uid()
-		apiSettings.name = "模板页"
+		apiSettings.name = "设置"
 	})
 	return apiSettings
 }
@@ -49,7 +49,16 @@ func (customPage *Settings) SetVisible(isVisible bool) {
 
 func (customPage *Settings) GetWidget() Widget {
 	return StdRootWidget(&customPage.rootWidget,
-		pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("神秘代码：设置")),
+		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("应用").SetLayoutVBox(true).SetWidgets(
+					pack.NewWidgetGroup().Append(
+						pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("环境")),
+						pack.TTComboBox(pack.NewTTComboBoxArgs(nil).SetModel([]string{"测试", "正式"})),
+					).AppendZeroVSpacer().AppendZeroHSpacer().GetWidgets(),
+				)),
+			).AppendZeroVSpacer().GetWidgets(),
+		)),
 	)
 }
 

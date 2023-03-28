@@ -23,6 +23,7 @@ func NewTTGroupBoxArgs(assignTo **walk.GroupBox) *TTGroupBoxArgs {
 		assignTo:  assignTo,
 		alignment: AlignHCenterVCenter,
 		layout:    VBox{},
+		visible:   true,
 	}
 }
 
