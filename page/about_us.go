@@ -57,7 +57,10 @@ func (customPage *AboutUs) GetWidget() Widget {
 						pack.TTTextLabel(pack.NewTTTextLabelArgs(nil).
 							SetCustomSize(Size{Width: 100, Height: 300}).
 							SetText(
-								`    你好，欢迎使用字幕翻译工具（以下简称：Anto），我是Anto的研发人员。。。叭叭叭，还是不写了
+								`    你好，欢迎使用字幕翻译工具（以下简称：Anto），我是Anto的研发人员Speauty，现主要研究字幕方面，比如提取、翻译、合成等。所以如果有什么好的想法，可以直接给我发邮件。
+    
+交流邮箱：speauty@163.com
+Github项目地址：https://github.com/speauty/tools.subrip.translator
 `)),
 					).AppendZeroVSpacer().GetWidgets(),
 				),
