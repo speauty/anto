@@ -26,6 +26,7 @@ func (customC *Cfg) Load(cfgFilePath string) error {
 }
 
 func (customC *Cfg) Sync() error {
+	viper.Set("app.env", customC.App.Env)
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}
