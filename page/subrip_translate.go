@@ -110,7 +110,7 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
-				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetVisible(true).SetTitle("日志").SetWidgets(
+				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("日志").SetWidgets(
 					pack.NewWidgetGroup().Append(
 						pack.TTTextEdit(pack.NewTextEditWrapperArgs(&customPage.ptrLog).SetReadOnly(true).SetVScroll(true)),
 					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
