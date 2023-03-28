@@ -69,7 +69,7 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 			},
 		},
-		/*Menu{
+		Menu{
 			Text: "帮助",
 			Items: []MenuItem{
 				Action{
@@ -87,7 +87,7 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 					},
 				},
 			},
-		},*/
+		},
 	}
 }
 
