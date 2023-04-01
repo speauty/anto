@@ -81,16 +81,13 @@ func (customB *SrtBlock) decodeSubTrack(lineStr string) (isSub bool, err error) 
 }
 
 func (customB *SrtBlock) encode(flagInverse bool) []byte {
-	blockBytes := fmt.Appendf(
-		[]byte{}, "%d\n%s %s %s\n",
-		customB.SeqNo,
-		customB.TimeStart, customB.TimeSep, customB.TimeEnd,
-	)
-	if flagInverse && customB.SubTrack != "" {
-		blockBytes = fmt.Appendln(blockBytes, customB.SubTrack, "\n", customB.MainTrack)
-	} else {
-		blockBytes = fmt.Appendln(blockBytes, customB.MainTrack, "\n", customB.SubTrack)
+	blockStr := fmt.Sprintf("%d\n%s %s %s\n", customB.SeqNo,
+		customB.TimeStart, customB.TimeSep, customB.TimeEnd)
+	if flagInverse == false || customB.SubTrack == "" {
+		blockStr = fmt.Sprintf("%s%s\n%s", blockStr, customB.MainTrack, customB.SubTrack)
+		return []byte(blockStr)
 	}
+	blockStr = fmt.Sprintf("%s%s\n%s", blockStr, customB.SubTrack, customB.MainTrack)
 
-	return blockBytes
+	return []byte(blockStr)
 }
