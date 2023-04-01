@@ -7,9 +7,23 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"runtime"
+	"sync"
 	"translator/tst/tt_log"
 	"translator/tst/tt_srt"
 )
+
+var (
+	apiSrtWriter  *SrtWriter
+	onceSrtWriter sync.Once
+)
+
+func GetInstance() *SrtWriter {
+	onceSrtWriter.Do(func() {
+		apiSrtWriter = new(SrtWriter)
+		apiSrtWriter.init()
+	})
+	return apiSrtWriter
+}
 
 type SrtWriterData struct {
 	FileNameSaved string
@@ -26,6 +40,10 @@ type SrtWriter struct {
 
 func (customSW *SrtWriter) Run(ctx context.Context) {
 	customSW.ctx = ctx
+}
+
+func (customSW *SrtWriter) Push(data *SrtWriterData) {
+	customSW.chanWriter <- data
 }
 
 func (customSW *SrtWriter) jobWriter() {
