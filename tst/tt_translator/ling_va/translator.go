@@ -28,26 +28,13 @@ func GetInstance() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:         "lingva",
-		name:       "Lingva",
-		qps:        10,
-		procMax:    20,
-		textMaxLen: 2000,
-		sep:        "\n",
-		langSupported: []tt_translator.LangK{
-			{"zh", "中文"},
-			{"en", "英语"},
-			{"ja", "日语"},
-			{"ru", "俄语"},
-			{"fr", "法语"},
-			{"ko", "韩语"},
-			{"de", "德语"},
-			{"da", "丹麦语"},
-			{"nl", "荷兰语"},
-			{"it", "意大利语"},
-			{"ar", "阿拉伯语"},
-			{"be", "白俄罗斯语"},
-		},
+		id:            "lingva",
+		name:          "Lingva",
+		qps:           10,
+		procMax:       20,
+		textMaxLen:    2000,
+		sep:           "\n",
+		langSupported: langSupported,
 	}
 }
 

@@ -28,32 +28,14 @@ func GetInstance() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:         "tecent_mt",
-		name:       "腾讯云MT",
-		qps:        50,
-		procMax:    20,
-		textMaxLen: 2000,
-		sep:        "\n",
-		isClientOk: false,
-		langSupported: []tt_translator.LangK{
-			{"zh", "中文"},
-			{"en", "英语"},
-			{"ja", "日语"},
-			{"ko", "韩语"},
-			{"fr", "法语"},
-			{"es", "西班牙语"},
-			{"it", "意大利语"},
-			{"de", "德语"},
-			{"tr", "土耳其语"},
-			{"ru", "俄语"},
-			{"pt", "葡萄牙语"},
-			{"vi", "越南语"},
-			{"id", "印尼语"},
-			{"th", "泰语"},
-			{"ms", "马来西亚语"},
-			{"ar", "阿拉伯语"},
-			{"hi", "印地语"},
-		},
+		id:            "tecent_mt",
+		name:          "腾讯云MT",
+		qps:           50,
+		procMax:       20,
+		textMaxLen:    2000,
+		sep:           "\n",
+		isClientOk:    false,
+		langSupported: langSupported,
 	}
 }
 

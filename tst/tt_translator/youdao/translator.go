@@ -30,16 +30,13 @@ func GetInstance() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:         "youdao",
-		name:       "有道翻译",
-		qps:        50,
-		procMax:    20,
-		textMaxLen: 2000,
-		sep:        "\n",
-		langSupported: []tt_translator.LangK{
-			{"zh_cn", "中文"},
-			{"en", "英语"},
-		},
+		id:            "youdao",
+		name:          "有道翻译",
+		qps:           50,
+		procMax:       20,
+		textMaxLen:    2000,
+		sep:           "\n",
+		langSupported: langSupported,
 	}
 }
 
