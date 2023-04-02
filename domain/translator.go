@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"translator/tst/tt_log"
 	"translator/tst/tt_translator"
@@ -60,4 +61,10 @@ func (customT *Translators) genNames2ComboBox() {
 		}
 		return true
 	})
+
+	if len(customT.names) > 1 {
+		sort.Slice(customT.names, func(i, j int) bool {
+			return customT.names[i].Key < customT.names[j].Key
+		})
+	}
 }
