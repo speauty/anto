@@ -171,8 +171,8 @@ func (customST *SrtTranslator) jobTranslator() {
 						continue
 					}
 					chanMsg <- fmt.Sprintf(
-						"字幕文件(%s)翻译完成, 耗时(s): %d",
-						currentData.PrtSrt.FileName, carbon.Now().DiffAbsInSeconds(timeStart),
+						"字幕文件(%s)翻译完成, 引擎: %s, 耗时(s): %d",
+						currentData.PrtSrt.FileName, currentData.PtrOpts.Translator.GetName(), carbon.Now().DiffAbsInSeconds(timeStart),
 					)
 					nextCron.Push(currentData.toSrtWriterData())
 				}
