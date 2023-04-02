@@ -77,7 +77,6 @@ func (customG *Gui) genMainWindow() error {
 	return MainWindow{
 		AssignTo:       &customG.win,
 		Title:          customG.cfg.Title,
-		Icon:           customG.cfg.Icon,
 		Visible:        false,
 		Persistent:     true,
 		Layout:         VBox{MarginsZero: true},
