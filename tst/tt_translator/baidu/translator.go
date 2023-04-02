@@ -124,7 +124,7 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		tt_log.GetInstance().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
-	if respObj.ErrorCode != "52000" || respObj.ErrorMsg != "" {
+	if respObj.ErrorCode != "" && respObj.ErrorCode != "52000" {
 		tt_log.GetInstance().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 代码: %s, 错误: %s", customT.GetName(), respObj.ErrorCode, respObj.ErrorMsg))
 		return nil, fmt.Errorf("翻译异常, 代码: %s, 错误: %s", respObj.ErrorCode, respObj.ErrorMsg)
 	}
@@ -149,8 +149,8 @@ func (customT *Translator) signBuilder(strQuery string, salt string) string {
 }
 
 type remoteResp struct {
-	ErrorCode string `json:"errorCode"`
-	ErrorMsg  string `json:"error_msg"`
+	ErrorCode string `json:"error_code,omitempty"`
+	ErrorMsg  string `json:"error_msg,omitempty"`
 	From      string `json:"from"`
 	To        string `json:"to"`
 	Results   []struct {
