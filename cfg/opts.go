@@ -43,6 +43,11 @@ func (customC *Cfg) Sync() error {
 		viper.Set("ling_va.data_id", customC.LingVA.DataId)
 	}
 
+	{ // sync tencent_cloud_mt
+		viper.Set("tencent_cloud_mt.secret_id", customC.TencentCloudMT.SecretId)
+		viper.Set("tencent_cloud_mt.secret_key", customC.TencentCloudMT.SecretKey)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

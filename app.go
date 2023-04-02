@@ -11,6 +11,7 @@ import (
 	"translator/tst/tt_translator/baidu"
 	"translator/tst/tt_translator/huawei_cloud_nlp"
 	"translator/tst/tt_translator/ling_va"
+	"translator/tst/tt_translator/tencent_cloud_mt"
 	"translator/tst/tt_translator/youdao"
 	"translator/tst/tt_ui"
 )
@@ -30,10 +31,12 @@ func main() {
 	huawei_cloud_nlp.GetInstance().Init(cfg.GetInstance().HuaweiCloudNlp)
 	ling_va.GetInstance().Init(cfg.GetInstance().LingVA)
 	baidu.GetInstance().Init(cfg.GetInstance().Baidu)
+	tencent_cloud_mt.GetInstance().Init(cfg.GetInstance().TencentCloudMT)
 
 	domain.GetTranslators().Register(
 		huawei_cloud_nlp.GetInstance(),
 		youdao.GetInstance(), ling_va.GetInstance(), baidu.GetInstance(),
+		tencent_cloud_mt.GetInstance(),
 	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())

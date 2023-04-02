@@ -35,13 +35,15 @@ type Settings struct {
 
 	ptrEnv *walk.ComboBox
 
-	ptrLingVADataId           *walk.LineEdit
-	ptrBaiduAppId             *walk.LineEdit
-	ptrBaiduAppKey            *walk.LineEdit
-	ptrHuaweiCloudAKId        *walk.LineEdit
-	ptrHuaweiCloudSKKey       *walk.LineEdit
-	ptrHuaweiCloudAKProjectId *walk.LineEdit
-	ptrHuaweiCloudAKRegion    *walk.LineEdit
+	ptrLingVADataId            *walk.LineEdit
+	ptrBaiduAppId              *walk.LineEdit
+	ptrBaiduAppKey             *walk.LineEdit
+	ptrTencentCloudMTSecretId  *walk.LineEdit
+	ptrTencentCloudMTSecretKey *walk.LineEdit
+	ptrHuaweiCloudAKId         *walk.LineEdit
+	ptrHuaweiCloudSKKey        *walk.LineEdit
+	ptrHuaweiCloudAKProjectId  *walk.LineEdit
+	ptrHuaweiCloudAKRegion     *walk.LineEdit
 }
 
 func (customPage *Settings) GetId() string {
@@ -94,7 +96,21 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云-NLP").SetLayoutVBox(false).SetWidgets(
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("腾讯云翻译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretId).
+											SetText(cfg.GetInstance().TencentCloudMT.SecretId)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretKey).
+											SetText(cfg.GetInstance().TencentCloudMT.SecretKey)),
+									).GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 									pack.NewWidgetGroup().Append(
@@ -130,6 +146,8 @@ func (customPage *Settings) eventSync() {
 	lingVADataId := customPage.ptrLingVADataId.Text()
 	baiduAppId := customPage.ptrBaiduAppId.Text()
 	baiduAppKey := customPage.ptrBaiduAppKey.Text()
+	tencentCloudMTSecretId := customPage.ptrTencentCloudMTSecretId.Text()
+	tencentCloudMTSecretKey := customPage.ptrTencentCloudMTSecretKey.Text()
 	huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
 	huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
 	huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
@@ -145,6 +163,14 @@ func (customPage *Settings) eventSync() {
 	}
 	if baiduAppKey != cfg.GetInstance().Baidu.AppKey {
 		cfg.GetInstance().Baidu.AppKey = baiduAppKey
+		cntModified++
+	}
+	if tencentCloudMTSecretId != cfg.GetInstance().TencentCloudMT.SecretId {
+		cfg.GetInstance().TencentCloudMT.SecretId = tencentCloudMTSecretId
+		cntModified++
+	}
+	if tencentCloudMTSecretKey != cfg.GetInstance().TencentCloudMT.SecretKey {
+		cfg.GetInstance().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
 		cntModified++
 	}
 	if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
