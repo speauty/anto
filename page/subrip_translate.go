@@ -1,14 +1,17 @@
 package page
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"github.com/golang-module/carbon"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
+	"translator/cron/detector"
+	"translator/cron/reader"
+	"translator/cron/translator"
+	"translator/cron/writer"
 	"translator/domain"
-	"translator/task"
 	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_ui/handle"
 	"translator/tst/tt_ui/msg"
@@ -30,6 +33,15 @@ func GetSubripTranslate() *SubripTranslate {
 		apiSubripTranslate.name = "字幕翻译"
 		apiSubripTranslate.engines = domain.GetTranslators().GetNames()
 		apiSubripTranslate.chanLog = make(chan string, 128)
+		detector.GetInstance().SetMsgRedirect(apiSubripTranslate.chanLog)
+		translator.GetInstance().SetMsgRedirect(apiSubripTranslate.chanLog)
+
+		ctx := context.Background()
+		detector.GetInstance().Run(ctx)
+		reader.GetInstance().Run(ctx)
+		translator.GetInstance().Run(ctx)
+		writer.GetInstance().Run(ctx)
+
 		apiSubripTranslate.cronSyncLog()
 
 	})
@@ -207,14 +219,13 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		msg.Err(customPage.mainWindow, errors.New("请选择字幕文件或目录, 优先使用字幕文件"))
 		return
 	}
-	no := util.Uid()
-	tTranslate := new(task.Translate).
-		SetTaskNo(no).
-		SetTranslator(currentEngine).
-		SetFromLang(fromLang).SetToLang(toLang).
-		SetTranslateMode(_type.TranslateMode(mode)).SetMainTrackReport(_type.LangDirection(mainTrackExport)).
-		SetSrtFile(strFile).SetSrtDir(strDir).
-		SetChanLog(customPage.chanLog)
+
+	detector.GetInstance().Push(&detector.StrDetectorData{
+		Translator: currentEngine, FromLang: fromLang, ToLang: toLang,
+		TranslateMode: _type.TranslateMode(mode), MainTrackReport: _type.LangDirection(mainTrackExport),
+		SrtFile: strFile, SrtDir: strDir,
+	})
+
 	if customPage.ptrSrtFile != nil {
 		_ = customPage.ptrSrtFile.SetText("")
 	}
@@ -223,17 +234,7 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		_ = customPage.ptrSrtDir.SetText("")
 	}
 	msg.Info(customPage.mainWindow, "投递任务成功")
-	customPage.appendToLog(fmt.Sprintf(
-		"[%s] 投递任务[编号: %s]成功[引擎: %s, 来源语种: %s, 目标语种: %s, 翻译模式: %s, 导出主轨道: %s, 字幕文件: %s, 字幕目录: %s]",
-		carbon.Now().Layout(carbon.DateTimeLayout), no, currentEngine.GetName(),
-		currentEngine.GetLangSupported()[customPage.ptrFromLang.CurrentIndex()].Name,
-		currentEngine.GetLangSupported()[customPage.ptrToLang.CurrentIndex()].Name,
-		mode, mainTrackExport, strFile, strDir,
-	))
 
-	go func() {
-		tTranslate.Run()
-	}()
 	return
 }
 

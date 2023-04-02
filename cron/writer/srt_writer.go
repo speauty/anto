@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"go.uber.org/zap"
 	"os"
 	"runtime"
 	"sync"
@@ -32,14 +31,21 @@ type SrtWriterData struct {
 }
 
 type SrtWriter struct {
-	ctx           context.Context
-	chanWriter    chan *SrtWriterData
-	chanMsgWriter chan string
-	maxChanWriter int
+	ctx             context.Context
+	chanWriter      chan *SrtWriterData
+	chanMsgWriter   chan string
+	chanMsgRedirect chan string
+	maxChanWriter   int
+}
+
+func (customSW *SrtWriter) SetMsgRedirect(chanMsg chan string) {
+	customSW.chanMsgRedirect = chanMsg
 }
 
 func (customSW *SrtWriter) Run(ctx context.Context) {
 	customSW.ctx = ctx
+	customSW.jobWriter()
+	customSW.jobMsg()
 }
 
 func (customSW *SrtWriter) Push(data *SrtWriterData) {
@@ -96,10 +102,10 @@ func (customSW *SrtWriter) jobWriter() {
 	}
 }
 
-func (customSW *SrtWriter) RedirectMsgTo(targetChan chan string) {
-	go func(ctx context.Context, chanMsgWriter, targetChan chan string) {
-		coroutineName := "消息定向协程"
-		chanName := "chanWriter"
+func (customSW *SrtWriter) jobMsg() {
+	go func(ctx context.Context, chanMsgWriter, chanMsgRedirect chan string) {
+		coroutineName := "消息协程"
+		chanName := "chanMsgWriter"
 
 		for true {
 			select {
@@ -111,13 +117,13 @@ func (customSW *SrtWriter) RedirectMsgTo(targetChan chan string) {
 					customSW.log().Info(fmt.Sprintf("%s-%s通道关闭, %s被迫退出", customSW.getName(), chanName, coroutineName))
 					runtime.Goexit()
 				}
-				if targetChan == nil {
-					customSW.log().Info(fmt.Sprintf("%s未设置通道(%s)接管, 定向输出到日志", customSW.getName(), chanName), zap.String("msg", currentMsg))
+				if chanMsgRedirect != nil {
+					chanMsgRedirect <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customSW.getName(), currentMsg)
 				}
-				targetChan <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customSW.getName(), currentMsg)
+				customSW.log().Info(fmt.Sprintf("来源: %s, 信息: %s", customSW.getName(), currentMsg))
 			}
 		}
-	}(customSW.ctx, customSW.chanMsgWriter, targetChan)
+	}(customSW.ctx, customSW.chanMsgWriter, customSW.chanMsgRedirect)
 }
 
 func (customSW *SrtWriter) getName() string {

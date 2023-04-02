@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"go.uber.org/zap"
 	"runtime"
 	"sync"
 	"translator/cron/writer"
@@ -61,11 +60,18 @@ type SrtTranslator struct {
 	ctx               context.Context
 	chanTranslator    chan *SrtTranslatorData
 	chanMsgTranslator chan string
+	chanMsgRedirect   chan string
 	maxChanTranslator int
+}
+
+func (customST *SrtTranslator) SetMsgRedirect(chanMsg chan string) {
+	customST.chanMsgRedirect = chanMsg
 }
 
 func (customST *SrtTranslator) Run(ctx context.Context) {
 	customST.ctx = ctx
+	customST.jobTranslator()
+	customST.jobMsg()
 }
 
 func (customST *SrtTranslator) Push(data *SrtTranslatorData) {
@@ -132,6 +138,7 @@ func (customST *SrtTranslator) jobTranslator() {
 						blockChunked = append(blockChunked, tmpBlockStr)
 						tmpBlockStr = ""
 					}
+
 					if len(blockChunked) == 0 {
 						chanMsg <- fmt.Sprintf("字幕文件(%s)未解析到需要翻译的字幕块, 疑似增量翻译模式", currentData.PrtSrt.FileName)
 						continue
@@ -158,7 +165,7 @@ func (customST *SrtTranslator) jobTranslator() {
 							}
 						}
 					}
-
+					currentData.PrtSrt.FlagTranslated = flagTranslated
 					if flagTranslated == false {
 						chanMsg <- fmt.Sprintf("字幕文件(%s)未进行翻译", currentData.PrtSrt.FileName)
 						continue
@@ -174,9 +181,9 @@ func (customST *SrtTranslator) jobTranslator() {
 	}
 }
 
-func (customST *SrtTranslator) RedirectMsgTo(targetChan chan string) {
-	go func(ctx context.Context, chanMsgWriter, targetChan chan string) {
-		coroutineName := "消息定向协程"
+func (customST *SrtTranslator) jobMsg() {
+	go func(ctx context.Context, chanMsgTranslator, chanMsgRedirect chan string) {
+		coroutineName := "消息协程"
 		chanName := "chanMsgTranslator"
 
 		for true {
@@ -184,18 +191,18 @@ func (customST *SrtTranslator) RedirectMsgTo(targetChan chan string) {
 			case <-ctx.Done():
 				customST.log().Info(fmt.Sprintf("%s关闭(ctx.done), %s被迫退出", customST.getName(), coroutineName))
 				runtime.Goexit()
-			case currentMsg, isOpen := <-chanMsgWriter:
+			case currentMsg, isOpen := <-chanMsgTranslator:
 				if isOpen == false && currentMsg == "" {
 					customST.log().Info(fmt.Sprintf("%s-%s通道关闭, %s被迫退出", customST.getName(), chanName, coroutineName))
 					runtime.Goexit()
 				}
-				if targetChan == nil {
-					customST.log().Info(fmt.Sprintf("%s未设置通道(%s)接管, 定向输出到日志", customST.getName(), chanName), zap.String("msg", currentMsg))
+				if chanMsgRedirect != nil {
+					chanMsgRedirect <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customST.getName(), currentMsg)
 				}
-				targetChan <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customST.getName(), currentMsg)
+				customST.log().Info(fmt.Sprintf("来源: %s, 信息: %s", customST.getName(), currentMsg))
 			}
 		}
-	}(customST.ctx, customST.chanMsgTranslator, targetChan)
+	}(customST.ctx, customST.chanMsgTranslator, customST.chanMsgRedirect)
 }
 
 func (customST *SrtTranslator) getName() string {

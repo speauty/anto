@@ -84,10 +84,10 @@ func (customB *SrtBlock) encode(flagInverse bool) []byte {
 	blockStr := fmt.Sprintf("%d\n%s %s %s\n", customB.SeqNo,
 		customB.TimeStart, customB.TimeSep, customB.TimeEnd)
 	if flagInverse == false || customB.SubTrack == "" {
-		blockStr = fmt.Sprintf("%s%s\n%s", blockStr, customB.MainTrack, customB.SubTrack)
+		blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.MainTrack, customB.SubTrack)
 		return []byte(blockStr)
 	}
-	blockStr = fmt.Sprintf("%s%s\n%s", blockStr, customB.SubTrack, customB.MainTrack)
+	blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.SubTrack, customB.MainTrack)
 
 	return []byte(blockStr)
 }

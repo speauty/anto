@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"go.uber.org/zap"
 	"io"
 	"os"
 	"runtime"
@@ -42,14 +41,21 @@ func (customSRD *SrtReaderData) toTranslatorData() *translator.SrtTranslatorData
 }
 
 type SrtReader struct {
-	ctx           context.Context
-	chanReader    chan *SrtReaderData
-	chanMsgReader chan string
-	maxChanReader int
+	ctx             context.Context
+	chanReader      chan *SrtReaderData
+	chanMsgReader   chan string
+	chanMsgRedirect chan string
+	maxChanReader   int
+}
+
+func (customSR *SrtReader) SetMsgRedirect(chanMsg chan string) {
+	customSR.chanMsgRedirect = chanMsg
 }
 
 func (customSR *SrtReader) Run(ctx context.Context) {
 	customSR.ctx = ctx
+	customSR.jobReader()
+	customSR.jobMsg()
 }
 
 func (customSR *SrtReader) Push(data *SrtReaderData) {
@@ -107,7 +113,7 @@ func (customSR *SrtReader) jobReader() {
 						chanMsg <- fmt.Sprintf("解析文件(%s)异常, 错误: %s, 即将丢弃", currentData.FilePath, err)
 						continue
 					}
-
+					currentData.PrtSrt.CntBlock = len(currentData.PrtSrt.Blocks)
 					translator.GetInstance().Push(currentData.toTranslatorData())
 					chanMsg <- fmt.Sprintf(
 						"读取文件(%s)成功, 文件名: %s, 字幕块: %d, 文件大小: %d, 耗时: %d",
@@ -120,9 +126,9 @@ func (customSR *SrtReader) jobReader() {
 	}
 }
 
-func (customSR *SrtReader) RedirectMsgTo(targetChan chan string) {
-	go func(ctx context.Context, chanMsgReader, targetChan chan string) {
-		coroutineName := "消息定向协程"
+func (customSR *SrtReader) jobMsg() {
+	go func(ctx context.Context, chanMsgReader, chanMsgRedirect chan string) {
+		coroutineName := "消息协程"
 		chanName := "chanMsgReader"
 
 		for true {
@@ -135,17 +141,17 @@ func (customSR *SrtReader) RedirectMsgTo(targetChan chan string) {
 					customSR.log().Info(fmt.Sprintf("%s-%s通道关闭, %s被迫退出", customSR.getName(), chanName, coroutineName))
 					runtime.Goexit()
 				}
-				if targetChan == nil {
-					customSR.log().Info(fmt.Sprintf("%s未设置通道(%s)接管, 定向输出到日志", customSR.getName(), chanName), zap.String("msg", currentMsg))
+				if chanMsgRedirect != nil {
+					chanMsgRedirect <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customSR.getName(), currentMsg)
 				}
-				targetChan <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customSR.getName(), currentMsg)
+				customSR.log().Info(fmt.Sprintf("来源: %s, 信息: %s", customSR.getName(), currentMsg))
 			}
 		}
-	}(customSR.ctx, customSR.chanMsgReader, targetChan)
+	}(customSR.ctx, customSR.chanMsgReader, customSR.chanMsgRedirect)
 }
 
 func (customSR *SrtReader) getName() string {
-	return "SRT写入程序"
+	return "SRT读取程序"
 }
 
 func (customSR *SrtReader) init() {

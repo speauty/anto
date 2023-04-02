@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	//var ctx = context.Background()
 
 	if err := cfg.GetInstance().Load(""); err != nil {
 		panic(err)
