@@ -38,7 +38,6 @@ func New() *Translator {
 		langSupported: []tt_translator.LangK{
 			{"zh", "中文"},
 			{"en", "英语"},
-			{"zh-TW", "繁体中文"},
 			{"ja", "日语"},
 			{"ko", "韩语"},
 			{"fr", "法语"},
