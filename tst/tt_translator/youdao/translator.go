@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
+	"translator/tst/tt_log"
 	"translator/tst/tt_translator"
 )
 
@@ -77,17 +79,21 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		}
 	}()
 	if err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
 	}
 	respBytes, err := io.ReadAll(httpResp.Body)
 	if err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
 	}
 	youDaoResp := new(youDaoMTResp)
 	if err := json.Unmarshal(respBytes, youDaoResp); err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 	if youDaoResp.ErrorCode != 0 {
+		tt_log.GetInstance().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err), zap.String("result", string(respBytes)))
 		return nil, fmt.Errorf("翻译异常, 代码: %d", youDaoResp.ErrorCode)
 	}
 
@@ -106,9 +112,9 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 }
 
 type youDaoMTResp struct {
-	//Type        string `json:"type"`
-	ErrorCode int `json:"errorCode"`
-	//ElapsedTime int    `json:"elapsedTime"`
+	Type        string `json:"type"`
+	ErrorCode   int    `json:"errorCode"`
+	ElapsedTime int    `json:"elapsedTime"`
 	TransResult [][]struct {
 		Src string `json:"src,omitempty"` // 原文
 		Tgt string `json:"tgt,omitempty"` // 译文

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
+	"translator/tst/tt_log"
 	"translator/tst/tt_translator"
 )
 
@@ -75,7 +77,7 @@ func (customT *Translator) IsValid() bool                           { return cus
 func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
-	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s", customT.cfg.DataId)
+	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s/", customT.cfg.DataId)
 	queryUrl := fmt.Sprintf(
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
@@ -87,22 +89,27 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		}
 	}()
 	if err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
 	}
 	respBytes, err := io.ReadAll(httpResp.Body)
 	if err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
 	}
 	lingVaResp := new(lingVaMTResp)
 	if err := json.Unmarshal(respBytes, lingVaResp); err != nil {
+		tt_log.GetInstance().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 	if lingVaResp.State == false {
+		tt_log.GetInstance().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err), zap.String("result", string(respBytes)))
 		return nil, fmt.Errorf("翻译异常")
 	}
 	textTranslatedList := strings.Split(lingVaResp.Props.TextTranslated, customT.sep)
 	textSourceList := strings.Split(lingVaResp.Props.Params.TextSource, customT.sep)
 	if len(textSourceList) != len(textTranslatedList) {
+		tt_log.GetInstance().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
 		return nil, fmt.Errorf("翻译异常, 错误: 源文和译文数量不对等")
 	}
 
@@ -122,12 +129,12 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 type lingVaMTResp struct {
 	State bool `json:"__N_SSG"`
 	Props struct {
-		//Type           int    `json:"type"`
+		Type           int    `json:"type"`
 		TextTranslated string `json:"translation"`
 		Params         struct {
-			//FromLanguage string `json:"source"`
-			//ToLanguage   string `json:"target"`
-			TextSource string `json:"query"`
+			FromLanguage string `json:"source"`
+			ToLanguage   string `json:"target"`
+			TextSource   string `json:"query"`
 		} `json:"initial"`
 	} `json:"pageProps"`
 }
