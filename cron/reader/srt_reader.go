@@ -9,10 +9,24 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"sync"
 	"translator/cron/translator"
 	"translator/tst/tt_log"
 	"translator/tst/tt_srt"
 )
+
+var (
+	apiSrtReader  *SrtReader
+	onceSrtReader sync.Once
+)
+
+func GetInstance() *SrtReader {
+	onceSrtReader.Do(func() {
+		apiSrtReader = new(SrtReader)
+		apiSrtReader.init()
+	})
+	return apiSrtReader
+}
 
 type SrtReaderData struct {
 	FilePath          string

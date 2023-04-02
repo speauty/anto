@@ -22,6 +22,7 @@ var (
 func GetInstance() *SrtTranslator {
 	onceSrtTranslator.Do(func() {
 		apiSrtTranslator = new(SrtTranslator)
+		apiSrtTranslator.init()
 	})
 	return apiSrtTranslator
 }
