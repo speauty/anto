@@ -5,7 +5,6 @@ import (
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
-	"strings"
 	"sync"
 	"translator/cfg"
 	_const "translator/const"
@@ -36,6 +35,12 @@ type Settings struct {
 	rootWidget *walk.Composite
 
 	ptrEnv *walk.ComboBox
+
+	ptrLingVADataId           *walk.LineEdit
+	ptrHuaweiCloudAKId        *walk.LineEdit
+	ptrHuaweiCloudSKKey       *walk.LineEdit
+	ptrHuaweiCloudAKProjectId *walk.LineEdit
+	ptrHuaweiCloudAKRegion    *walk.LineEdit
 }
 
 func (customPage *Settings) GetId() string {
@@ -61,12 +66,33 @@ func (customPage *Settings) GetWidget() Widget {
 	return StdRootWidget(&customPage.rootWidget,
 		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
-				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("应用").SetLayoutVBox(false).SetWidgets(
+				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetWidgets(
 					pack.NewWidgetGroup().Append(
-						pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
-								pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("环境")),
-								pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrEnv).SetModel([]string{"Debug", "Release"}).SetCurrentIdx(0)),
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("数据ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrLingVADataId).
+											SetText(cfg.GetInstance().LingVA.DataId)),
+									).GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云-NLP").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("访问ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.GetInstance().HuaweiCloudNlp.AKId)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("访问密钥")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.GetInstance().HuaweiCloudNlp.SkKey)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("项目ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.GetInstance().HuaweiCloudNlp.ProjectId)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("支持区域")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKRegion).SetText(cfg.GetInstance().HuaweiCloudNlp.Region)),
+									).GetWidgets(),
+								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
 						pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -74,7 +100,7 @@ func (customPage *Settings) GetWidget() Widget {
 								pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("同步").SetOnClicked(customPage.eventSync)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-					).AppendZeroHSpacer().GetWidgets(),
+					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
 				)),
 			).AppendZeroVSpacer().GetWidgets(),
 		)),
@@ -92,13 +118,34 @@ func (customPage *Settings) Reset() {
 }
 
 func (customPage *Settings) eventSync() {
-	currentEnv := strings.ToLower(customPage.ptrEnv.Text())
+	lingVADataId := customPage.ptrLingVADataId.Text()
+	huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
+	huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
+	huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
+	huaweiCloudAKRegion := customPage.ptrHuaweiCloudAKRegion.Text()
 	cntModified := 0
-	if currentEnv != cfg.GetInstance().App.Env {
-		cfg.GetInstance().App.Env = currentEnv
+	if lingVADataId != cfg.GetInstance().LingVA.DataId {
+		cfg.GetInstance().LingVA.DataId = lingVADataId
+		cntModified++
+	}
+	if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
+		cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
+		cntModified++
+	}
+	if huaweiCloudSKKey != cfg.GetInstance().HuaweiCloudNlp.SkKey {
+		cfg.GetInstance().HuaweiCloudNlp.SkKey = huaweiCloudSKKey
+		cntModified++
+	}
+	if huaweiCloudAKProjectId != cfg.GetInstance().HuaweiCloudNlp.ProjectId {
+		cfg.GetInstance().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
+		cntModified++
+	}
+	if huaweiCloudAKRegion != cfg.GetInstance().HuaweiCloudNlp.Region {
+		cfg.GetInstance().HuaweiCloudNlp.Region = huaweiCloudAKRegion
 		cntModified++
 	}
 	if cntModified == 0 {
+		msg.Info(customPage.mainWindow, "暂无配置需要同步")
 		return
 	}
 	if err := cfg.GetInstance().Sync(); err != nil {
@@ -106,5 +153,5 @@ func (customPage *Settings) eventSync() {
 		msg.Err(customPage.mainWindow, errors.New("同步配置到文件失败"))
 		return
 	}
-	msg.Info(customPage.mainWindow, "同步配置成功")
+	msg.Info(customPage.mainWindow, "同步配置成功, 请重启当前应用")
 }
