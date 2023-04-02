@@ -1,18 +1,20 @@
-package ling_va
+package baidu
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"sync"
 	"translator/tst/tt_log"
 	"translator/tst/tt_translator"
+	"translator/util"
 )
+
+var api = "https://fanyi-api.baidu.com/api/trans/vip/translate"
 
 var (
 	apiTranslator  *Translator
@@ -28,25 +30,41 @@ func GetInstance() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:         "lingva",
-		name:       "Lingva",
-		qps:        10,
-		procMax:    20,
-		textMaxLen: 2000,
+		id:         "baidu",
+		name:       "百度翻译",
+		qps:        1,
+		procMax:    1,
+		textMaxLen: 1000,
 		sep:        "\n",
 		langSupported: []tt_translator.LangK{
 			{"zh", "中文"},
 			{"en", "英语"},
-			{"ja", "日语"},
+			{"yue", "粤语"},
+			{"wyw", "文言文"},
+			{"jp", "日语"},
+			{"kor", "韩语"},
+			{"fra", "法语"},
+			{"spa", "西班牙语"},
+			{"th", "泰语"},
+			{"ara", "阿拉伯语"},
 			{"ru", "俄语"},
-			{"fr", "法语"},
-			{"ko", "韩语"},
+			{"pt", "葡萄牙语"},
 			{"de", "德语"},
-			{"da", "丹麦语"},
-			{"nl", "荷兰语"},
 			{"it", "意大利语"},
-			{"ar", "阿拉伯语"},
-			{"be", "白俄罗斯语"},
+			{"el", "希腊语"},
+			{"nl", "荷兰语"},
+			{"pl", "波兰语"},
+			{"bul", "保加利亚语"},
+			{"est", "爱沙尼亚语"},
+			{"dan", "丹麦语"},
+			{"fin", "芬兰语"},
+			{"cs", "捷克语"},
+			{"rom", "罗马尼亚语"},
+			{"slo", "斯洛文尼亚语"},
+			{"swe", "瑞典语"},
+			{"hu", "匈牙利语"},
+			{"cht", "繁体中文"},
+			{"vie", "越南语"},
 		},
 	}
 }
@@ -72,22 +90,26 @@ func (customT *Translator) GetProcMax() int                         { return cus
 func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
 func (customT *Translator) GetLangSupported() []tt_translator.LangK { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
-func (customT *Translator) IsValid() bool                           { return customT.cfg.DataId != "" }
+func (customT *Translator) IsValid() bool {
+	return customT.cfg != nil && customT.cfg.AppId != "" && customT.cfg.AppKey != ""
+}
 
 func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_translator.TranslateRes, error) {
 	timeStart := carbon.Now()
-
-	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s/", customT.cfg.DataId)
-	queryUrl := fmt.Sprintf(
-		"%s/%s/%s/%s.json", api,
-		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
+	salt := util.Uid()
+	sign := customT.signBuilder(args.TextContent, salt)
+	urlQueried := fmt.Sprintf(
+		"%s?q=%s&from=%s&to=%s&appid=%s&salt=%s&sign=%s", api,
+		url.QueryEscape(args.TextContent), args.FromLang, args.ToLang,
+		customT.cfg.AppId, salt, sign,
 	)
-	httpResp, err := http.DefaultClient.Get(queryUrl)
+	httpResp, err := http.DefaultClient.Get(urlQueried)
 	defer func() {
 		if httpResp != nil && httpResp.Body != nil {
 			_ = httpResp.Body.Close()
 		}
 	}()
+
 	if err != nil {
 		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
@@ -97,44 +119,42 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
 	}
-	lingVaResp := new(lingVaMTResp)
-	if err := json.Unmarshal(respBytes, lingVaResp); err != nil {
+	respObj := new(remoteResp)
+	if err := json.Unmarshal(respBytes, respObj); err != nil {
 		tt_log.GetInstance().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
-	if lingVaResp.State == false {
-		tt_log.GetInstance().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err), zap.String("result", string(respBytes)))
-		return nil, fmt.Errorf("翻译异常")
-	}
-	textTranslatedList := strings.Split(lingVaResp.Props.TextTranslated, customT.sep)
-	textSourceList := strings.Split(lingVaResp.Props.Params.TextSource, customT.sep)
-	if len(textSourceList) != len(textTranslatedList) {
-		tt_log.GetInstance().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, fmt.Errorf("翻译异常, 错误: 源文和译文数量不对等")
+	if respObj.ErrorCode != "52000" || respObj.ErrorMsg != "" {
+		tt_log.GetInstance().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 代码: %s, 错误: %s", customT.GetName(), respObj.ErrorCode, respObj.ErrorMsg))
+		return nil, fmt.Errorf("翻译异常, 代码: %s, 错误: %s", respObj.ErrorCode, respObj.ErrorMsg)
 	}
 
 	ret := new(tt_translator.TranslateRes)
-	for textIdx, textSource := range textSourceList {
+	for _, transBlockArray := range respObj.Results {
 		ret.Results = append(ret.Results, &tt_translator.TranslateResBlock{
-			Id:             textSource,
-			TextTranslated: textTranslatedList[textIdx],
+			Id:             transBlockArray.Src,
+			TextTranslated: transBlockArray.Dst,
 		})
 	}
 
-	ret.TimeUsed = int(carbon.Now().DiffAbsInSeconds(timeStart))
+	ret.TimeUsed = int(carbon.Now().DiffInSeconds(timeStart))
 	return ret, nil
-
 }
 
-type lingVaMTResp struct {
-	State bool `json:"__N_SSG"`
-	Props struct {
-		Type           int    `json:"type"`
-		TextTranslated string `json:"translation"`
-		Params         struct {
-			FromLanguage string `json:"source"`
-			ToLanguage   string `json:"target"`
-			TextSource   string `json:"query"`
-		} `json:"initial"`
-	} `json:"pageProps"`
+func (customT *Translator) signBuilder(strQuery string, salt string) string {
+	tmpStr := fmt.Sprintf("%s%s%s%s", customT.cfg.AppId, strQuery, salt, customT.cfg.AppKey)
+	tmpMD5 := md5.New()
+	tmpMD5.Write([]byte(tmpStr))
+	return fmt.Sprintf("%x", tmpMD5.Sum(nil))
+}
+
+type remoteResp struct {
+	ErrorCode string `json:"errorCode"`
+	ErrorMsg  string `json:"error_msg"`
+	From      string `json:"from"`
+	To        string `json:"to"`
+	Results   []struct {
+		Src string `json:"src"`
+		Dst string `json:"dst"`
+	} `json:"trans_result"`
 }

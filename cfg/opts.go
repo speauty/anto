@@ -34,6 +34,11 @@ func (customC *Cfg) Sync() error {
 		viper.Set("huawei_cloud_nlp.region", customC.HuaweiCloudNlp.Region)
 	}
 
+	{ // sync baidu
+		viper.Set("baidu.app_id", customC.Baidu.AppId)
+		viper.Set("baidu.app_key", customC.Baidu.AppKey)
+	}
+
 	{ // sync ling_va
 		viper.Set("ling_va.data_id", customC.LingVA.DataId)
 	}

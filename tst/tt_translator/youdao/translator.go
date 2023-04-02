@@ -74,7 +74,7 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 	)
 	httpResp, err := http.DefaultClient.Get(urlQueried)
 	defer func() {
-		if httpResp.Body != nil {
+		if httpResp != nil && httpResp.Body != nil {
 			_ = httpResp.Body.Close()
 		}
 	}()

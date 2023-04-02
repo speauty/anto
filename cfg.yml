@@ -6,3 +6,7 @@ huawei_cloud_nlp: # 华为云机器翻译
 
 ling_va:
   data_id: ""           # 数据ID
+
+baidu:
+  app_id: ""            # 应用ID
+  app_key: ""           # 应用密钥
