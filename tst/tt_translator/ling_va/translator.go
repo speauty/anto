@@ -52,6 +52,7 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
+	cfg           *Cfg
 	qps           int
 	procMax       int
 	textMaxLen    int
@@ -59,7 +60,7 @@ type Translator struct {
 	sep           string
 }
 
-func (customT *Translator) Init(_ interface{}) {}
+func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
 
 func (customT *Translator) GetId() string                           { return customT.id }
 func (customT *Translator) GetName() string                         { return customT.name }
@@ -69,11 +70,12 @@ func (customT *Translator) GetProcMax() int                         { return cus
 func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
 func (customT *Translator) GetLangSupported() []tt_translator.LangK { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
+func (customT *Translator) IsValid() bool                           { return customT.cfg.DataId != "" }
 
 func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
-	var api = "https://lingva.ml/_next/data/3qnDcUVykFKnSC3cdRX2t"
+	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s", customT.cfg.DataId)
 	queryUrl := fmt.Sprintf(
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),

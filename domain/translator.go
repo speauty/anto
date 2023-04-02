@@ -1,7 +1,9 @@
 package domain
 
 import (
+	"fmt"
 	"sync"
+	"translator/tst/tt_log"
 	"translator/tst/tt_translator"
 	_type "translator/type"
 )
@@ -48,10 +50,14 @@ func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
 func (customT *Translators) genNames2ComboBox() {
 	customT.names = []*_type.StdComboBoxModel{}
 	customT.list.Range(func(idx, translator any) bool {
-		customT.names = append(customT.names, &_type.StdComboBoxModel{
-			Key:  translator.(tt_translator.ITranslator).GetId(),
-			Name: translator.(tt_translator.ITranslator).GetName(),
-		})
+		if translator.(tt_translator.ITranslator).IsValid() {
+			customT.names = append(customT.names, &_type.StdComboBoxModel{
+				Key:  translator.(tt_translator.ITranslator).GetId(),
+				Name: translator.(tt_translator.ITranslator).GetName(),
+			})
+		} else {
+			tt_log.GetInstance().Warn(fmt.Sprintf("当前翻译引擎无效: %s", translator.(tt_translator.ITranslator).GetName()))
+		}
 		return true
 	})
 }

@@ -10,6 +10,7 @@ type ITranslator interface {
 	GetTextMaxLen() int
 	GetLangSupported() []LangK
 	GetSep() string
+	IsValid() bool
 	Translate(*TranslateArgs) (*TranslateRes, error)
 }
 

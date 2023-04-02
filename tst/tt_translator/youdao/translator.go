@@ -61,6 +61,7 @@ func (customT *Translator) GetProcMax() int                         { return cus
 func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
 func (customT *Translator) GetLangSupported() []tt_translator.LangK { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
+func (customT *Translator) IsValid() bool                           { return true }
 
 func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_translator.TranslateRes, error) {
 	timeStart := carbon.Now()
