@@ -26,7 +26,18 @@ func (customC *Cfg) Load(cfgFilePath string) error {
 }
 
 func (customC *Cfg) Sync() error {
-	viper.Set("app.env", customC.App.Env)
+
+	{ // sync huawei_cloud_nlp
+		viper.Set("huawei_cloud_nlp.ak_id", customC.HuaweiCloudNlp.AKId)
+		viper.Set("huawei_cloud_nlp.sk_key", customC.HuaweiCloudNlp.SkKey)
+		viper.Set("huawei_cloud_nlp.project_id", customC.HuaweiCloudNlp.ProjectId)
+		viper.Set("huawei_cloud_nlp.region", customC.HuaweiCloudNlp.Region)
+	}
+
+	{ // sync ling_va
+		viper.Set("ling_va.data_id", customC.LingVA.DataId)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

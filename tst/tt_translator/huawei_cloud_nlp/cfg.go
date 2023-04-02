@@ -7,11 +7,6 @@ type Cfg struct {
 	ProjectId string `mapstructure:"project_id"` // 项目ID
 }
 
-func (customC Cfg) DefaultCfg() *Cfg {
-	return &Cfg{
-		AKId:      "",
-		SkKey:     "",
-		Region:    "cn-north-4",
-		ProjectId: "",
-	}
+func (customC Cfg) Default() *Cfg {
+	return &Cfg{AKId: "", SkKey: "", Region: "cn-north-4", ProjectId: ""}
 }

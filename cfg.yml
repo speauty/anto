@@ -1,6 +1,8 @@
-app:
-  env: "debug" # 当前应用环境[debug-开发/调试(默认) release-发布]
-ui:
-  title: "Anto"                 # ui名称
-  icon: "favicon.ico"           # icon路径(相对于资源目录)
-  resource_dir: "./assets"      # 资源目录
+huawei_cloud_nlp: # 华为云机器翻译
+  ak_id: ""             # Access Key
+  sk_key: ""            # Secret Access Key
+  region: "cn-north-4"  # 当前接口开发的区域, 目前仅支持华北-北京四终端节点
+  project_id: ""        # 项目ID
+
+ling_va:
+  data_id: ""           # 数据ID

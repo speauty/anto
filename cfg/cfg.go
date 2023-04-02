@@ -3,6 +3,8 @@ package cfg
 import (
 	"fmt"
 	"sync"
+	"translator/tst/tt_translator/huawei_cloud_nlp"
+	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_ui"
 )
 
@@ -14,13 +16,19 @@ var (
 func GetInstance() *Cfg {
 	onceCfg.Do(func() {
 		apiCfg = new(Cfg)
+		apiCfg.App = App{}.Default()
+		apiCfg.UI = tt_ui.Cfg{}.Default()
+		apiCfg.HuaweiCloudNlp = huawei_cloud_nlp.Cfg{}.Default()
+		apiCfg.LingVA = ling_va.Cfg{}.Default()
 	})
 	return apiCfg
 }
 
 type Cfg struct {
-	App *App       `mapstructure:"app"`
-	UI  *tt_ui.Cfg `mapstructure:"ui"`
+	App            *App                  `mapstructure:"-"`
+	UI             *tt_ui.Cfg            `mapstructure:"-"`
+	HuaweiCloudNlp *huawei_cloud_nlp.Cfg `mapstructure:"huawei_cloud_nlp"`
+	LingVA         *ling_va.Cfg          `mapstructure:"ling_va"`
 }
 
 func (customC *Cfg) NewUITitle() string {

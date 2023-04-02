@@ -115,7 +115,6 @@ func (customT *Translator) GetLangSupported() []tt_translator.LangK { return cus
 func (customT *Translator) GetSep() string                          { return customT.sep }
 
 func (customT *Translator) IsValid() bool {
-	fmt.Println(customT.cfg)
 	return customT.cfg != nil && customT.cfg.AKId != "" && customT.cfg.SkKey != "" && customT.cfg.ProjectId != ""
 }
 

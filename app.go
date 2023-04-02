@@ -1,19 +1,21 @@
 package main
 
 import (
+	"translator/boot"
 	"translator/cfg"
 	_const "translator/const"
 	"translator/domain"
 	"translator/menu"
 	"translator/page"
 	"translator/tst/tt_log"
+	"translator/tst/tt_translator/huawei_cloud_nlp"
 	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_translator/youdao"
 	"translator/tst/tt_ui"
 )
 
 func main() {
-	//var ctx = context.Background()
+	new(boot.ResourceBuilder).Install()
 
 	if err := cfg.GetInstance().Load(""); err != nil {
 		panic(err)
@@ -23,8 +25,14 @@ func main() {
 	tt_log.GetInstance()
 
 	cfg.GetInstance().UI.Title = cfg.GetInstance().NewUITitle()
+
+	huawei_cloud_nlp.GetInstance().Init(cfg.GetInstance().HuaweiCloudNlp)
+	ling_va.GetInstance().Init(cfg.GetInstance().LingVA)
+
 	domain.GetTranslators().Register(
-		ling_va.GetInstance(), youdao.GetInstance(),
+		huawei_cloud_nlp.GetInstance(),
+		youdao.GetInstance(),
+		ling_va.GetInstance(),
 	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
