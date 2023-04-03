@@ -48,6 +48,11 @@ func (customC *Cfg) Sync() error {
 		viper.Set("tencent_cloud_mt.secret_key", customC.TencentCloudMT.SecretKey)
 	}
 
+	{ // sync openapi_youdao
+		viper.Set("openapi_youdao.app_key", customC.OpenAPIYouDao.AppKey)
+		viper.Set("openapi_youdao.app_secret", customC.OpenAPIYouDao.AppSecret)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

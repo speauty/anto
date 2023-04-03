@@ -14,3 +14,7 @@ baidu:
 tencent_cloud_mt:       # 腾讯云机器翻译
   secret_id: ""         # 密钥ID 用于标识接口调用者身份
   secret_key: ""        # 密钥关键字 用于验证接口调用者的身份
+
+openapi_youdao:         # 有道智云翻译
+  app_key: ""           # 应用ID
+  app_secret: ""        # 应用密钥

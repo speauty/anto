@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/golang-module/carbon v1.7.3
+	github.com/google/go-querystring v1.1.0
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.34
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
@@ -11,6 +12,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.628
 	github.com/twharmon/gouid v0.5.2
+	golang.org/x/crypto v0.7.0
 )
 
 require (
@@ -28,7 +30,6 @@ require (
 	go.mongodb.org/mongo-driver v1.11.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
-	golang.org/x/crypto v0.7.0 // indirect
 	gopkg.in/Knetic/govaluate.v3 v3.0.0 // indirect
 )
 

@@ -40,6 +40,8 @@ type Settings struct {
 	ptrBaiduAppKey             *walk.LineEdit
 	ptrTencentCloudMTSecretId  *walk.LineEdit
 	ptrTencentCloudMTSecretKey *walk.LineEdit
+	ptrOpenAPIYouDaoAppKey     *walk.LineEdit
+	ptrOpenAPIYouDaoAppSecret  *walk.LineEdit
 	ptrHuaweiCloudAKId         *walk.LineEdit
 	ptrHuaweiCloudSKKey        *walk.LineEdit
 	ptrHuaweiCloudAKProjectId  *walk.LineEdit
@@ -110,6 +112,20 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("有道智云翻译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppKey).
+											SetText(cfg.GetInstance().OpenAPIYouDao.AppKey)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
+											SetText(cfg.GetInstance().OpenAPIYouDao.AppSecret)),
+									).GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
 						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -148,6 +164,8 @@ func (customPage *Settings) eventSync() {
 	baiduAppKey := customPage.ptrBaiduAppKey.Text()
 	tencentCloudMTSecretId := customPage.ptrTencentCloudMTSecretId.Text()
 	tencentCloudMTSecretKey := customPage.ptrTencentCloudMTSecretKey.Text()
+	openAPIYouDaoAppKey := customPage.ptrOpenAPIYouDaoAppKey.Text()
+	openAPIYouDaoAppSecret := customPage.ptrOpenAPIYouDaoAppSecret.Text()
 	huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
 	huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
 	huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
@@ -173,6 +191,16 @@ func (customPage *Settings) eventSync() {
 		cfg.GetInstance().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
 		cntModified++
 	}
+
+	if openAPIYouDaoAppKey != cfg.GetInstance().OpenAPIYouDao.AppKey {
+		cfg.GetInstance().OpenAPIYouDao.AppKey = openAPIYouDaoAppKey
+		cntModified++
+	}
+	if openAPIYouDaoAppSecret != cfg.GetInstance().OpenAPIYouDao.AppSecret {
+		cfg.GetInstance().OpenAPIYouDao.AppSecret = openAPIYouDaoAppSecret
+		cntModified++
+	}
+
 	if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
 		cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
 		cntModified++
