@@ -2,7 +2,7 @@ package _const
 
 const (
 	Author     = "speauty"
-	Version    = "v2.0.0"
+	Version    = "v2.5.0"
 	EnvDebug   = "debug"
 	EnvRelease = "release"
 
