@@ -3,6 +3,7 @@ package cfg
 import (
 	"fmt"
 	"sync"
+	"translator/tst/tt_translator/ali_cloud_mt"
 	"translator/tst/tt_translator/baidu"
 	"translator/tst/tt_translator/huawei_cloud_nlp"
 	"translator/tst/tt_translator/ling_va"
@@ -26,6 +27,7 @@ func GetInstance() *Cfg {
 		apiCfg.Baidu = baidu.Cfg{}.Default()
 		apiCfg.TencentCloudMT = tencent_cloud_mt.Cfg{}.Default()
 		apiCfg.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
+		apiCfg.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
 	})
 	return apiCfg
 }
@@ -38,6 +40,7 @@ type Cfg struct {
 	Baidu          *baidu.Cfg            `mapstructure:"baidu"`
 	TencentCloudMT *tencent_cloud_mt.Cfg `mapstructure:"tencent_cloud_mt"`
 	OpenAPIYouDao  *openapi_youdao.Cfg   `mapstructure:"openapi_youdao"`
+	AliCloudMT     *ali_cloud_mt.Cfg     `mapstructure:"ali_cloud_mt"`
 }
 
 func (customC *Cfg) NewUITitle() string {

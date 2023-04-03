@@ -5,7 +5,7 @@ huawei_cloud_nlp: # 华为云机器翻译
   project_id: ""        # 项目ID
 
 ling_va:
-  data_id: ""           # 数据ID
+  data_id: "3qnDcUVykFKnSC3cdRX2t"           # 数据ID
 
 baidu:
   app_id: ""            # 应用ID
@@ -18,3 +18,8 @@ tencent_cloud_mt:       # 腾讯云机器翻译
 openapi_youdao:         # 有道智云翻译
   app_key: ""           # 应用ID
   app_secret: ""        # 应用密钥
+
+ali_cloud_mt:           # 阿里云翻译
+  ak_id: ""             # 应用ID
+  ak_secret: ""         # 应用密钥
+  region: ""            # 区域

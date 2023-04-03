@@ -42,6 +42,8 @@ type Settings struct {
 	ptrTencentCloudMTSecretKey *walk.LineEdit
 	ptrOpenAPIYouDaoAppKey     *walk.LineEdit
 	ptrOpenAPIYouDaoAppSecret  *walk.LineEdit
+	ptrAliCloudMTAkId          *walk.LineEdit
+	ptrAliCloudMTAkSecret      *walk.LineEdit
 	ptrHuaweiCloudAKId         *walk.LineEdit
 	ptrHuaweiCloudSKKey        *walk.LineEdit
 	ptrHuaweiCloudAKProjectId  *walk.LineEdit
@@ -126,6 +128,20 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("阿里云翻译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkId).
+											SetText(cfg.GetInstance().AliCloudMT.AKId)),
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkSecret).
+											SetText(cfg.GetInstance().AliCloudMT.AKSecret)),
+									).GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
 						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -159,64 +175,92 @@ func (customPage *Settings) Reset() {
 }
 
 func (customPage *Settings) eventSync() {
-	lingVADataId := customPage.ptrLingVADataId.Text()
-	baiduAppId := customPage.ptrBaiduAppId.Text()
-	baiduAppKey := customPage.ptrBaiduAppKey.Text()
-	tencentCloudMTSecretId := customPage.ptrTencentCloudMTSecretId.Text()
-	tencentCloudMTSecretKey := customPage.ptrTencentCloudMTSecretKey.Text()
-	openAPIYouDaoAppKey := customPage.ptrOpenAPIYouDaoAppKey.Text()
-	openAPIYouDaoAppSecret := customPage.ptrOpenAPIYouDaoAppSecret.Text()
-	huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
-	huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
-	huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
-	huaweiCloudAKRegion := customPage.ptrHuaweiCloudAKRegion.Text()
 	cntModified := 0
-	if lingVADataId != cfg.GetInstance().LingVA.DataId {
-		cfg.GetInstance().LingVA.DataId = lingVADataId
-		cntModified++
-	}
-	if baiduAppId != cfg.GetInstance().Baidu.AppId {
-		cfg.GetInstance().Baidu.AppId = baiduAppId
-		cntModified++
-	}
-	if baiduAppKey != cfg.GetInstance().Baidu.AppKey {
-		cfg.GetInstance().Baidu.AppKey = baiduAppKey
-		cntModified++
-	}
-	if tencentCloudMTSecretId != cfg.GetInstance().TencentCloudMT.SecretId {
-		cfg.GetInstance().TencentCloudMT.SecretId = tencentCloudMTSecretId
-		cntModified++
-	}
-	if tencentCloudMTSecretKey != cfg.GetInstance().TencentCloudMT.SecretKey {
-		cfg.GetInstance().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
-		cntModified++
+
+	{
+		lingVADataId := customPage.ptrLingVADataId.Text()
+		if lingVADataId != cfg.GetInstance().LingVA.DataId {
+			cfg.GetInstance().LingVA.DataId = lingVADataId
+			cntModified++
+		}
 	}
 
-	if openAPIYouDaoAppKey != cfg.GetInstance().OpenAPIYouDao.AppKey {
-		cfg.GetInstance().OpenAPIYouDao.AppKey = openAPIYouDaoAppKey
-		cntModified++
-	}
-	if openAPIYouDaoAppSecret != cfg.GetInstance().OpenAPIYouDao.AppSecret {
-		cfg.GetInstance().OpenAPIYouDao.AppSecret = openAPIYouDaoAppSecret
-		cntModified++
+	{
+		baiduAppId := customPage.ptrBaiduAppId.Text()
+		baiduAppKey := customPage.ptrBaiduAppKey.Text()
+		if baiduAppId != cfg.GetInstance().Baidu.AppId {
+			cfg.GetInstance().Baidu.AppId = baiduAppId
+			cntModified++
+		}
+		if baiduAppKey != cfg.GetInstance().Baidu.AppKey {
+			cfg.GetInstance().Baidu.AppKey = baiduAppKey
+			cntModified++
+		}
 	}
 
-	if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
-		cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
-		cntModified++
+	{
+		tencentCloudMTSecretId := customPage.ptrTencentCloudMTSecretId.Text()
+		tencentCloudMTSecretKey := customPage.ptrTencentCloudMTSecretKey.Text()
+		if tencentCloudMTSecretId != cfg.GetInstance().TencentCloudMT.SecretId {
+			cfg.GetInstance().TencentCloudMT.SecretId = tencentCloudMTSecretId
+			cntModified++
+		}
+		if tencentCloudMTSecretKey != cfg.GetInstance().TencentCloudMT.SecretKey {
+			cfg.GetInstance().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
+			cntModified++
+		}
 	}
-	if huaweiCloudSKKey != cfg.GetInstance().HuaweiCloudNlp.SkKey {
-		cfg.GetInstance().HuaweiCloudNlp.SkKey = huaweiCloudSKKey
-		cntModified++
+
+	{
+		openAPIYouDaoAppKey := customPage.ptrOpenAPIYouDaoAppKey.Text()
+		openAPIYouDaoAppSecret := customPage.ptrOpenAPIYouDaoAppSecret.Text()
+		if openAPIYouDaoAppKey != cfg.GetInstance().OpenAPIYouDao.AppKey {
+			cfg.GetInstance().OpenAPIYouDao.AppKey = openAPIYouDaoAppKey
+			cntModified++
+		}
+		if openAPIYouDaoAppSecret != cfg.GetInstance().OpenAPIYouDao.AppSecret {
+			cfg.GetInstance().OpenAPIYouDao.AppSecret = openAPIYouDaoAppSecret
+			cntModified++
+		}
 	}
-	if huaweiCloudAKProjectId != cfg.GetInstance().HuaweiCloudNlp.ProjectId {
-		cfg.GetInstance().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
-		cntModified++
+
+	{
+		aliCloudMTAkId := customPage.ptrAliCloudMTAkId.Text()
+		aliCloudMTAkSecret := customPage.ptrAliCloudMTAkSecret.Text()
+		if aliCloudMTAkId != cfg.GetInstance().AliCloudMT.AKId {
+			cfg.GetInstance().AliCloudMT.AKId = aliCloudMTAkId
+			cntModified++
+		}
+		if aliCloudMTAkSecret != cfg.GetInstance().AliCloudMT.AKSecret {
+			cfg.GetInstance().AliCloudMT.AKSecret = aliCloudMTAkSecret
+			cntModified++
+		}
 	}
-	if huaweiCloudAKRegion != cfg.GetInstance().HuaweiCloudNlp.Region {
-		cfg.GetInstance().HuaweiCloudNlp.Region = huaweiCloudAKRegion
-		cntModified++
+
+	{
+		huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
+		huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
+		huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
+		huaweiCloudAKRegion := customPage.ptrHuaweiCloudAKRegion.Text()
+
+		if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
+			cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
+			cntModified++
+		}
+		if huaweiCloudSKKey != cfg.GetInstance().HuaweiCloudNlp.SkKey {
+			cfg.GetInstance().HuaweiCloudNlp.SkKey = huaweiCloudSKKey
+			cntModified++
+		}
+		if huaweiCloudAKProjectId != cfg.GetInstance().HuaweiCloudNlp.ProjectId {
+			cfg.GetInstance().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
+			cntModified++
+		}
+		if huaweiCloudAKRegion != cfg.GetInstance().HuaweiCloudNlp.Region {
+			cfg.GetInstance().HuaweiCloudNlp.Region = huaweiCloudAKRegion
+			cntModified++
+		}
 	}
+
 	if cntModified == 0 {
 		msg.Info(customPage.mainWindow, "暂无配置需要同步")
 		return

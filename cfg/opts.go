@@ -53,6 +53,12 @@ func (customC *Cfg) Sync() error {
 		viper.Set("openapi_youdao.app_secret", customC.OpenAPIYouDao.AppSecret)
 	}
 
+	{ // sync ali_cloud_mt
+		viper.Set("ali_cloud_mt.ak_id", customC.AliCloudMT.AKId)
+		viper.Set("ali_cloud_mt.ak_secret", customC.AliCloudMT.AKSecret)
+		viper.Set("ali_cloud_mt.region", customC.AliCloudMT.Region)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

@@ -8,6 +8,7 @@ import (
 	"translator/menu"
 	"translator/page"
 	"translator/tst/tt_log"
+	"translator/tst/tt_translator/ali_cloud_mt"
 	"translator/tst/tt_translator/baidu"
 	"translator/tst/tt_translator/huawei_cloud_nlp"
 	"translator/tst/tt_translator/ling_va"
@@ -34,11 +35,13 @@ func main() {
 	baidu.GetInstance().Init(cfg.GetInstance().Baidu)
 	tencent_cloud_mt.GetInstance().Init(cfg.GetInstance().TencentCloudMT)
 	openapi_youdao.GetInstance().Init(cfg.GetInstance().OpenAPIYouDao)
+	ali_cloud_mt.GetInstance().Init(cfg.GetInstance().AliCloudMT)
 
 	domain.GetTranslators().Register(
 		huawei_cloud_nlp.GetInstance(),
 		youdao.GetInstance(), ling_va.GetInstance(), baidu.GetInstance(),
 		tencent_cloud_mt.GetInstance(), openapi_youdao.GetInstance(),
+		ali_cloud_mt.GetInstance(),
 	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
