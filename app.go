@@ -42,6 +42,7 @@ func main() {
 		youdao.GetInstance(), ling_va.GetInstance(), baidu.GetInstance(),
 		tencent_cloud_mt.GetInstance(), openapi_youdao.GetInstance(),
 		ali_cloud_mt.GetInstance(),
+		//deepl.GetInstance(),
 	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
@@ -54,7 +55,7 @@ func main() {
 		panic(err)
 	}
 
-	_ = tt_ui.GetInstance().GoPage(page.GetSettings().GetId())
+	_ = tt_ui.GetInstance().GoPage(page.GetAboutUs().GetId())
 
 	tt_ui.GetInstance().Run()
 }
