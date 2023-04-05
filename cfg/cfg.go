@@ -5,6 +5,7 @@ import (
 	"sync"
 	"translator/tst/tt_translator/ali_cloud_mt"
 	"translator/tst/tt_translator/baidu"
+	"translator/tst/tt_translator/caiyunai"
 	"translator/tst/tt_translator/huawei_cloud_nlp"
 	"translator/tst/tt_translator/ling_va"
 	"translator/tst/tt_translator/openapi_youdao"
@@ -28,6 +29,7 @@ func GetInstance() *Cfg {
 		apiCfg.TencentCloudMT = tencent_cloud_mt.Cfg{}.Default()
 		apiCfg.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
 		apiCfg.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
+		apiCfg.CaiYunAI = caiyunai.Cfg{}.Default()
 	})
 	return apiCfg
 }
@@ -41,6 +43,7 @@ type Cfg struct {
 	TencentCloudMT *tencent_cloud_mt.Cfg `mapstructure:"tencent_cloud_mt"`
 	OpenAPIYouDao  *openapi_youdao.Cfg   `mapstructure:"openapi_youdao"`
 	AliCloudMT     *ali_cloud_mt.Cfg     `mapstructure:"ali_cloud_mt"`
+	CaiYunAI       *caiyunai.Cfg         `mapstructure:"caiyun_ai"`
 }
 
 func (customC *Cfg) NewUITitle() string {

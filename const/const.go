@@ -38,6 +38,7 @@ ali_cloud_mt:           # 阿里云翻译
   ak_id: ""             # 应用ID
   ak_secret: ""         # 应用密钥
   region: ""            # 区域
-
+caiyun_ai:                      # 彩云小翻译
+  token: "3975l6lr5pcbvidl6jl2" # 密钥
 `
 )

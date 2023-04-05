@@ -59,6 +59,10 @@ func (customC *Cfg) Sync() error {
 		viper.Set("ali_cloud_mt.region", customC.AliCloudMT.Region)
 	}
 
+	{ // sync caiyun_ai
+		viper.Set("caiyun_ai.token", customC.CaiYunAI.Token)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

@@ -44,6 +44,7 @@ type Settings struct {
 	ptrOpenAPIYouDaoAppSecret  *walk.LineEdit
 	ptrAliCloudMTAkId          *walk.LineEdit
 	ptrAliCloudMTAkSecret      *walk.LineEdit
+	ptrCaiYunAIToken           *walk.LineEdit
 	ptrHuaweiCloudAKId         *walk.LineEdit
 	ptrHuaweiCloudSKKey        *walk.LineEdit
 	ptrHuaweiCloudAKProjectId  *walk.LineEdit
@@ -142,6 +143,17 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
+						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrCaiYunAIToken).
+											SetText(cfg.GetInstance().CaiYunAI.Token)),
+									).GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
 						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -233,6 +245,14 @@ func (customPage *Settings) eventSync() {
 		}
 		if aliCloudMTAkSecret != cfg.GetInstance().AliCloudMT.AKSecret {
 			cfg.GetInstance().AliCloudMT.AKSecret = aliCloudMTAkSecret
+			cntModified++
+		}
+	}
+	// ptrCaiYunAIToken
+	{
+		caiYunAIToken := customPage.ptrCaiYunAIToken.Text()
+		if caiYunAIToken != cfg.GetInstance().CaiYunAI.Token {
+			cfg.GetInstance().CaiYunAI.Token = caiYunAIToken
 			cntModified++
 		}
 	}
