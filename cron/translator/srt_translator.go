@@ -152,7 +152,7 @@ func (customST *SrtTranslator) jobTranslator() {
 						})
 						if err != nil {
 							chanMsg <- fmt.Sprintf("翻译异常, 引擎: %s, %s", currentData.PtrOpts.Translator.GetName(), err)
-							continue
+							break
 						}
 						for _, result := range translateRes.Results {
 							for blockIdx, block := range currentData.PrtSrt.Blocks {

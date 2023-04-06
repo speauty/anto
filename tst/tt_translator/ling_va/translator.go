@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/golang-module/carbon"
 	"go.uber.org/zap"
-	"io"
-	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -32,7 +30,7 @@ func New() *Translator {
 		name:          "Lingva",
 		qps:           10,
 		procMax:       20,
-		textMaxLen:    2000,
+		textMaxLen:    1000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -69,23 +67,13 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
 	)
-	httpResp, err := http.DefaultClient.Get(queryUrl)
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
+	respBytes, err := tt_translator.RequestSimpleGet(customT, queryUrl)
 	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
+		return nil, err
 	}
 	lingVaResp := new(lingVaMTResp)
 	if err := json.Unmarshal(respBytes, lingVaResp); err != nil {
+		fmt.Println(string(respBytes))
 		tt_log.GetInstance().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}

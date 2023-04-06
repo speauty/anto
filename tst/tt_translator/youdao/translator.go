@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/golang-module/carbon"
 	"go.uber.org/zap"
-	"io"
-	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -69,20 +67,10 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		strings.ToUpper(args.FromLang), strings.ToUpper(args.ToLang),
 		url.QueryEscape(args.TextContent),
 	)
-	httpResp, err := http.DefaultClient.Get(urlQueried)
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
+
+	respBytes, err := tt_translator.RequestSimpleGet(customT, urlQueried)
 	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
+		return nil, err
 	}
 	youDaoResp := new(youDaoMTResp)
 	if err := json.Unmarshal(respBytes, youDaoResp); err != nil {

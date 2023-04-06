@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"github.com/golang-module/carbon"
 	"github.com/google/go-querystring/query"
-	"io"
-	"net/http"
 	"strings"
 	"sync"
 	"translator/tst/tt_log"
@@ -79,20 +77,9 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 	newReq.Sign = customT.signBuilder(strings.Join(texts, ""), newReq.Salt, newReq.CurrentTime)
 	params, _ := query.Values(newReq)
 	urlQueried := fmt.Sprintf("%s?%s", customT.api, params.Encode())
-	httpResp, err := http.DefaultClient.Get(urlQueried)
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
+	respBytes, err := tt_translator.RequestSimpleGet(customT, urlQueried)
 	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("引擎: %s, 错误: 调用接口失败(%s)", customT.GetName(), err))
-		return nil, fmt.Errorf("错误: 网络请求出现异常(%s)", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("引擎: %s, 错误: 读取报文异常(%s)", customT.GetName(), err))
-		return nil, fmt.Errorf("错误: 读取报文出现异常(%s)", err.Error())
+		return nil, err
 	}
 	newResp := new(remoteResp)
 	if err := json.Unmarshal(respBytes, newResp); err != nil {

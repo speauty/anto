@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"io"
-	"net/http"
 	"net/url"
 	"sync"
 	"translator/tst/tt_log"
@@ -74,21 +72,9 @@ func (customT *Translator) Translate(args *tt_translator.TranslateArgs) (*tt_tra
 		url.QueryEscape(args.TextContent), args.FromLang, args.ToLang,
 		customT.cfg.AppId, salt, sign,
 	)
-	httpResp, err := http.DefaultClient.Get(urlQueried)
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
-
+	respBytes, err := tt_translator.RequestSimpleGet(customT, urlQueried)
 	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		tt_log.GetInstance().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
+		return nil, err
 	}
 	respObj := new(remoteResp)
 	if err := json.Unmarshal(respBytes, respObj); err != nil {
