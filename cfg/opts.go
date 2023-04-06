@@ -32,11 +32,13 @@ func (customC *Cfg) Sync() error {
 		viper.Set("huawei_cloud_nlp.sk_key", customC.HuaweiCloudNlp.SkKey)
 		viper.Set("huawei_cloud_nlp.project_id", customC.HuaweiCloudNlp.ProjectId)
 		viper.Set("huawei_cloud_nlp.region", customC.HuaweiCloudNlp.Region)
+		viper.Set("huawei_cloud_nlp.max_single_text_length", customC.HuaweiCloudNlp.MaxSingleTextLength)
 	}
 
 	{ // sync baidu
 		viper.Set("baidu.app_id", customC.Baidu.AppId)
 		viper.Set("baidu.app_key", customC.Baidu.AppKey)
+		viper.Set("baidu.max_single_text_length", customC.Baidu.MaxSingleTextLength)
 	}
 
 	{ // sync ling_va
@@ -53,16 +55,19 @@ func (customC *Cfg) Sync() error {
 	{ // sync openapi_youdao
 		viper.Set("openapi_youdao.app_key", customC.OpenAPIYouDao.AppKey)
 		viper.Set("openapi_youdao.app_secret", customC.OpenAPIYouDao.AppSecret)
+		viper.Set("openapi_youdao.max_single_text_length", customC.OpenAPIYouDao.MaxSingleTextLength)
 	}
 
 	{ // sync ali_cloud_mt
 		viper.Set("ali_cloud_mt.ak_id", customC.AliCloudMT.AKId)
 		viper.Set("ali_cloud_mt.ak_secret", customC.AliCloudMT.AKSecret)
 		viper.Set("ali_cloud_mt.region", customC.AliCloudMT.Region)
+		viper.Set("ali_cloud_mt.max_single_text_length", customC.AliCloudMT.MaxSingleTextLength)
 	}
 
 	{ // sync caiyun_ai
 		viper.Set("caiyun_ai.token", customC.CaiYunAI.Token)
+		viper.Set("caiyun_ai.max_single_text_length", customC.CaiYunAI.MaxSingleTextLength)
 	}
 
 	if err := viper.WriteConfig(); err != nil {
