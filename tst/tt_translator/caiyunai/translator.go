@@ -52,12 +52,17 @@ type Translator struct {
 
 func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
 
-func (customT *Translator) GetId() string                           { return customT.id }
-func (customT *Translator) GetName() string                         { return customT.name }
-func (customT *Translator) GetCfg() interface{}                     { return nil }
-func (customT *Translator) GetQPS() int                             { return customT.qps }
-func (customT *Translator) GetProcMax() int                         { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
+func (customT *Translator) GetId() string       { return customT.id }
+func (customT *Translator) GetName() string     { return customT.name }
+func (customT *Translator) GetCfg() interface{} { return nil }
+func (customT *Translator) GetQPS() int         { return customT.qps }
+func (customT *Translator) GetProcMax() int     { return customT.procMax }
+func (customT *Translator) GetTextMaxLen() int {
+	if customT.cfg.MaxSingleTextLength > 0 {
+		return customT.cfg.MaxSingleTextLength
+	}
+	return customT.textMaxLen
+}
 func (customT *Translator) GetLangSupported() []tt_translator.LangK { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool                           { return customT.cfg != nil && customT.cfg.Token != "" }

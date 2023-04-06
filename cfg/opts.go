@@ -41,11 +41,13 @@ func (customC *Cfg) Sync() error {
 
 	{ // sync ling_va
 		viper.Set("ling_va.data_id", customC.LingVA.DataId)
+		viper.Set("ling_va.max_single_text_length", customC.LingVA.MaxSingleTextLength)
 	}
 
 	{ // sync tencent_cloud_mt
 		viper.Set("tencent_cloud_mt.secret_id", customC.TencentCloudMT.SecretId)
 		viper.Set("tencent_cloud_mt.secret_key", customC.TencentCloudMT.SecretKey)
+		viper.Set("tencent_cloud_mt.max_single_text_length", customC.TencentCloudMT.MaxSingleTextLength)
 	}
 
 	{ // sync openapi_youdao
