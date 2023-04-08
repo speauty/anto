@@ -38,6 +38,7 @@ type StrDetectorData struct {
 	MainTrackReport _type.LangDirection
 	SrtFile         string
 	SrtDir          string
+	FlagTrackExport int
 }
 
 func (customSDD StrDetectorData) toReaderData(filePath string) *reader.SrtReaderData {
@@ -49,6 +50,7 @@ func (customSDD StrDetectorData) toReaderData(filePath string) *reader.SrtReader
 			ToLang:          customSDD.ToLang,
 			TranslateMode:   customSDD.TranslateMode,
 			MainTrackReport: customSDD.MainTrackReport,
+			FlagTrackExport: customSDD.FlagTrackExport,
 		},
 	}
 }

@@ -62,6 +62,8 @@ type SubripTranslate struct {
 	ptrMode       *walk.ComboBox
 	ptrMainExport *walk.ComboBox
 
+	ptrFlagTrackExport *walk.ComboBox
+
 	ptrSrtFile *walk.Label
 	ptrSrtDir  *walk.Label
 
@@ -106,6 +108,8 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 			pack.NewWidgetGroup().Append(
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译模式")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrMode).SetModel(_type.ModeDelta.GetModes()).SetCurrentIdx(_type.ModeDelta.GetIdx())),
+				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出轨道")),
+				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFlagTrackExport).SetModel([]string{"全部轨道", "主轨", "副轨"}).SetCurrentIdx(0)),
 				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出主轨道")),
 				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrMainExport).SetModel(_type.LangDirectionFrom.GetDirections()).SetCurrentIdx(0)),
 			).AppendZeroHSpacer().GetWidgets(),
@@ -219,11 +223,10 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		msg.Err(customPage.mainWindow, errors.New("请选择字幕文件或目录, 优先使用字幕文件"))
 		return
 	}
-
 	detector.GetInstance().Push(&detector.StrDetectorData{
 		Translator: currentEngine, FromLang: fromLang, ToLang: toLang,
 		TranslateMode: _type.TranslateMode(mode), MainTrackReport: _type.LangDirection(mainTrackExport),
-		SrtFile: strFile, SrtDir: strDir,
+		SrtFile: strFile, SrtDir: strDir, FlagTrackExport: customPage.ptrFlagTrackExport.CurrentIndex(),
 	})
 
 	if customPage.ptrSrtFile != nil {

@@ -35,7 +35,10 @@ func (customSTD *SrtTranslatorData) toSrtWriterData() *writer.SrtWriterData {
 	tmpData := &writer.SrtWriterData{
 		FileNameSaved: customSTD.fileNameSavedBuilder(),
 		PrtSrt:        customSTD.PrtSrt,
-		PtrOpts:       &tt_srt.EncodeOpt{FlagIsInverse: customSTD.PtrOpts.MainTrackReport == _type.LangDirectionTo},
+		PtrOpts: &tt_srt.EncodeOpt{
+			FlagIsInverse:   customSTD.PtrOpts.MainTrackReport == _type.LangDirectionTo,
+			FlagTrackExport: customSTD.PtrOpts.FlagTrackExport,
+		},
 	}
 	return tmpData
 }
@@ -54,6 +57,7 @@ type SrtTranslatorOpts struct {
 	ToLang          string
 	TranslateMode   _type.TranslateMode
 	MainTrackReport _type.LangDirection
+	FlagTrackExport int
 }
 
 type SrtTranslator struct {

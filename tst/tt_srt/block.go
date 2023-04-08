@@ -80,14 +80,34 @@ func (customB *SrtBlock) decodeSubTrack(lineStr string) (isSub bool, err error) 
 	return
 }
 
-func (customB *SrtBlock) encode(flagInverse bool) []byte {
+func (customB *SrtBlock) encode(flagInverse bool, flagTrackExportedMode int) []byte {
 	blockStr := fmt.Sprintf("%d\n%s %s %s\n", customB.SeqNo,
 		customB.TimeStart, customB.TimeSep, customB.TimeEnd)
-	if flagInverse == false || customB.SubTrack == "" {
-		blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.MainTrack, customB.SubTrack)
-		return []byte(blockStr)
+	if customB.SubTrack == "" {
+		blockStr = fmt.Sprintf("%s%s\n", blockStr, customB.MainTrack)
+	} else {
+		if flagTrackExportedMode != 0 {
+			if flagTrackExportedMode == 1 {
+				if flagInverse == true {
+					blockStr = fmt.Sprintf("%s%s\n", blockStr, customB.SubTrack)
+				} else {
+					blockStr = fmt.Sprintf("%s%s\n", blockStr, customB.MainTrack)
+				}
+			} else if flagTrackExportedMode == 2 {
+				if flagInverse == true {
+					blockStr = fmt.Sprintf("%s%s\n", blockStr, customB.MainTrack)
+				} else {
+					blockStr = fmt.Sprintf("%s%s\n", blockStr, customB.SubTrack)
+				}
+			}
+		} else {
+			if flagInverse == false {
+				blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.MainTrack, customB.SubTrack)
+			} else {
+				blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.SubTrack, customB.MainTrack)
+			}
+		}
 	}
-	blockStr = fmt.Sprintf("%s%s\n%s\n", blockStr, customB.SubTrack, customB.MainTrack)
 
 	return []byte(blockStr)
 }
