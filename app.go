@@ -1,22 +1,22 @@
 package main
 
 import (
-	"translator/boot"
-	"translator/cfg"
-	_const "translator/const"
-	"translator/domain"
-	"translator/menu"
-	"translator/page"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator/ali_cloud_mt"
-	"translator/tst/tt_translator/baidu"
-	"translator/tst/tt_translator/caiyunai"
-	"translator/tst/tt_translator/huawei_cloud_nlp"
-	"translator/tst/tt_translator/ling_va"
-	"translator/tst/tt_translator/openapi_youdao"
-	"translator/tst/tt_translator/tencent_cloud_mt"
-	"translator/tst/tt_translator/youdao"
-	"translator/tst/tt_ui"
+	"anto/boot"
+	"anto/cfg"
+	_const "anto/const"
+	"anto/domain"
+	"anto/menu"
+	"anto/page"
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator/ali_cloud_mt"
+	"anto/tst/tt_translator/baidu"
+	"anto/tst/tt_translator/caiyunai"
+	"anto/tst/tt_translator/huawei_cloud_nlp"
+	"anto/tst/tt_translator/ling_va"
+	"anto/tst/tt_translator/openapi_youdao"
+	"anto/tst/tt_translator/tencent_cloud_mt"
+	"anto/tst/tt_translator/youdao"
+	"anto/tst/tt_ui"
 )
 
 func main() {
@@ -44,7 +44,6 @@ func main() {
 		youdao.GetInstance(), ling_va.GetInstance(), baidu.GetInstance(),
 		tencent_cloud_mt.GetInstance(), openapi_youdao.GetInstance(),
 		ali_cloud_mt.GetInstance(), caiyunai.GetInstance(),
-		//deepl.GetInstance(),
 	)
 
 	tt_ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())

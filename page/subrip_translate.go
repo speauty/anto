@@ -1,23 +1,23 @@
 package page
 
 import (
+	"anto/cron/detector"
+	"anto/cron/reader"
+	"anto/cron/translator"
+	"anto/cron/writer"
+	"anto/domain"
+	"anto/tst/tt_translator/ling_va"
+	"anto/tst/tt_ui/handle"
+	"anto/tst/tt_ui/msg"
+	"anto/tst/tt_ui/pack"
+	_type "anto/type"
+	"anto/util"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
-	"translator/cron/detector"
-	"translator/cron/reader"
-	"translator/cron/translator"
-	"translator/cron/writer"
-	"translator/domain"
-	"translator/tst/tt_translator/ling_va"
-	"translator/tst/tt_ui/handle"
-	"translator/tst/tt_ui/msg"
-	"translator/tst/tt_ui/pack"
-	_type "translator/type"
-	"translator/util"
 )
 
 var (

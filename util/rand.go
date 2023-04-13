@@ -1,8 +1,8 @@
 package util
 
 import (
+	_const "anto/const"
 	"github.com/twharmon/gouid"
-	_const "translator/const"
 )
 
 func Uid() string {

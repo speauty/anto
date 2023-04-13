@@ -1,6 +1,9 @@
 package openapi_youdao
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
+	"anto/util"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -9,9 +12,6 @@ import (
 	"github.com/google/go-querystring/query"
 	"strings"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
-	"translator/util"
 )
 
 var (

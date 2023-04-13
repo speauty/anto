@@ -1,6 +1,6 @@
 package tt_ui
 
-import _const "translator/const"
+import _const "anto/const"
 
 type Cfg struct {
 	Title       string `mapstructure:"title"`

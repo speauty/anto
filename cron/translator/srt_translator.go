@@ -1,16 +1,16 @@
 package translator
 
 import (
+	"anto/cron/writer"
+	"anto/tst/tt_log"
+	"anto/tst/tt_srt"
+	"anto/tst/tt_translator"
+	_type "anto/type"
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
 	"runtime"
 	"sync"
-	"translator/cron/writer"
-	"translator/tst/tt_log"
-	"translator/tst/tt_srt"
-	"translator/tst/tt_translator"
-	_type "translator/type"
 )
 
 var (

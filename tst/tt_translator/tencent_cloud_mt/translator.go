@@ -1,6 +1,8 @@
 package tencent_cloud_mt
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,8 +12,6 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	"strings"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
 )
 
 var (

@@ -1,15 +1,15 @@
 package menu
 
 import (
+	"anto/page"
+	"anto/tst/tt_log"
+	"anto/tst/tt_ui"
+	"anto/tst/tt_ui/msg"
 	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
 	"sync"
-	"translator/page"
-	"translator/tst/tt_log"
-	"translator/tst/tt_ui"
-	"translator/tst/tt_ui/msg"
 )
 
 var (

@@ -1,6 +1,9 @@
 package caiyunai
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
+	"anto/util"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -9,9 +12,6 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
-	"translator/util"
 )
 
 var (

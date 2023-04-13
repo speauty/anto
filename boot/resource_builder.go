@@ -1,10 +1,10 @@
 package boot
 
 import (
+	_const "anto/const"
 	_ "embed"
 	"fmt"
 	"os"
-	_const "translator/const"
 )
 
 //go:embed favicon.ico

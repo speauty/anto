@@ -1,11 +1,11 @@
 package tt_srt
 
 import (
+	"anto/util"
 	"bufio"
 	"fmt"
 	"io"
 	"strings"
-	"translator/util"
 )
 
 func (customS *Srt) Decode(fileStream io.Reader) (err error) {

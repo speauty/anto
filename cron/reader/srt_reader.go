@@ -1,6 +1,9 @@
 package reader
 
 import (
+	"anto/cron/translator"
+	"anto/tst/tt_log"
+	"anto/tst/tt_srt"
 	"bytes"
 	"context"
 	"fmt"
@@ -9,9 +12,6 @@ import (
 	"os"
 	"runtime"
 	"sync"
-	"translator/cron/translator"
-	"translator/tst/tt_log"
-	"translator/tst/tt_srt"
 )
 
 var (

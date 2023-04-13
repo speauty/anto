@@ -1,14 +1,14 @@
 package writer
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_srt"
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
 	"os"
 	"runtime"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_srt"
 )
 
 var (
@@ -36,6 +36,7 @@ type SrtWriter struct {
 	chanMsgWriter   chan string
 	chanMsgRedirect chan string
 	maxChanWriter   int
+	test            sync.Locker
 }
 
 func (customSW *SrtWriter) SetMsgRedirect(chanMsg chan string) {

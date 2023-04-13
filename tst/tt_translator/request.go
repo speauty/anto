@@ -1,10 +1,10 @@
 package tt_translator
 
 import (
+	"anto/tst/tt_log"
 	"fmt"
 	"io"
 	"net/http"
-	"translator/tst/tt_log"
 )
 
 func RequestSimpleGet(engine ITranslator, url string) ([]byte, error) {

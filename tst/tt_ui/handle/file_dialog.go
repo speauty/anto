@@ -1,9 +1,9 @@
 package handle
 
 import (
+	"anto/tst/tt_ui/msg"
 	"fmt"
 	"github.com/lxn/walk"
-	"translator/tst/tt_ui/msg"
 )
 
 func FileDialogHandle(args *FileDialogHandleArgs) {

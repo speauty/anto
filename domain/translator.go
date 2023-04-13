@@ -1,12 +1,12 @@
 package domain
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
+	_type "anto/type"
 	"fmt"
 	"sort"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
-	_type "translator/type"
 )
 
 var (

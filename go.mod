@@ -1,4 +1,4 @@
-module translator
+module anto
 
 go 1.19
 

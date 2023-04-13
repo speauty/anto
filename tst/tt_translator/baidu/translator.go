@@ -1,15 +1,15 @@
 package baidu
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
+	"anto/util"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
 	"net/url"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
-	"translator/util"
 )
 
 var api = "https://fanyi-api.baidu.com/api/trans/vip/translate"

@@ -1,8 +1,8 @@
 package huawei_cloud_nlp
 
 import (
+	"anto/tst/tt_translator"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/nlp/v2/model"
-	"translator/tst/tt_translator"
 )
 
 var langSupported = []tt_translator.LangK{

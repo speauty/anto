@@ -1,6 +1,6 @@
 package cfg
 
-import _const "translator/const"
+import _const "anto/const"
 
 type App struct {
 	Env     string `mapstructure:"env"`

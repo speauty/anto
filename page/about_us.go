@@ -1,11 +1,11 @@
 package page
 
 import (
+	"anto/tst/tt_ui/pack"
+	"anto/util"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
-	"translator/tst/tt_ui/pack"
-	"translator/util"
 )
 
 var (

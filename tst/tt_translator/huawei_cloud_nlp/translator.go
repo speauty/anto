@@ -1,6 +1,8 @@
 package huawei_cloud_nlp
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
 	"errors"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -10,8 +12,6 @@ import (
 	region "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/nlp/v2/region"
 	"strings"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
 )
 
 var (

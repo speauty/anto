@@ -1,11 +1,11 @@
 package tt_ui
 
 import (
+	"anto/tst/tt_log"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"github.com/lxn/win"
 	"sync"
-	"translator/tst/tt_log"
 )
 
 const width = 800

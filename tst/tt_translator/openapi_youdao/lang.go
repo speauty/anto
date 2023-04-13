@@ -1,6 +1,6 @@
 package openapi_youdao
 
-import "translator/tst/tt_translator"
+import "anto/tst/tt_translator"
 
 var langSupported = []tt_translator.LangK{
 	{"zh-CHS", "中文"},

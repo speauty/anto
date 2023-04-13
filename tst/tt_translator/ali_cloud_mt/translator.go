@@ -1,6 +1,8 @@
 package ali_cloud_mt
 
 import (
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
 	"encoding/json"
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
@@ -10,8 +12,6 @@ import (
 	"github.com/spf13/cast"
 	"strings"
 	"sync"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
 )
 
 var (

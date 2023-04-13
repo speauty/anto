@@ -1,9 +1,9 @@
 package page
 
 import (
+	"anto/tst/tt_ui/pack"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"translator/tst/tt_ui/pack"
 )
 
 func StdRootWidget(rootWidget **walk.Composite, widgets ...Widget) Widget {

@@ -1,6 +1,11 @@
 package page
 
 import (
+	"anto/cfg"
+	"anto/tst/tt_log"
+	"anto/tst/tt_ui/msg"
+	"anto/tst/tt_ui/pack"
+	"anto/util"
 	"errors"
 	"fmt"
 	"github.com/lxn/walk"
@@ -8,11 +13,6 @@ import (
 	"go.uber.org/zap"
 	"strconv"
 	"sync"
-	"translator/cfg"
-	"translator/tst/tt_log"
-	"translator/tst/tt_ui/msg"
-	"translator/tst/tt_ui/pack"
-	"translator/util"
 )
 
 var (

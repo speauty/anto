@@ -2,6 +2,12 @@
 package detector
 
 import (
+	"anto/cron/reader"
+	"anto/cron/translator"
+	"anto/tst/tt_log"
+	"anto/tst/tt_translator"
+	_type "anto/type"
+	"anto/util"
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -9,12 +15,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
-	"translator/cron/reader"
-	"translator/cron/translator"
-	"translator/tst/tt_log"
-	"translator/tst/tt_translator"
-	_type "translator/type"
-	"translator/util"
 )
 
 var (

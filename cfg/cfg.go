@@ -1,16 +1,16 @@
 package cfg
 
 import (
+	"anto/tst/tt_translator/ali_cloud_mt"
+	"anto/tst/tt_translator/baidu"
+	"anto/tst/tt_translator/caiyunai"
+	"anto/tst/tt_translator/huawei_cloud_nlp"
+	"anto/tst/tt_translator/ling_va"
+	"anto/tst/tt_translator/openapi_youdao"
+	"anto/tst/tt_translator/tencent_cloud_mt"
+	"anto/tst/tt_ui"
 	"fmt"
 	"sync"
-	"translator/tst/tt_translator/ali_cloud_mt"
-	"translator/tst/tt_translator/baidu"
-	"translator/tst/tt_translator/caiyunai"
-	"translator/tst/tt_translator/huawei_cloud_nlp"
-	"translator/tst/tt_translator/ling_va"
-	"translator/tst/tt_translator/openapi_youdao"
-	"translator/tst/tt_translator/tencent_cloud_mt"
-	"translator/tst/tt_ui"
 )
 
 var (
