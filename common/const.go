@@ -2,7 +2,7 @@ package common
 
 const (
 	Author  = "speauty"
-	Version = "v2.8.2"
+	Version = "v2.9.2"
 
 	GoUidLen = 8
 

@@ -1,8 +1,13 @@
-init:
-	go mod tidy
+deployWin: rs build compress
 
-buildWin:
-	go build "-ldflags=-w -s -H=windowsgui" -o .\bin\anto.exe anto && upx -9 .\bin\anto.exe
+build:
+	go build "-ldflags=-w -s -H=windowsgui" -o .\bin\anto.exe anto
 
-rsrs:
+compress:
+	upx -9 .\bin\anto.exe
+
+rs:
 	rsrc -manifest anto.manifest -ico favicon.ico -o rsrc.syso
+
+tidy:
+	go mod tidy
