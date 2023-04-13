@@ -1,10 +1,10 @@
 package translate
 
 import (
+	_type "anto/common"
 	"anto/cron/writer"
 	"anto/dependency/service/translator"
 	"anto/lib/srt"
-	_type "anto/type"
 	"fmt"
 )
 

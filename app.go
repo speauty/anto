@@ -1,13 +1,10 @@
 package main
 
 import (
-	"anto/boot"
+	"anto/bootstrap"
 	"anto/cfg"
-	_const "anto/const"
-	"anto/cron/detector"
-	"anto/cron/reader"
-	"anto/cron/translate"
-	"anto/cron/writer"
+	_const "anto/common"
+	"anto/dependency/repository"
 	"anto/dependency/service/translator/ali_cloud_mt"
 	"anto/dependency/service/translator/baidu"
 	"anto/dependency/service/translator/caiyunai"
@@ -16,19 +13,15 @@ import (
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
 	"anto/dependency/service/translator/youdao"
-	"anto/domain"
 	"anto/lib/log"
-	"anto/lib/nohup"
-	"anto/lib/ui"
-	"anto/menu"
-	"anto/page"
+	"anto/platform/win"
 	"context"
 )
 
 func main() {
 	ctx := context.Background()
 
-	new(boot.ResourceBuilder).Install()
+	new(bootstrap.ResourceBuilder).Install()
 
 	if err := cfg.GetInstance().Load(""); err != nil {
 		panic(err)
@@ -47,28 +40,12 @@ func main() {
 	ali_cloud_mt.Singleton().Init(cfg.GetInstance().AliCloudMT)
 	caiyunai.Singleton().Init(cfg.GetInstance().CaiYunAI)
 
-	domain.GetTranslators().Register(
+	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),
 		youdao.Singleton(), ling_va.Singleton(), baidu.Singleton(),
 		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
 		ali_cloud_mt.Singleton(), caiyunai.Singleton(),
 	)
 
-	ui.GetInstance().RegisterMenus(menu.GetInstance().GetMenus())
-
-	ui.GetInstance().RegisterPages(
-		page.GetAboutUs(), page.GetSettings(), page.GetUsage(), page.GetSubripTranslate(),
-	)
-
-	if err := ui.GetInstance().Init(cfg.GetInstance().UI); err != nil {
-		panic(err)
-	}
-
-	_ = ui.GetInstance().GoPage(page.GetAboutUs().GetId())
-
-	nohup.NewResident(
-		ctx,
-		detector.Singleton(), reader.Singleton(), translate.Singleton(), writer.Singleton(),
-		ui.GetInstance(),
-	)
+	win.Run(ctx)
 }

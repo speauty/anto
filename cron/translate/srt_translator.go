@@ -1,12 +1,12 @@
 package translate
 
 import (
+	_type "anto/common"
 	"anto/cron"
 	"anto/cron/writer"
 	"anto/dependency/service/translator"
 	"anto/lib/log"
 	"anto/lib/util"
-	_type "anto/type"
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"

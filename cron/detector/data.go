@@ -1,10 +1,10 @@
 package detector
 
 import (
+	_type "anto/common"
 	"anto/cron/reader"
 	"anto/cron/translate"
 	"anto/dependency/service/translator"
-	_type "anto/type"
 )
 
 type StrDetectorData struct {

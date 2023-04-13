@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="anto" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="工具-字幕翻译" />
-    <working_directory value="$PROJECT_DIR$/bin" />
+    <working_directory value="$PROJECT_DIR$/../anto/bin" />
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
@@ -16,7 +16,7 @@
     <package value="anto" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/app.go" />
-    <output_directory value="$PROJECT_DIR$/bin" />
+    <output_directory value="$PROJECT_DIR$/../anto/bin" />
     <method v="2" />
   </configuration>
 </component>

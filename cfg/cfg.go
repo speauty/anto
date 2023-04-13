@@ -8,7 +8,7 @@ import (
 	"anto/dependency/service/translator/ling_va"
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
-	"anto/lib/ui"
+	"anto/platform/win/ui"
 	"fmt"
 	"sync"
 )
@@ -48,8 +48,7 @@ type Cfg struct {
 
 func (customC *Cfg) NewUITitle() string {
 	return fmt.Sprintf(
-		"%s-%s-%s@%s",
-		customC.UI.Title, customC.App.Version,
-		customC.App.Env, customC.App.Author,
+		"%s-%s@%s",
+		customC.UI.Title, customC.App.Version, customC.App.Author,
 	)
 }

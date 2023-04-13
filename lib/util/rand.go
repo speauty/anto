@@ -1,7 +1,7 @@
 package util
 
 import (
-	_const "anto/const"
+	_const "anto/common"
 	"github.com/twharmon/gouid"
 )
 
