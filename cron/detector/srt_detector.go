@@ -92,10 +92,13 @@ func (customCron *SrtDetector) jobDetector() {
 						continue
 					}
 					_ = filepath.Walk(currentData.SrtDir, func(path string, info fs.FileInfo, err error) error {
-						if info.IsDir() || !util.IsSrtFile(path) || info.Size() == 0 {
-							if path != currentData.SrtDir { // 跳过二级目录
+						if info.IsDir() {
+							if path != currentData.SrtDir {
 								return filepath.SkipDir
 							}
+							return nil
+						}
+						if !util.IsSrtFile(path) || info.Size() == 0 {
 							return nil
 						}
 						reader.Singleton().Push(currentData.toReaderData(path))
