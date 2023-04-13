@@ -1,8 +1,8 @@
 package page
 
 import (
-	"anto/tst/tt_ui/pack"
-	"anto/util"
+	"anto/lib/ui/pack"
+	"anto/lib/util"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"

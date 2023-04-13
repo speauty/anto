@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"anto/tst/tt_log"
-	"anto/tst/tt_translator"
+	serviceTranslator "anto/dependency/service/translator"
+	"anto/lib/log"
 	_type "anto/type"
 	"fmt"
 	"sort"
@@ -26,7 +26,7 @@ type Translators struct {
 	names []*_type.StdComboBoxModel
 }
 
-func (customT *Translators) Register(translators ...tt_translator.ITranslator) {
+func (customT *Translators) Register(translators ...serviceTranslator.InterfaceTranslator) {
 	for _, translator := range translators {
 		if _, isExisted := customT.list.Load(translator.GetId()); isExisted {
 			continue
@@ -36,12 +36,12 @@ func (customT *Translators) Register(translators ...tt_translator.ITranslator) {
 	customT.genNames2ComboBox()
 }
 
-func (customT *Translators) GetById(id string) tt_translator.ITranslator {
+func (customT *Translators) GetById(id string) serviceTranslator.InterfaceTranslator {
 	obj, isExisted := customT.list.Load(id)
 	if !isExisted {
 		return nil
 	}
-	return obj.(tt_translator.ITranslator)
+	return obj.(serviceTranslator.InterfaceTranslator)
 }
 
 func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
@@ -51,13 +51,13 @@ func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
 func (customT *Translators) genNames2ComboBox() {
 	customT.names = []*_type.StdComboBoxModel{}
 	customT.list.Range(func(idx, translator any) bool {
-		if translator.(tt_translator.ITranslator).IsValid() {
+		if translator.(serviceTranslator.InterfaceTranslator).IsValid() {
 			customT.names = append(customT.names, &_type.StdComboBoxModel{
-				Key:  translator.(tt_translator.ITranslator).GetId(),
-				Name: translator.(tt_translator.ITranslator).GetName(),
+				Key:  translator.(serviceTranslator.InterfaceTranslator).GetId(),
+				Name: translator.(serviceTranslator.InterfaceTranslator).GetName(),
 			})
 		} else {
-			tt_log.GetInstance().Warn(fmt.Sprintf("当前翻译引擎无效: %s", translator.(tt_translator.ITranslator).GetName()))
+			log.Singleton().Warn(fmt.Sprintf("当前翻译引擎无效: %s", translator.(serviceTranslator.InterfaceTranslator).GetName()))
 		}
 		return true
 	})

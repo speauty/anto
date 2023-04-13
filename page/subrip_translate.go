@@ -2,17 +2,14 @@ package page
 
 import (
 	"anto/cron/detector"
-	"anto/cron/reader"
-	"anto/cron/translator"
-	"anto/cron/writer"
+	"anto/cron/translate"
+	"anto/dependency/service/translator/ling_va"
 	"anto/domain"
-	"anto/tst/tt_translator/ling_va"
-	"anto/tst/tt_ui/handle"
-	"anto/tst/tt_ui/msg"
-	"anto/tst/tt_ui/pack"
+	"anto/lib/ui/handle"
+	"anto/lib/ui/msg"
+	pack2 "anto/lib/ui/pack"
+	"anto/lib/util"
 	_type "anto/type"
-	"anto/util"
-	"context"
 	"errors"
 	"fmt"
 	"github.com/lxn/walk"
@@ -33,14 +30,8 @@ func GetSubripTranslate() *SubripTranslate {
 		apiSubripTranslate.name = "字幕翻译"
 		apiSubripTranslate.engines = domain.GetTranslators().GetNames()
 		apiSubripTranslate.chanLog = make(chan string, 128)
-		detector.GetInstance().SetMsgRedirect(apiSubripTranslate.chanLog)
-		translator.GetInstance().SetMsgRedirect(apiSubripTranslate.chanLog)
-
-		ctx := context.Background()
-		detector.GetInstance().Run(ctx)
-		reader.GetInstance().Run(ctx)
-		translator.GetInstance().Run(ctx)
-		writer.GetInstance().Run(ctx)
+		detector.Singleton().SetMsgRedirect(apiSubripTranslate.chanLog)
+		translate.Singleton().SetMsgRedirect(apiSubripTranslate.chanLog)
 
 		apiSubripTranslate.cronSyncLog()
 
@@ -90,45 +81,45 @@ func (customPage *SubripTranslate) SetVisible(isVisible bool) {
 
 func (customPage *SubripTranslate) GetWidget() Widget {
 	return StdRootWidget(&customPage.rootWidget,
-		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译引擎")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrEngine).
+		pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack2.NewWidgetGroup().Append(
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("翻译引擎")),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrEngine).
 					SetModel(apiSubripTranslate.engines).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(0).SetOnCurrentIdxChangedFn(customPage.eventEngineOnChange)),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionFrom.String())),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFromLang).
-					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText(_type.LangDirectionTo.String())),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrToLang).
-					SetModel(ling_va.GetInstance().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText(_type.LangDirectionFrom.String())),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrFromLang).
+					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText(_type.LangDirectionTo.String())),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrToLang).
+					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
-		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("翻译模式")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrMode).SetModel(_type.ModeDelta.GetModes()).SetCurrentIdx(_type.ModeDelta.GetIdx())),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出轨道")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrFlagTrackExport).SetModel([]string{"全部轨道", "主轨", "副轨"}).SetCurrentIdx(0)),
-				pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("导出主轨道")),
-				pack.TTComboBox(pack.NewTTComboBoxArgs(&customPage.ptrMainExport).SetModel(_type.LangDirectionFrom.GetDirections()).SetCurrentIdx(0)),
+		pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack2.NewWidgetGroup().Append(
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("翻译模式")),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrMode).SetModel(_type.ModeDelta.GetModes()).SetCurrentIdx(_type.ModeDelta.GetIdx())),
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("导出轨道")),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrFlagTrackExport).SetModel([]string{"全部轨道", "主轨", "副轨"}).SetCurrentIdx(0)),
+				pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("导出主轨道")),
+				pack2.TTComboBox(pack2.NewTTComboBoxArgs(&customPage.ptrMainExport).SetModel(_type.LangDirectionFrom.GetDirections()).SetCurrentIdx(0)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
 		StdBrowserSelectorWidget("字幕文件", customPage.eventSrtFileOnClicked, &customPage.ptrSrtFile),
 		StdBrowserSelectorWidget("字幕目录", customPage.eventSrtDirOnClicked, &customPage.ptrSrtDir),
-		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
-				pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("清空日志").SetOnClicked(customPage.flushLog)),
+		pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack2.NewWidgetGroup().Append(
+				pack2.TTPushBtn(pack2.NewTTPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
+				pack2.TTPushBtn(pack2.NewTTPushBtnArgs(nil).SetText("清空日志").SetOnClicked(customPage.flushLog)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
-		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("日志").SetWidgets(
-					pack.NewWidgetGroup().Append(
-						pack.TTTextEdit(pack.NewTextEditWrapperArgs(&customPage.ptrLog).SetReadOnly(true).SetVScroll(true)),
+		pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack2.NewWidgetGroup().Append(
+				pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("日志").SetWidgets(
+					pack2.NewWidgetGroup().Append(
+						pack2.TTTextEdit(pack2.NewTextEditWrapperArgs(&customPage.ptrLog).SetReadOnly(true).SetVScroll(true)),
 					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
 				)),
 			).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
@@ -223,7 +214,7 @@ func (customPage *SubripTranslate) eventBtnTranslate() {
 		msg.Err(customPage.mainWindow, errors.New("请选择字幕文件或目录, 优先使用字幕文件"))
 		return
 	}
-	detector.GetInstance().Push(&detector.StrDetectorData{
+	detector.Singleton().Push(&detector.StrDetectorData{
 		Translator: currentEngine, FromLang: fromLang, ToLang: toLang,
 		TranslateMode: _type.TranslateMode(mode), MainTrackReport: _type.LangDirection(mainTrackExport),
 		SrtFile: strFile, SrtDir: strDir, FlagTrackExport: customPage.ptrFlagTrackExport.CurrentIndex(),

@@ -1,14 +1,14 @@
 package cfg
 
 import (
-	"anto/tst/tt_translator/ali_cloud_mt"
-	"anto/tst/tt_translator/baidu"
-	"anto/tst/tt_translator/caiyunai"
-	"anto/tst/tt_translator/huawei_cloud_nlp"
-	"anto/tst/tt_translator/ling_va"
-	"anto/tst/tt_translator/openapi_youdao"
-	"anto/tst/tt_translator/tencent_cloud_mt"
-	"anto/tst/tt_ui"
+	"anto/dependency/service/translator/ali_cloud_mt"
+	"anto/dependency/service/translator/baidu"
+	"anto/dependency/service/translator/caiyunai"
+	"anto/dependency/service/translator/huawei_cloud_nlp"
+	"anto/dependency/service/translator/ling_va"
+	"anto/dependency/service/translator/openapi_youdao"
+	"anto/dependency/service/translator/tencent_cloud_mt"
+	"anto/lib/ui"
 	"fmt"
 	"sync"
 )
@@ -22,7 +22,7 @@ func GetInstance() *Cfg {
 	onceCfg.Do(func() {
 		apiCfg = new(Cfg)
 		apiCfg.App = App{}.Default()
-		apiCfg.UI = tt_ui.Cfg{}.Default()
+		apiCfg.UI = ui.Cfg{}.Default()
 		apiCfg.HuaweiCloudNlp = huawei_cloud_nlp.Cfg{}.Default()
 		apiCfg.LingVA = ling_va.Cfg{}.Default()
 		apiCfg.Baidu = baidu.Cfg{}.Default()
@@ -36,7 +36,7 @@ func GetInstance() *Cfg {
 
 type Cfg struct {
 	App            *App                  `mapstructure:"-"`
-	UI             *tt_ui.Cfg            `mapstructure:"-"`
+	UI             *ui.Cfg               `mapstructure:"-"`
 	HuaweiCloudNlp *huawei_cloud_nlp.Cfg `mapstructure:"huawei_cloud_nlp"`
 	LingVA         *ling_va.Cfg          `mapstructure:"ling_va"`
 	Baidu          *baidu.Cfg            `mapstructure:"baidu"`

@@ -2,10 +2,10 @@ package page
 
 import (
 	"anto/cfg"
-	"anto/tst/tt_log"
-	"anto/tst/tt_ui/msg"
-	"anto/tst/tt_ui/pack"
-	"anto/util"
+	"anto/lib/log"
+	"anto/lib/ui/msg"
+	pack2 "anto/lib/ui/pack"
+	"anto/lib/util"
 	"errors"
 	"fmt"
 	"github.com/lxn/walk"
@@ -81,128 +81,128 @@ func (customPage *Settings) SetVisible(isVisible bool) {
 func (customPage *Settings) GetWidget() Widget {
 	defer customPage.Reset()
 	return StdRootWidget(&customPage.rootWidget,
-		pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetWidgets(
-					pack.NewWidgetGroup().Append(
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("数据ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrLingVADataId).
+		pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
+			pack2.NewWidgetGroup().Append(
+				pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetWidgets(
+					pack2.NewWidgetGroup().Append(
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("数据ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrLingVADataId).
 											SetText(cfg.GetInstance().LingVA.DataId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrLingVAMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrLingVAMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().LingVA.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("百度翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrBaiduAppId).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("百度翻译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrBaiduAppId).
 											SetText(cfg.GetInstance().Baidu.AppId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrBaiduAppKey).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrBaiduAppKey).
 											SetText(cfg.GetInstance().Baidu.AppKey)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrBaiduMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrBaiduMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().Baidu.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("腾讯云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretId).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("腾讯云翻译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretId).
 											SetText(cfg.GetInstance().TencentCloudMT.SecretId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretKey).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrTencentCloudMTSecretKey).
 											SetText(cfg.GetInstance().TencentCloudMT.SecretKey)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrTencentMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrTencentMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().TencentCloudMT.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("有道智云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppKey).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("有道智云翻译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppKey).
 											SetText(cfg.GetInstance().OpenAPIYouDao.AppKey)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
 											SetText(cfg.GetInstance().OpenAPIYouDao.AppSecret)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("阿里云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkId).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("阿里云翻译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkId).
 											SetText(cfg.GetInstance().AliCloudMT.AKId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkSecret).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTAkSecret).
 											SetText(cfg.GetInstance().AliCloudMT.AKSecret)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().AliCloudMT.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("应用密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrCaiYunAIToken).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("应用密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrCaiYunAIToken).
 											SetText(cfg.GetInstance().CaiYunAI.Token)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().CaiYunAI.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTGroupBox(pack.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("访问ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.GetInstance().HuaweiCloudNlp.AKId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("访问密钥")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.GetInstance().HuaweiCloudNlp.SkKey)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("项目ID")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.GetInstance().HuaweiCloudNlp.ProjectId)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("支持区域")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKRegion).SetText(cfg.GetInstance().HuaweiCloudNlp.Region)),
-										pack.TTLabel(pack.NewTTLabelArgs(nil).SetText("单次最长请求")),
-										pack.TTLineEdit(pack.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
+						pack2.TTGroupBox(pack2.NewTTGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack2.NewWidgetGroup().Append(
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("访问ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.GetInstance().HuaweiCloudNlp.AKId)),
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("访问密钥")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.GetInstance().HuaweiCloudNlp.SkKey)),
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("项目ID")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.GetInstance().HuaweiCloudNlp.ProjectId)),
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("支持区域")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudAKRegion).SetText(cfg.GetInstance().HuaweiCloudNlp.Region)),
+										pack2.TTLabel(pack2.NewTTLabelArgs(nil).SetText("单次最长请求")),
+										pack2.TTLineEdit(pack2.NewLineEditWrapperArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().HuaweiCloudNlp.MaxSingleTextLength))),
 									).GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.TTComposite(pack.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.TTPushBtn(pack.NewTTPushBtnArgs(nil).SetText("同步").SetOnClicked(customPage.eventSync)),
+						pack2.TTComposite(pack2.NewTTCompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+							pack2.NewWidgetGroup().Append(
+								pack2.TTPushBtn(pack2.NewTTPushBtnArgs(nil).SetText("同步").SetOnClicked(customPage.eventSync)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
 					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
@@ -387,7 +387,7 @@ func (customPage *Settings) eventSync() {
 		return
 	}
 	if err := cfg.GetInstance().Sync(); err != nil {
-		tt_log.GetInstance().Error("同步配置到文件失败", zap.Error(err))
+		log.Singleton().Error("同步配置到文件失败", zap.Error(err))
 		msg.Err(customPage.mainWindow, errors.New("同步配置到文件失败"))
 		return
 	}

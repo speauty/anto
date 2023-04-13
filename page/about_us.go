@@ -1,8 +1,8 @@
 package page
 
 import (
-	"anto/tst/tt_ui/pack"
-	"anto/util"
+	pack2 "anto/lib/ui/pack"
+	"anto/lib/util"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"sync"
@@ -49,12 +49,12 @@ func (customPage *AboutUs) SetVisible(isVisible bool) {
 
 func (customPage *AboutUs) GetWidget() Widget {
 	return StdRootWidget(&customPage.rootWidget,
-		pack.TTGroupBox(
-			pack.NewTTGroupBoxArgs(nil).
+		pack2.TTGroupBox(
+			pack2.NewTTGroupBoxArgs(nil).
 				SetTitle("关于我们").SetVisible(true).SetLayoutVBox(false).
 				SetWidgets(
-					pack.NewWidgetGroup().Append(
-						pack.TTTextLabel(pack.NewTTTextLabelArgs(nil).
+					pack2.NewWidgetGroup().Append(
+						pack2.TTTextLabel(pack2.NewTTTextLabelArgs(nil).
 							SetCustomSize(Size{Width: 100, Height: 300}).
 							SetText(
 								`    你好，欢迎使用字幕翻译工具（以下简称：Anto），我是Anto的研发人员Speauty，现主要研究字幕方面，比如提取、翻译、合成等。所以如果有什么好的想法，可以直接给我发邮件。

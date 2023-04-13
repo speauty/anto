@@ -1,8 +1,9 @@
 package writer
 
 import (
-	"anto/tst/tt_log"
-	"anto/tst/tt_srt"
+	"anto/cron"
+	"anto/lib/log"
+	"anto/lib/util"
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -11,67 +12,71 @@ import (
 	"sync"
 )
 
-var (
-	apiSrtWriter  *SrtWriter
-	onceSrtWriter sync.Once
+const (
+	cronName     = "SRT写入程序"
+	numChanData  = 10
+	numChanMsg   = 20
+	numCoroutine = 10
 )
 
-func GetInstance() *SrtWriter {
-	onceSrtWriter.Do(func() {
-		apiSrtWriter = new(SrtWriter)
-		apiSrtWriter.init()
-	})
-	return apiSrtWriter
-}
+var (
+	apiSingleton  *SrtWriter
+	onceSingleton sync.Once
+)
 
-type SrtWriterData struct {
-	FileNameSaved string
-	PrtSrt        *tt_srt.Srt
-	PtrOpts       *tt_srt.EncodeOpt
+func Singleton() *SrtWriter {
+	onceSingleton.Do(func() {
+		apiSingleton = new(SrtWriter)
+		apiSingleton.init()
+	})
+	return apiSingleton
 }
 
 type SrtWriter struct {
 	ctx             context.Context
-	chanWriter      chan *SrtWriterData
-	chanMsgWriter   chan string
+	ctxFnCancel     context.CancelFunc
+	chanData        chan *SrtWriterData
+	chanMsg         chan string
 	chanMsgRedirect chan string
-	maxChanWriter   int
-	test            sync.Locker
+	numCoroutine    int
 }
 
-func (customSW *SrtWriter) SetMsgRedirect(chanMsg chan string) {
-	customSW.chanMsgRedirect = chanMsg
+func (customCron *SrtWriter) Push(data *SrtWriterData) {
+	customCron.chanData <- data
 }
 
-func (customSW *SrtWriter) Run(ctx context.Context) {
-	customSW.ctx = ctx
-	customSW.jobWriter()
-	customSW.jobMsg()
+func (customCron *SrtWriter) Run(ctx context.Context, fnCancel context.CancelFunc) {
+	customCron.ctx = ctx
+	customCron.ctxFnCancel = fnCancel
+
+	customCron.jobWriter()
+	customCron.jobMsg()
 }
 
-func (customSW *SrtWriter) Push(data *SrtWriterData) {
-	customSW.chanWriter <- data
+func (customCron *SrtWriter) Close() {}
+
+func (customCron *SrtWriter) SetMsgRedirect(chanMsg chan string) {
+	customCron.chanMsgRedirect = chanMsg
 }
 
-func (customSW *SrtWriter) jobWriter() {
-	if customSW.maxChanWriter <= 0 {
-		customSW.log().Warn(fmt.Sprintf("%s-%s通道的最大数量(%d)无效, 重置为5", customSW.getName(), "chanWriter", customSW.maxChanWriter))
-		customSW.maxChanWriter = 5
+func (customCron *SrtWriter) jobWriter() {
+	if customCron.numCoroutine <= 0 {
+		customCron.log().WarnF("%s-%s通道的最大数量(%d)无效, 重置为5", cronName, "chanData", customCron.numCoroutine)
+		customCron.numCoroutine = 5
 	}
 
-	for idx := 0; idx < customSW.maxChanWriter; idx++ {
+	for idx := 0; idx < customCron.numCoroutine; idx++ {
 		go func(ctx context.Context, chanWriter chan *SrtWriterData, chanMsg chan string, idx int) {
 			coroutineName := fmt.Sprintf("写入协程(%d)", idx)
-			chanName := "chanWriter"
 			for true {
 				select {
 				case <-ctx.Done():
-					customSW.log().Info(fmt.Sprintf("%s关闭(ctx.done), %s被迫退出", customSW.getName(), coroutineName))
+					customCron.log().WarnF("%s关闭(ctx.done), %s被迫退出", cronName, coroutineName)
 					runtime.Goexit()
 				case currentData, isOpen := <-chanWriter:
 					timeStart := carbon.Now()
 					if isOpen == false && currentData == nil {
-						customSW.log().Info(fmt.Sprintf("%s-%s通道关闭, %s被迫退出", customSW.getName(), chanName, coroutineName))
+						customCron.log().WarnF("%s-通道关闭, %s被迫退出", cronName, coroutineName)
 						runtime.Goexit()
 					}
 					if currentData.FileNameSaved == "" {
@@ -84,59 +89,37 @@ func (customSW *SrtWriter) jobWriter() {
 					}
 					bytesEncoded, err := currentData.PrtSrt.Encode(currentData.PtrOpts)
 					if err != nil {
+						customCron.log().ErrorF("%s编码失败, 错误: %s", currentData.PrtSrt.FileName, err)
 						chanMsg <- fmt.Sprintf("%s编码失败", currentData.PrtSrt.FileName)
 						continue
 					}
 
 					if err = os.WriteFile(currentData.FileNameSaved, bytesEncoded, os.ModePerm); err != nil {
+						customCron.log().ErrorF("写入文件失败(%s => %s), 错误: %s", currentData.PrtSrt.FileName, currentData.FileNameSaved, err)
 						chanMsg <- fmt.Sprintf("写入文件失败(%s => %s)", currentData.PrtSrt.FileName, currentData.FileNameSaved)
 						continue
 					}
 					chanMsg <- fmt.Sprintf(
 						"写入文件成功, 源件: %s, 目标文件: %s, 写入字节数: %d, 耗时(s): %d",
 						currentData.PrtSrt.FileName, currentData.FileNameSaved, len(bytesEncoded),
-						carbon.Now().DiffAbsInSeconds(timeStart),
+						util.GetSecondsFromTime(timeStart),
 					)
 				}
 			}
-		}(customSW.ctx, customSW.chanWriter, customSW.chanMsgWriter, idx)
+		}(customCron.ctx, customCron.chanData, customCron.chanMsg, idx)
 	}
 }
 
-func (customSW *SrtWriter) jobMsg() {
-	go func(ctx context.Context, chanMsgWriter, chanMsgRedirect chan string) {
-		coroutineName := "消息协程"
-		chanName := "chanMsgWriter"
-
-		for true {
-			select {
-			case <-ctx.Done():
-				customSW.log().Info(fmt.Sprintf("%s关闭(ctx.done), %s被迫退出", customSW.getName(), coroutineName))
-				runtime.Goexit()
-			case currentMsg, isOpen := <-chanMsgWriter:
-				if isOpen == false && currentMsg == "" {
-					customSW.log().Info(fmt.Sprintf("%s-%s通道关闭, %s被迫退出", customSW.getName(), chanName, coroutineName))
-					runtime.Goexit()
-				}
-				if chanMsgRedirect != nil {
-					chanMsgRedirect <- fmt.Sprintf("当前时间: %s, 来源: %s, 信息: [%s]", carbon.Now().Layout(carbon.ShortDateTimeLayout), customSW.getName(), currentMsg)
-				}
-				customSW.log().Info(fmt.Sprintf("来源: %s, 信息: %s", customSW.getName(), currentMsg))
-			}
-		}
-	}(customSW.ctx, customSW.chanMsgWriter, customSW.chanMsgRedirect)
+func (customCron *SrtWriter) jobMsg() {
+	cron.FuncSrtCronMsgRedirect(customCron.ctx, cronName, customCron.log(), customCron.chanMsg, customCron.chanMsgRedirect)
 }
 
-func (customSW *SrtWriter) getName() string {
-	return "SRT写入程序"
+func (customCron *SrtWriter) init() {
+	customCron.chanData = make(chan *SrtWriterData, numChanData)
+	customCron.chanMsg = make(chan string, numChanMsg)
+	customCron.numCoroutine = numCoroutine
 }
 
-func (customSW *SrtWriter) init() {
-	customSW.chanWriter = make(chan *SrtWriterData, 10)
-	customSW.chanMsgWriter = make(chan string, 20)
-	customSW.maxChanWriter = 10
-}
-
-func (customSW *SrtWriter) log() *tt_log.TTLog {
-	return tt_log.GetInstance()
+func (customCron *SrtWriter) log() *log.Log {
+	return log.Singleton()
 }
