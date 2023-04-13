@@ -24,9 +24,6 @@ func FileDialogHandle(args *FileDialogHandleArgs) {
 		msg.Err(args.owner, fmt.Errorf("选择%s异常, 错误: %s", topic, err))
 		return
 	} else if !isAccepted {
-		if (*args.pathEchoHandle).Text() == "" {
-			msg.Err(args.owner, fmt.Errorf("选择%s失败, 请重新选择", topic))
-		}
 		return
 	}
 	_ = (*args.pathEchoHandle).SetText(dlg.FilePath)

@@ -13,11 +13,13 @@ func UIComboBox(args *UIComboBoxArgs) Widget {
 		OnCurrentIndexChanged: args.onCurrentIdxChangedFn,
 		DisplayMember:         args.displayMember,
 		BindingMember:         args.bindingMember,
+		MinSize:               args.customSize,
+		MaxSize:               args.customSize,
 	}
 }
 
 func NewUIComboBoxArgs(assignTo **walk.ComboBox) *UIComboBoxArgs {
-	return &UIComboBoxArgs{assignTo: assignTo}
+	return &UIComboBoxArgs{assignTo: assignTo, customSize: Size{Width: 80}}
 }
 
 type UIComboBoxArgs struct {
@@ -27,6 +29,12 @@ type UIComboBoxArgs struct {
 	onCurrentIdxChangedFn walk.EventHandler
 	displayMember         string
 	bindingMember         string
+	customSize            Size
+}
+
+func (customT *UIComboBoxArgs) SetCustomSize(customSize Size) *UIComboBoxArgs {
+	customT.customSize = customSize
+	return customT
 }
 
 func (customT *UIComboBoxArgs) SetDisplayMember(displayMember string) *UIComboBoxArgs {

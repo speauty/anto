@@ -96,7 +96,7 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrFromLang).
 					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
 
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText(common.LangDirectionTo.String())),
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("    "+common.LangDirectionTo.String())),
 				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrToLang).
 					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
 			).AppendZeroHSpacer().GetWidgets(),
@@ -122,14 +122,10 @@ func (customPage *SubripTranslate) GetWidget() Widget {
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(false).SetWidgets(
 			pack.NewWidgetGroup().Append(
-				pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("输出").SetWidgets(
-					pack.NewWidgetGroup().Append(
-						pack.UITextEdit(pack.NewUITextEditArgs(&customPage.ptrLog).SetReadOnly(true).SetVScroll(true)),
-					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
-				)),
-			).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
+				pack.UITextEdit(pack.NewUITextEditArgs(&customPage.ptrLog).SetCustomSize(Size{Height: 344}).SetReadOnly(true).SetVScroll(true)),
+			).AppendZeroHSpacer().GetWidgets(),
 		)),
 
 		VSpacer{},

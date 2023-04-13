@@ -16,7 +16,7 @@ func UIPushBtn(args *UIPushBtnArgs) Widget {
 }
 
 func NewUIPushBtnArgs(assignTo **walk.PushButton) *UIPushBtnArgs {
-	return &UIPushBtnArgs{assignTo: assignTo, text: "btn"}
+	return &UIPushBtnArgs{assignTo: assignTo, text: "btn", customSize: Size{Width: 80}}
 }
 
 type UIPushBtnArgs struct {
