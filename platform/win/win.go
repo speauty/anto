@@ -13,19 +13,19 @@ import (
 )
 
 func Run(ctx context.Context) {
-	ui.GetInstance().RegisterMenus(GetInstance().GetMenus())
+	ui.Singleton().RegisterMenus(GetInstance().GetMenus())
 
-	ui.GetInstance().RegisterPages(page.GetSettings(), page.GetSubripTranslate())
+	ui.Singleton().RegisterPages(page.GetSettings(), page.GetSubripTranslate())
 
-	if err := ui.GetInstance().Init(cfg.GetInstance().UI); err != nil {
+	if err := ui.Singleton().Init(cfg.Singleton().UI); err != nil {
 		panic(err)
 	}
 
-	_ = ui.GetInstance().GoPage(page.GetSubripTranslate().GetId())
+	_ = ui.Singleton().GoPage(page.GetSubripTranslate().GetId())
 
 	nohup.NewResident(
 		ctx,
 		detector.Singleton(), reader.Singleton(), translate.Singleton(), writer.Singleton(),
-		ui.GetInstance(),
+		ui.Singleton(),
 	)
 }

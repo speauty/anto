@@ -91,10 +91,10 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("数据ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVADataId).
-											SetText(cfg.GetInstance().LingVA.DataId).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().LingVA.DataId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -105,13 +105,13 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppId).
-											SetText(cfg.GetInstance().Baidu.AppId).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().Baidu.AppId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppKey).
-											SetText(cfg.GetInstance().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().Baidu.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().Baidu.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -122,13 +122,13 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretId).
-											SetText(cfg.GetInstance().TencentCloudMT.SecretId).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().TencentCloudMT.SecretId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretKey).
-											SetText(cfg.GetInstance().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -139,13 +139,13 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppKey).
-											SetText(cfg.GetInstance().OpenAPIYouDao.AppKey).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().OpenAPIYouDao.AppKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
-											SetText(cfg.GetInstance().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -156,13 +156,13 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkId).
-											SetText(cfg.GetInstance().AliCloudMT.AKId).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().AliCloudMT.AKId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkSecret).
-											SetText(cfg.GetInstance().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -173,10 +173,10 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
-											SetText(cfg.GetInstance().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
+											SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -186,14 +186,14 @@ func (customPage *Settings) GetWidget() Widget {
 								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.GetInstance().HuaweiCloudNlp.AKId)),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.Singleton().HuaweiCloudNlp.AKId)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.GetInstance().HuaweiCloudNlp.SkKey)),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.Singleton().HuaweiCloudNlp.SkKey)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("项目ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.GetInstance().HuaweiCloudNlp.ProjectId)),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.Singleton().HuaweiCloudNlp.ProjectId)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().HuaweiCloudNlp.MaxSingleTextLength))),
+											SetText(fmt.Sprintf("%d", cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength))),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -219,8 +219,8 @@ func (customPage *Settings) eventSync() {
 
 	{
 		lingVADataId := customPage.ptrLingVADataId.Text()
-		if lingVADataId != cfg.GetInstance().LingVA.DataId {
-			cfg.GetInstance().LingVA.DataId = lingVADataId
+		if lingVADataId != cfg.Singleton().LingVA.DataId {
+			cfg.Singleton().LingVA.DataId = lingVADataId
 			cntModified++
 		}
 		lingVAMaxSingleTextLength := customPage.ptrLingVAMaxSingleTextLength.Text()
@@ -229,8 +229,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("LingVA单次最长请求无效, 请重新设置"))
 			return
 		}
-		if lingVAMaxSingleTextLengthInt != cfg.GetInstance().LingVA.MaxSingleTextLength {
-			cfg.GetInstance().LingVA.MaxSingleTextLength = lingVAMaxSingleTextLengthInt
+		if lingVAMaxSingleTextLengthInt != cfg.Singleton().LingVA.MaxSingleTextLength {
+			cfg.Singleton().LingVA.MaxSingleTextLength = lingVAMaxSingleTextLengthInt
 			cntModified++
 		}
 
@@ -239,12 +239,12 @@ func (customPage *Settings) eventSync() {
 	{
 		baiduAppId := customPage.ptrBaiduAppId.Text()
 		baiduAppKey := customPage.ptrBaiduAppKey.Text()
-		if baiduAppId != cfg.GetInstance().Baidu.AppId {
-			cfg.GetInstance().Baidu.AppId = baiduAppId
+		if baiduAppId != cfg.Singleton().Baidu.AppId {
+			cfg.Singleton().Baidu.AppId = baiduAppId
 			cntModified++
 		}
-		if baiduAppKey != cfg.GetInstance().Baidu.AppKey {
-			cfg.GetInstance().Baidu.AppKey = baiduAppKey
+		if baiduAppKey != cfg.Singleton().Baidu.AppKey {
+			cfg.Singleton().Baidu.AppKey = baiduAppKey
 			cntModified++
 		}
 		baiduSingleTextLength := customPage.ptrBaiduMaxSingleTextLength.Text()
@@ -253,8 +253,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("百度翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if baiduSingleTextLengthInt != cfg.GetInstance().Baidu.MaxSingleTextLength {
-			cfg.GetInstance().Baidu.MaxSingleTextLength = baiduSingleTextLengthInt
+		if baiduSingleTextLengthInt != cfg.Singleton().Baidu.MaxSingleTextLength {
+			cfg.Singleton().Baidu.MaxSingleTextLength = baiduSingleTextLengthInt
 			cntModified++
 		}
 	}
@@ -262,12 +262,12 @@ func (customPage *Settings) eventSync() {
 	{
 		tencentCloudMTSecretId := customPage.ptrTencentCloudMTSecretId.Text()
 		tencentCloudMTSecretKey := customPage.ptrTencentCloudMTSecretKey.Text()
-		if tencentCloudMTSecretId != cfg.GetInstance().TencentCloudMT.SecretId {
-			cfg.GetInstance().TencentCloudMT.SecretId = tencentCloudMTSecretId
+		if tencentCloudMTSecretId != cfg.Singleton().TencentCloudMT.SecretId {
+			cfg.Singleton().TencentCloudMT.SecretId = tencentCloudMTSecretId
 			cntModified++
 		}
-		if tencentCloudMTSecretKey != cfg.GetInstance().TencentCloudMT.SecretKey {
-			cfg.GetInstance().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
+		if tencentCloudMTSecretKey != cfg.Singleton().TencentCloudMT.SecretKey {
+			cfg.Singleton().TencentCloudMT.SecretKey = tencentCloudMTSecretKey
 			cntModified++
 		}
 		tencentMaxSingleTextLength := customPage.ptrTencentMaxSingleTextLength.Text()
@@ -276,8 +276,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("华为云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if tencentMaxSingleTextLengthInt != cfg.GetInstance().TencentCloudMT.MaxSingleTextLength {
-			cfg.GetInstance().TencentCloudMT.MaxSingleTextLength = tencentMaxSingleTextLengthInt
+		if tencentMaxSingleTextLengthInt != cfg.Singleton().TencentCloudMT.MaxSingleTextLength {
+			cfg.Singleton().TencentCloudMT.MaxSingleTextLength = tencentMaxSingleTextLengthInt
 			cntModified++
 		}
 	}
@@ -285,12 +285,12 @@ func (customPage *Settings) eventSync() {
 	{
 		openAPIYouDaoAppKey := customPage.ptrOpenAPIYouDaoAppKey.Text()
 		openAPIYouDaoAppSecret := customPage.ptrOpenAPIYouDaoAppSecret.Text()
-		if openAPIYouDaoAppKey != cfg.GetInstance().OpenAPIYouDao.AppKey {
-			cfg.GetInstance().OpenAPIYouDao.AppKey = openAPIYouDaoAppKey
+		if openAPIYouDaoAppKey != cfg.Singleton().OpenAPIYouDao.AppKey {
+			cfg.Singleton().OpenAPIYouDao.AppKey = openAPIYouDaoAppKey
 			cntModified++
 		}
-		if openAPIYouDaoAppSecret != cfg.GetInstance().OpenAPIYouDao.AppSecret {
-			cfg.GetInstance().OpenAPIYouDao.AppSecret = openAPIYouDaoAppSecret
+		if openAPIYouDaoAppSecret != cfg.Singleton().OpenAPIYouDao.AppSecret {
+			cfg.Singleton().OpenAPIYouDao.AppSecret = openAPIYouDaoAppSecret
 			cntModified++
 		}
 		openAPIMaxSingleTextLength := customPage.ptrOpenAPIMaxSingleTextLength.Text()
@@ -299,8 +299,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("有道智云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if openAPIMaxSingleTextLengthInt != cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength {
-			cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength = openAPIMaxSingleTextLengthInt
+		if openAPIMaxSingleTextLengthInt != cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength {
+			cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength = openAPIMaxSingleTextLengthInt
 			cntModified++
 		}
 	}
@@ -308,12 +308,12 @@ func (customPage *Settings) eventSync() {
 	{
 		aliCloudMTAkId := customPage.ptrAliCloudMTAkId.Text()
 		aliCloudMTAkSecret := customPage.ptrAliCloudMTAkSecret.Text()
-		if aliCloudMTAkId != cfg.GetInstance().AliCloudMT.AKId {
-			cfg.GetInstance().AliCloudMT.AKId = aliCloudMTAkId
+		if aliCloudMTAkId != cfg.Singleton().AliCloudMT.AKId {
+			cfg.Singleton().AliCloudMT.AKId = aliCloudMTAkId
 			cntModified++
 		}
-		if aliCloudMTAkSecret != cfg.GetInstance().AliCloudMT.AKSecret {
-			cfg.GetInstance().AliCloudMT.AKSecret = aliCloudMTAkSecret
+		if aliCloudMTAkSecret != cfg.Singleton().AliCloudMT.AKSecret {
+			cfg.Singleton().AliCloudMT.AKSecret = aliCloudMTAkSecret
 			cntModified++
 		}
 		aliCloudMTMaxSingleTextLength := customPage.ptrAliCloudMTMaxSingleTextLength.Text()
@@ -322,16 +322,16 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("阿里云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if aliCloudMTMaxSingleTextLengthInt != cfg.GetInstance().AliCloudMT.MaxSingleTextLength {
-			cfg.GetInstance().AliCloudMT.MaxSingleTextLength = aliCloudMTMaxSingleTextLengthInt
+		if aliCloudMTMaxSingleTextLengthInt != cfg.Singleton().AliCloudMT.MaxSingleTextLength {
+			cfg.Singleton().AliCloudMT.MaxSingleTextLength = aliCloudMTMaxSingleTextLengthInt
 			cntModified++
 		}
 	}
 	// ptrCaiYunAIToken
 	{
 		caiYunAIToken := customPage.ptrCaiYunAIToken.Text()
-		if caiYunAIToken != cfg.GetInstance().CaiYunAI.Token {
-			cfg.GetInstance().CaiYunAI.Token = caiYunAIToken
+		if caiYunAIToken != cfg.Singleton().CaiYunAI.Token {
+			cfg.Singleton().CaiYunAI.Token = caiYunAIToken
 			cntModified++
 		}
 		caiYunAIMaxSingleTextLength := customPage.ptrCaiYunAIMaxSingleTextLength.Text()
@@ -340,8 +340,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("彩云小译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if caiYunAIMaxSingleTextLengthInt != cfg.GetInstance().CaiYunAI.MaxSingleTextLength {
-			cfg.GetInstance().CaiYunAI.MaxSingleTextLength = caiYunAIMaxSingleTextLengthInt
+		if caiYunAIMaxSingleTextLengthInt != cfg.Singleton().CaiYunAI.MaxSingleTextLength {
+			cfg.Singleton().CaiYunAI.MaxSingleTextLength = caiYunAIMaxSingleTextLengthInt
 			cntModified++
 		}
 	}
@@ -351,16 +351,16 @@ func (customPage *Settings) eventSync() {
 		huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
 		huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
 
-		if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
-			cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
+		if huaweiCloudAKId != cfg.Singleton().HuaweiCloudNlp.AKId {
+			cfg.Singleton().HuaweiCloudNlp.AKId = huaweiCloudAKId
 			cntModified++
 		}
-		if huaweiCloudSKKey != cfg.GetInstance().HuaweiCloudNlp.SkKey {
-			cfg.GetInstance().HuaweiCloudNlp.SkKey = huaweiCloudSKKey
+		if huaweiCloudSKKey != cfg.Singleton().HuaweiCloudNlp.SkKey {
+			cfg.Singleton().HuaweiCloudNlp.SkKey = huaweiCloudSKKey
 			cntModified++
 		}
-		if huaweiCloudAKProjectId != cfg.GetInstance().HuaweiCloudNlp.ProjectId {
-			cfg.GetInstance().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
+		if huaweiCloudAKProjectId != cfg.Singleton().HuaweiCloudNlp.ProjectId {
+			cfg.Singleton().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
 			cntModified++
 		}
 		huaweiCloudMaxSingleTextLength := customPage.ptrHuaweiCloudMaxSingleTextLength.Text()
@@ -369,8 +369,8 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("华为云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if huaweiCloudMaxSingleTextLengthInt != cfg.GetInstance().HuaweiCloudNlp.MaxSingleTextLength {
-			cfg.GetInstance().HuaweiCloudNlp.MaxSingleTextLength = huaweiCloudMaxSingleTextLengthInt
+		if huaweiCloudMaxSingleTextLengthInt != cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength {
+			cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength = huaweiCloudMaxSingleTextLengthInt
 			cntModified++
 		}
 	}
@@ -379,7 +379,7 @@ func (customPage *Settings) eventSync() {
 		msg.Info(customPage.mainWindow, "暂无配置需要同步")
 		return
 	}
-	if err := cfg.GetInstance().Sync(); err != nil {
+	if err := cfg.Singleton().Sync(); err != nil {
 		log.Singleton().Error("同步配置到文件失败", zap.Error(err))
 		msg.Err(customPage.mainWindow, errors.New("同步配置到文件失败"))
 		return

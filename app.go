@@ -23,22 +23,22 @@ func main() {
 
 	new(bootstrap.ResourceBuilder).Install()
 
-	if err := cfg.GetInstance().Load(""); err != nil {
+	if err := cfg.Singleton().Load(""); err != nil {
 		panic(err)
 	}
-	cfg.GetInstance().App.Author = _const.Author
-	cfg.GetInstance().App.Version = _const.Version
+	cfg.Singleton().App.Author = _const.Author
+	cfg.Singleton().App.Version = _const.Version
 	log.Singleton()
 
-	cfg.GetInstance().UI.Title = cfg.GetInstance().NewUITitle()
+	cfg.Singleton().UI.Title = cfg.Singleton().NewUITitle()
 
-	huawei_cloud_nlp.Singleton().Init(cfg.GetInstance().HuaweiCloudNlp)
-	ling_va.Singleton().Init(cfg.GetInstance().LingVA)
-	baidu.Singleton().Init(cfg.GetInstance().Baidu)
-	tencent_cloud_mt.Singleton().Init(cfg.GetInstance().TencentCloudMT)
-	openapi_youdao.Singleton().Init(cfg.GetInstance().OpenAPIYouDao)
-	ali_cloud_mt.Singleton().Init(cfg.GetInstance().AliCloudMT)
-	caiyunai.Singleton().Init(cfg.GetInstance().CaiYunAI)
+	huawei_cloud_nlp.Singleton().Init(cfg.Singleton().HuaweiCloudNlp)
+	ling_va.Singleton().Init(cfg.Singleton().LingVA)
+	baidu.Singleton().Init(cfg.Singleton().Baidu)
+	tencent_cloud_mt.Singleton().Init(cfg.Singleton().TencentCloudMT)
+	openapi_youdao.Singleton().Init(cfg.Singleton().OpenAPIYouDao)
+	ali_cloud_mt.Singleton().Init(cfg.Singleton().AliCloudMT)
+	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),

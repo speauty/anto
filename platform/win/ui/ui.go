@@ -13,16 +13,16 @@ const width = 800
 const height = 600
 
 var (
-	apiGui  *Gui
-	onceGui sync.Once
+	apiSingleton  *Gui
+	onceSingleton sync.Once
 )
 
-func GetInstance() *Gui {
-	onceGui.Do(func() {
-		apiGui = new(Gui)
-		apiGui.pageCtl = new(PageCtl)
+func Singleton() *Gui {
+	onceSingleton.Do(func() {
+		apiSingleton = new(Gui)
+		apiSingleton.pageCtl = new(PageCtl)
 	})
-	return apiGui
+	return apiSingleton
 }
 
 type Gui struct {

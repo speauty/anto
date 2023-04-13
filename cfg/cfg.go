@@ -14,24 +14,24 @@ import (
 )
 
 var (
-	apiCfg  *Cfg
-	onceCfg sync.Once
+	apiSingleton  *Cfg
+	onceSingleton sync.Once
 )
 
-func GetInstance() *Cfg {
-	onceCfg.Do(func() {
-		apiCfg = new(Cfg)
-		apiCfg.App = App{}.Default()
-		apiCfg.UI = ui.Cfg{}.Default()
-		apiCfg.HuaweiCloudNlp = huawei_cloud_nlp.Cfg{}.Default()
-		apiCfg.LingVA = ling_va.Cfg{}.Default()
-		apiCfg.Baidu = baidu.Cfg{}.Default()
-		apiCfg.TencentCloudMT = tencent_cloud_mt.Cfg{}.Default()
-		apiCfg.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
-		apiCfg.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
-		apiCfg.CaiYunAI = caiyunai.Cfg{}.Default()
+func Singleton() *Cfg {
+	onceSingleton.Do(func() {
+		apiSingleton = new(Cfg)
+		apiSingleton.App = App{}.Default()
+		apiSingleton.UI = ui.Cfg{}.Default()
+		apiSingleton.HuaweiCloudNlp = huawei_cloud_nlp.Cfg{}.Default()
+		apiSingleton.LingVA = ling_va.Cfg{}.Default()
+		apiSingleton.Baidu = baidu.Cfg{}.Default()
+		apiSingleton.TencentCloudMT = tencent_cloud_mt.Cfg{}.Default()
+		apiSingleton.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
+		apiSingleton.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
+		apiSingleton.CaiYunAI = caiyunai.Cfg{}.Default()
 	})
-	return apiCfg
+	return apiSingleton
 }
 
 type Cfg struct {
