@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	apiSettings  *Settings
-	onceSettings sync.Once
+	apiSettings     *Settings
+	onceSettings    sync.Once
+	stdLineEditSize = Size{Width: 100}
 )
 
 func GetSettings() *Settings {
@@ -56,7 +57,6 @@ type Settings struct {
 	ptrHuaweiCloudAKId                *walk.LineEdit
 	ptrHuaweiCloudSKKey               *walk.LineEdit
 	ptrHuaweiCloudAKProjectId         *walk.LineEdit
-	ptrHuaweiCloudAKRegion            *walk.LineEdit
 	ptrHuaweiCloudMaxSingleTextLength *walk.LineEdit
 }
 
@@ -91,11 +91,11 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("数据ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVADataId).
-											SetText(cfg.GetInstance().LingVA.DataId)),
+											SetText(cfg.GetInstance().LingVA.DataId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().LingVA.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -105,14 +105,14 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppId).
-											SetText(cfg.GetInstance().Baidu.AppId)),
+											SetText(cfg.GetInstance().Baidu.AppId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppKey).
-											SetText(cfg.GetInstance().Baidu.AppKey)),
+											SetText(cfg.GetInstance().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().Baidu.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().Baidu.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -122,14 +122,14 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretId).
-											SetText(cfg.GetInstance().TencentCloudMT.SecretId)),
+											SetText(cfg.GetInstance().TencentCloudMT.SecretId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretKey).
-											SetText(cfg.GetInstance().TencentCloudMT.SecretKey)),
+											SetText(cfg.GetInstance().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().TencentCloudMT.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -139,14 +139,14 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppKey).
-											SetText(cfg.GetInstance().OpenAPIYouDao.AppKey)),
+											SetText(cfg.GetInstance().OpenAPIYouDao.AppKey).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
-											SetText(cfg.GetInstance().OpenAPIYouDao.AppSecret)),
+											SetText(cfg.GetInstance().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -156,14 +156,14 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkId).
-											SetText(cfg.GetInstance().AliCloudMT.AKId)),
+											SetText(cfg.GetInstance().AliCloudMT.AKId).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkSecret).
-											SetText(cfg.GetInstance().AliCloudMT.AKSecret)),
+											SetText(cfg.GetInstance().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().AliCloudMT.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -173,11 +173,11 @@ func (customPage *Settings) GetWidget() Widget {
 									pack.NewWidgetGroup().Append(
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
-											SetText(cfg.GetInstance().CaiYunAI.Token)),
+											SetText(cfg.GetInstance().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.GetInstance().CaiYunAI.MaxSingleTextLength))),
-									).GetWidgets(),
+											SetText(fmt.Sprintf("%d", cfg.GetInstance().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
@@ -185,24 +185,22 @@ func (customPage *Settings) GetWidget() Widget {
 							pack.NewWidgetGroup().Append(
 								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("访问ID")),
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.GetInstance().HuaweiCloudNlp.AKId)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("访问密钥")),
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.GetInstance().HuaweiCloudNlp.SkKey)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("项目ID")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.GetInstance().HuaweiCloudNlp.ProjectId)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("支持区域")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKRegion).SetText(cfg.GetInstance().HuaweiCloudNlp.Region)),
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.GetInstance().HuaweiCloudNlp.MaxSingleTextLength))),
-									).GetWidgets(),
+									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
 						pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 							pack.NewWidgetGroup().Append(
-								pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("同步").SetOnClicked(customPage.eventSync)),
+								pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("保存").SetOnClicked(customPage.eventSync)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
 					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
@@ -352,7 +350,6 @@ func (customPage *Settings) eventSync() {
 		huaweiCloudAKId := customPage.ptrHuaweiCloudAKId.Text()
 		huaweiCloudSKKey := customPage.ptrHuaweiCloudSKKey.Text()
 		huaweiCloudAKProjectId := customPage.ptrHuaweiCloudAKProjectId.Text()
-		huaweiCloudAKRegion := customPage.ptrHuaweiCloudAKRegion.Text()
 
 		if huaweiCloudAKId != cfg.GetInstance().HuaweiCloudNlp.AKId {
 			cfg.GetInstance().HuaweiCloudNlp.AKId = huaweiCloudAKId
@@ -364,10 +361,6 @@ func (customPage *Settings) eventSync() {
 		}
 		if huaweiCloudAKProjectId != cfg.GetInstance().HuaweiCloudNlp.ProjectId {
 			cfg.GetInstance().HuaweiCloudNlp.ProjectId = huaweiCloudAKProjectId
-			cntModified++
-		}
-		if huaweiCloudAKRegion != cfg.GetInstance().HuaweiCloudNlp.Region {
-			cfg.GetInstance().HuaweiCloudNlp.Region = huaweiCloudAKRegion
 			cntModified++
 		}
 		huaweiCloudMaxSingleTextLength := customPage.ptrHuaweiCloudMaxSingleTextLength.Text()
