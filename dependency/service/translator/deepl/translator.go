@@ -3,12 +3,9 @@ package deepl
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"io"
-	"net/http"
 	"strings"
 	"sync"
 )
@@ -75,41 +72,24 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		})
 	}
 
-	bytesEncoded, err := json.Marshal(req)
+	respBytes, err := translator.RequestSimplePost(customT, api, req)
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("压缩数据异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("压缩数据异常, 错误: %s", err.Error())
+		return nil, err
 	}
 
-	httpResp, err := http.DefaultClient.Post(api, "application/json", bytes.NewReader(bytesEncoded))
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
-	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
-	}
 	resp := new(translateResp)
-	if err := json.Unmarshal(respBytes, resp); err != nil {
-		log.Singleton().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
+	if err = json.Unmarshal(respBytes, resp); err != nil {
+		log.Singleton().ErrorF("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 
 	if resp.Error.Message != "" {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: %s", customT.GetName(), resp.Error.Message))
+		log.Singleton().ErrorF("响应解析错误, 引擎: %s, 错误: %s", customT.GetName(), resp.Error.Message)
 		return nil, fmt.Errorf("翻译异常, 错误: %s", resp.Error.Message)
 	}
 
 	if len(texts) != len(resp.Result.Translations[0].Beams[0].Sentences) {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, fmt.Errorf("翻译异常, 错误: 原文和译文数量不对等")
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 
 	ret := new(translator.TranslateRes)

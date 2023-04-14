@@ -17,17 +17,17 @@ func RequestSimpleGet(engine InterfaceTranslator, url string) ([]byte, error) {
 		}
 	}()
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", engine.GetName(), err))
+		log.Singleton().ErrorF("调用接口失败, 引擎: %s, 错误: %s", engine.GetName(), err)
 		return nil, fmt.Errorf("网络请求异常, 错误: %s", err.Error())
 	}
 
 	if httpResp.StatusCode != 200 {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %d(%s)", engine.GetName(), httpResp.StatusCode, httpResp.Status))
+		log.Singleton().ErrorF("调用接口失败, 引擎: %s, 错误: %d(%s)", engine.GetName(), httpResp.StatusCode, httpResp.Status)
 		return nil, fmt.Errorf("网络响应异常, 错误:  %d(%s)", httpResp.StatusCode, httpResp.Status)
 	}
 	respBytes, err := io.ReadAll(httpResp.Body)
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", engine.GetName(), err))
+		log.Singleton().ErrorF("读取报文异常, 引擎: %s, 错误: %s", engine.GetName(), err)
 		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
 	}
 	return respBytes, nil
@@ -49,13 +49,13 @@ func RequestSimpleHttp(engine InterfaceTranslator, r *http.Request) ([]byte, err
 		}
 	}()
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", engine.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
+		log.Singleton().ErrorF("调用接口失败, 引擎: %s, 错误: %s", engine.GetName(), err)
+		return nil, fmt.Errorf("网络请求异常, 错误: %s", err.Error())
 	}
 	respBytes, err := io.ReadAll(httpResp.Body)
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", engine.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
+		log.Singleton().ErrorF("读取报文异常, 引擎: %s, 错误: %s", engine.GetName(), err)
+		return nil, fmt.Errorf("读取报文异常, 错误: %s", err.Error())
 	}
 	return respBytes, nil
 }

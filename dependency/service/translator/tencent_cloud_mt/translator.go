@@ -55,7 +55,7 @@ type Translator struct {
 func (customT *Translator) Init(cfg interface{}) {
 	customT.cfg = cfg.(*Cfg)
 	if customT.cfg == nil {
-		log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: 未设置必需参数", customT.GetName()))
+		log.Singleton().ErrorF("引擎: %s, 错误: 未设置必需参数", customT.GetName())
 		return
 	}
 	customT.clientBuilder()
@@ -94,7 +94,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	req.Init().WithApiInfo("tmt", "2018-03-21", "TextTranslateBatch")
 	req.SetContext(context.Background())
 	if customT.tencentClient.GetCredential() == nil {
-		log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: 获取凭证失败", customT.GetName()))
+		log.Singleton().ErrorF("引擎: %s, 错误: 获取凭证失败", customT.GetName())
 		return nil, fmt.Errorf("引擎: %s, 错误: 获取凭证失败", customT.GetName())
 	}
 	resp := &remoteResp{
@@ -105,7 +105,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		return nil, err
 	}
 	if len(resp.Response.TargetTextList) != len(texts) {
-		return nil, fmt.Errorf("引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName())
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 	ret := new(translator.TranslateRes)
 	for idx, textTranslated := range resp.Response.TargetTextList {
@@ -125,7 +125,7 @@ func (customT *Translator) clientBuilder() {
 	}
 	tmpClient, tmpErr := common.NewClientWithSecretId(customT.cfg.SecretId, customT.cfg.SecretKey, customT.cfg.Region)
 	if tmpErr != nil {
-		log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: 初始化客户都安失败(%s)", customT.GetName(), tmpErr))
+		log.Singleton().ErrorF("引擎: %s, 错误: 初始化客户都安失败(%s)", customT.GetName(), tmpErr)
 		return
 	}
 

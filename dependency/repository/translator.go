@@ -3,8 +3,6 @@ package repository
 import (
 	_type "anto/common"
 	serviceTranslator "anto/dependency/service/translator"
-	"anto/lib/log"
-	"fmt"
 	"sort"
 	"sync"
 )
@@ -56,8 +54,6 @@ func (customT *Translators) genNames2ComboBox() {
 				Key:  translator.(serviceTranslator.InterfaceTranslator).GetId(),
 				Name: translator.(serviceTranslator.InterfaceTranslator).GetName(),
 			})
-		} else {
-			log.Singleton().Warn(fmt.Sprintf("当前翻译引擎无效: %s", translator.(serviceTranslator.InterfaceTranslator).GetName()))
 		}
 		return true
 	})

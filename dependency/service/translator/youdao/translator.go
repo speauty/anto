@@ -73,12 +73,12 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		return nil, err
 	}
 	youDaoResp := new(youDaoMTResp)
-	if err := json.Unmarshal(respBytes, youDaoResp); err != nil {
-		log.Singleton().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
+	if err = json.Unmarshal(respBytes, youDaoResp); err != nil {
+		log.Singleton().ErrorF("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 	if youDaoResp.ErrorCode != 0 {
-		log.Singleton().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err), zap.String("result", string(respBytes)))
+		log.Singleton().ErrorF("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err, zap.String("result", string(respBytes)))
 		return nil, fmt.Errorf("翻译异常, 代码: %d", youDaoResp.ErrorCode)
 	}
 

@@ -3,7 +3,6 @@ package huawei_cloud_nlp
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
-	"errors"
 	"fmt"
 	"github.com/golang-module/carbon"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
@@ -90,19 +89,18 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	resp, err := customT.getClient().RunTextTranslation(request)
 
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
+		log.Singleton().ErrorF("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("调用接口失败(%s)", err)
 	}
 	if resp.ErrorCode != nil && *resp.ErrorCode != "" {
-		log.Singleton().Error(fmt.Sprintf("接口响应错误, 引擎: %s, 错误: %s(%s)", customT.GetName(), *resp.ErrorCode, *resp.ErrorMsg))
+		log.Singleton().ErrorF("接口响应错误, 引擎: %s, 错误: %s(%s)", customT.GetName(), *resp.ErrorCode, *resp.ErrorMsg)
 		return nil, fmt.Errorf("响应错误(代码: %s, 错误: %s)", *resp.ErrorCode, *resp.ErrorMsg)
 	}
 
 	srcTexts := strings.Split(*resp.SrcText, customT.GetSep())
 	translatedTexts := strings.Split(*resp.TranslatedText, customT.GetSep())
 	if len(srcTexts) != len(translatedTexts) {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, errors.New("译文和原文数量匹配失败")
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 	for idx, text := range srcTexts {
 		ret.Results = append(ret.Results, &translator.TranslateResBlock{

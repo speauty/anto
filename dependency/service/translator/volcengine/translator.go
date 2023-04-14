@@ -86,19 +86,18 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 
 	resp := new(translateResponse)
 	if err = json.Unmarshal(respBytes, resp); err != nil {
-		log.Singleton().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
+		log.Singleton().ErrorF("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 
 	if resp.ResponseMetaData.Error.Code != "" {
-		log.Singleton().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s(%s)", customT.GetName(), resp.ResponseMetaData.Error.Message, resp.ResponseMetaData.Error.Code))
+		log.Singleton().ErrorF("接口响应异常, 引擎: %s, 错误: %s(%s)", customT.GetName(), resp.ResponseMetaData.Error.Message, resp.ResponseMetaData.Error.Code)
 		return nil, fmt.Errorf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), resp.ResponseMetaData.Error.Message)
 	}
 	srcTexts := strings.Split(args.TextContent, customT.GetSep())
 	tgtTexts := strings.Split(resp.TranslationList[0].Translation, customT.GetSep())
 	if len(srcTexts) != len(tgtTexts) {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, fmt.Errorf("翻译异常, 错误: 源文和译文数量不对等")
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 
 	ret := new(translator.TranslateRes)

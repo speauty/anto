@@ -135,7 +135,6 @@ func (customCron *SrtTranslator) jobTranslator() {
 						})
 						if err != nil {
 							msg := fmt.Sprintf("翻译异常, 引擎: %s, %s", currentData.PtrOpts.Translator.GetName(), err)
-							customCron.log().Error(msg)
 							chanMsg <- msg
 							break
 						}

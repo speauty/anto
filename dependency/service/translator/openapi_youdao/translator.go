@@ -87,14 +87,14 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		return nil, err
 	}
 	newResp := new(remoteResp)
-	if err := json.Unmarshal(respBytes, newResp); err != nil {
-		log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: 解析报文异常(%s)", customT.GetName(), err))
+	if err = json.Unmarshal(respBytes, newResp); err != nil {
+		log.Singleton().ErrorF("引擎: %s, 错误: 解析报文异常(%s)", customT.GetName(), err)
 		return nil, fmt.Errorf("错误: 解析报文出现异常(%s)", err.Error())
 	}
 
 	if newResp.ErrorCode != "0" {
 		errMsg := errorMap[newResp.ErrorCode]
-		log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: 接口响应异常(%s:%s)", customT.GetName(), newResp.ErrorCode, errMsg))
+		log.Singleton().ErrorF("引擎: %s, 错误: 接口响应异常(%s:%s)", customT.GetName(), newResp.ErrorCode, errMsg)
 		return nil, fmt.Errorf("错误: 翻译异常(%s:%s)", newResp.ErrorCode, errMsg)
 	}
 

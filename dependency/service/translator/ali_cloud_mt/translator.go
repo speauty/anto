@@ -98,18 +98,17 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		req.SourceText = string(bytes)
 		resp, err := customT.mtClient.GetBatchTranslate(req)
 		if err != nil {
-			log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: %s", customT.GetName(), err))
+			log.Singleton().ErrorF("引擎: %s, 错误: %s", customT.GetName(), err)
 			return nil, fmt.Errorf("引擎: %s, 错误: %s", customT.GetName(), err)
 		}
 		for _, translated := range resp.TranslatedList {
 			if translated["code"] != "200" {
-				log.Singleton().Error(fmt.Sprintf("引擎: %s, 错误: %s", customT.GetName(), translated["errorMsg"].(string)))
+				log.Singleton().ErrorF("引擎: %s, 错误: %s", customT.GetName(), translated["errorMsg"].(string))
 				return nil, fmt.Errorf("引擎: %s, 错误: %s", customT.GetName(), translated["errorMsg"].(string))
 			}
 			idx := cast.ToInt(translated["index"].(string))
 			ret.Results = append(ret.Results, &translator.TranslateResBlock{
-				Id:             texts[idx],
-				TextTranslated: translated["translated"].(string),
+				Id: texts[idx], TextTranslated: translated["translated"].(string),
 			})
 		}
 	}
@@ -131,7 +130,7 @@ func (customT *Translator) clientBuilder() {
 	}
 	client, err := alimt.NewClientWithOptions(region, config, credential)
 	if err != nil {
-		log.Singleton().Error("引擎: %s, 错误: 生成客户端失败(%s)", customT.GetName(), err)
+		log.Singleton().ErrorF("引擎: %s, 错误: 生成客户端失败(%s)", customT.GetName(), err)
 		return
 	}
 	customT.mtClient = client

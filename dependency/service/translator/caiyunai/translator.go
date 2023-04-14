@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"io"
 	"net/http"
 	"strings"
 	"sync"
@@ -79,36 +78,24 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	httpReq, _ := http.NewRequest(http.MethodPost, api, bytes.NewReader(reqBytes))
 	httpReq.Header.Set("content-type", "application/json")
 	httpReq.Header.Set("x-authorization", fmt.Sprintf("token %s", customT.cfg.Token))
-	httpResp, err := new(http.Client).Do(httpReq)
-	defer func() {
-		if httpResp != nil && httpResp.Body != nil {
-			_ = httpResp.Body.Close()
-		}
-	}()
+	respBytes, err := translator.RequestSimpleHttp(customT, httpReq)
 	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("调用接口失败, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("网络请求出现异常, 错误: %s", err.Error())
-	}
-	respBytes, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		log.Singleton().Error(fmt.Sprintf("读取报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
-		return nil, fmt.Errorf("读取报文出现异常, 错误: %s", err.Error())
+		return nil, err
 	}
 
 	resp := new(translateResp)
 	if err = json.Unmarshal(respBytes, resp); err != nil {
-		log.Singleton().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
+		log.Singleton().ErrorF("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 
 	if resp.Msg != "" {
-		log.Singleton().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), resp.Msg))
+		log.Singleton().ErrorF("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), resp.Msg)
 		return nil, fmt.Errorf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), resp.Msg)
 	}
 
 	if len(texts) != len(resp.Target) {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, fmt.Errorf("翻译异常, 错误: 源文和译文数量不对等")
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 
 	ret := new(translator.TranslateRes)

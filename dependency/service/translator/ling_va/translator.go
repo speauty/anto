@@ -79,18 +79,17 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	lingVaResp := new(lingVaMTResp)
 	if err := json.Unmarshal(respBytes, lingVaResp); err != nil {
 		fmt.Println(string(respBytes))
-		log.Singleton().Error(fmt.Sprintf("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err))
+		log.Singleton().ErrorF("解析报文异常, 引擎: %s, 错误: %s", customT.GetName(), err)
 		return nil, fmt.Errorf("解析报文出现异常, 错误: %s", err.Error())
 	}
 	if lingVaResp.State == false {
-		log.Singleton().Error(fmt.Sprintf("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err), zap.String("result", string(respBytes)))
+		log.Singleton().ErrorF("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err, zap.String("result", string(respBytes)))
 		return nil, fmt.Errorf("翻译异常")
 	}
 	textTranslatedList := strings.Split(lingVaResp.Props.TextTranslated, customT.sep)
 	textSourceList := strings.Split(lingVaResp.Props.Params.TextSource, customT.sep)
 	if len(textSourceList) != len(textTranslatedList) {
-		log.Singleton().Error(fmt.Sprintf("响应解析错误, 引擎: %s, 错误: 译文和原文数量匹配失败", customT.GetName()))
-		return nil, fmt.Errorf("翻译异常, 错误: 源文和译文数量不对等")
+		return nil, translator.ErrSrcAndTgtNotMatched
 	}
 
 	ret := new(translator.TranslateRes)
