@@ -1,1 +1,1 @@
-rsrc -manifest translator.manifest -ico favicon.ico -o rsrc.syso
+rsrc -manifest anto.manifest -ico favicon.ico -o rsrc.syso

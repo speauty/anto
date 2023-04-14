@@ -70,6 +70,10 @@ func (customC *Cfg) Sync() error {
 		viper.Set("caiyun_ai.max_single_text_length", customC.CaiYunAI.MaxSingleTextLength)
 	}
 
+	{ // sync niutrans
+		viper.Set("niutrans.app_key", customC.Niutrans.AppKey)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

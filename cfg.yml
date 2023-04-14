@@ -31,5 +31,8 @@ ali_cloud_mt:           # 阿里云翻译
   max_single_text_length: 3000 # 单次翻译最大长度
 
 caiyun_ai:                      # 彩云小翻译
-  token: "3975l6lr5pcbvidl6jl2" # 密钥
-  max_single_text_length: 5000 # 单次翻译最大长度
+  token: "" # 密钥
+  max_single_text_length: 5000  # 单次翻译最大长度
+
+niutrans:
+  app_key:

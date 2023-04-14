@@ -19,7 +19,7 @@ huawei_cloud_nlp: # 华为云机器翻译
   max_single_text_length: 2000 # 单次翻译最大长度
 
 ling_va:
-  data_id: "3qnDcUVykFKnSC3cdRX2t"            # 数据ID
+  data_id: 3qnDcUVykFKnSC3cdRX2t            # 数据ID
   max_single_text_length: 1000                # 单次翻译最大长度
 
 baidu:
@@ -44,8 +44,10 @@ ali_cloud_mt:           # 阿里云翻译
   max_single_text_length: 3000 # 单次翻译最大长度
 
 caiyun_ai:                      # 彩云小翻译
-  token: "3975l6lr5pcbvidl6jl2" # 密钥
+  token: 3975l6lr5pcbvidl6jl2 # 密钥
   max_single_text_length: 5000 # 单次翻译最大长度
 
+niutrans:
+  app_key: 
 `
 )

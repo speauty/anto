@@ -10,6 +10,7 @@ import (
 	"anto/dependency/service/translator/caiyunai"
 	"anto/dependency/service/translator/huawei_cloud_nlp"
 	"anto/dependency/service/translator/ling_va"
+	"anto/dependency/service/translator/niutrans"
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
 	"anto/dependency/service/translator/youdao"
@@ -26,6 +27,7 @@ func main() {
 	if err := cfg.Singleton().Load(""); err != nil {
 		panic(err)
 	}
+
 	cfg.Singleton().App.Author = common.Author
 	cfg.Singleton().App.Version = common.Version
 	log.Singleton()
@@ -39,12 +41,13 @@ func main() {
 	openapi_youdao.Singleton().Init(cfg.Singleton().OpenAPIYouDao)
 	ali_cloud_mt.Singleton().Init(cfg.Singleton().AliCloudMT)
 	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
+	niutrans.Singleton().Init(cfg.Singleton().Niutrans)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),
 		youdao.Singleton(), ling_va.Singleton(), baidu.Singleton(),
 		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
-		ali_cloud_mt.Singleton(), caiyunai.Singleton(),
+		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
 	)
 
 	win.Run(ctx)

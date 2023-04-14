@@ -38,6 +38,7 @@ type Settings struct {
 
 	ptrEnv *walk.ComboBox
 
+	ptrNiutransAppKey                 *walk.LineEdit
 	ptrLingVADataId                   *walk.LineEdit
 	ptrLingVAMaxSingleTextLength      *walk.LineEdit
 	ptrBaiduAppId                     *walk.LineEdit
@@ -81,10 +82,21 @@ func (customPage *Settings) SetVisible(isVisible bool) {
 func (customPage *Settings) GetWidget() Widget {
 	defer customPage.Reset()
 	return StdRootWidget(&customPage.rootWidget,
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
+		pack.UIScrollView(pack.NewUIScrollViewArgs(nil).SetCustomSize(Size{Width: 200}).SetChildren(
 			pack.NewWidgetGroup().Append(
 				pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetWidgets(
 					pack.NewWidgetGroup().Append(
+						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("小牛翻译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrNiutransAppKey).
+											SetText(cfg.Singleton().Niutrans.AppKey).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
 						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -95,6 +107,20 @@ func (customPage *Settings) GetWidget() Widget {
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
+						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
+											SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
+											SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -167,20 +193,7 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
-											SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
+
 						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
@@ -198,6 +211,7 @@ func (customPage *Settings) GetWidget() Widget {
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
 						)),
+
 						pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 							pack.NewWidgetGroup().Append(
 								pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("保存").SetOnClicked(customPage.eventSync)),
@@ -205,8 +219,7 @@ func (customPage *Settings) GetWidget() Widget {
 						)),
 					).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
 				)),
-			).AppendZeroVSpacer().GetWidgets(),
-		)),
+			).AppendZeroVSpacer().GetWidgets())),
 	)
 }
 
@@ -216,6 +229,14 @@ func (customPage *Settings) Reset() {
 
 func (customPage *Settings) eventSync() {
 	cntModified := 0
+
+	{
+		niutransAppKey := customPage.ptrNiutransAppKey.Text()
+		if niutransAppKey != cfg.Singleton().Niutrans.AppKey {
+			cfg.Singleton().Niutrans.AppKey = niutransAppKey
+			cntModified++
+		}
+	}
 
 	{
 		lingVADataId := customPage.ptrLingVADataId.Text()
@@ -233,7 +254,6 @@ func (customPage *Settings) eventSync() {
 			cfg.Singleton().LingVA.MaxSingleTextLength = lingVAMaxSingleTextLengthInt
 			cntModified++
 		}
-
 	}
 
 	{

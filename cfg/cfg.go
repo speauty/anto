@@ -6,6 +6,7 @@ import (
 	"anto/dependency/service/translator/caiyunai"
 	"anto/dependency/service/translator/huawei_cloud_nlp"
 	"anto/dependency/service/translator/ling_va"
+	"anto/dependency/service/translator/niutrans"
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
 	"anto/platform/win/ui"
@@ -30,6 +31,7 @@ func Singleton() *Cfg {
 		apiSingleton.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
 		apiSingleton.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
 		apiSingleton.CaiYunAI = caiyunai.Cfg{}.Default()
+		apiSingleton.Niutrans = niutrans.Cfg{}.Default()
 	})
 	return apiSingleton
 }
@@ -44,6 +46,7 @@ type Cfg struct {
 	OpenAPIYouDao  *openapi_youdao.Cfg   `mapstructure:"openapi_youdao"`
 	AliCloudMT     *ali_cloud_mt.Cfg     `mapstructure:"ali_cloud_mt"`
 	CaiYunAI       *caiyunai.Cfg         `mapstructure:"caiyun_ai"`
+	Niutrans       *niutrans.Cfg         `mapstructure:"niutrans"`
 }
 
 func (customC *Cfg) NewUITitle() string {
