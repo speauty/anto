@@ -36,3 +36,7 @@ caiyun_ai:                      # 彩云小翻译
 
 niutrans:
   app_key:
+
+volc_engine:
+  access_key:
+  secret_key:

@@ -74,6 +74,11 @@ func (customC *Cfg) Sync() error {
 		viper.Set("niutrans.app_key", customC.Niutrans.AppKey)
 	}
 
+	{ // sync volcengine
+		viper.Set("volc_engine.access_key", customC.VolcEngine.AccessKey)
+		viper.Set("volc_engine.secret_key", customC.VolcEngine.SecretKey)
+	}
+
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置失败, 错误: %s", err)
 	}

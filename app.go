@@ -13,6 +13,7 @@ import (
 	"anto/dependency/service/translator/niutrans"
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
+	"anto/dependency/service/translator/volcengine"
 	"anto/dependency/service/translator/youdao"
 	"anto/lib/log"
 	"anto/platform/win"
@@ -42,12 +43,14 @@ func main() {
 	ali_cloud_mt.Singleton().Init(cfg.Singleton().AliCloudMT)
 	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
 	niutrans.Singleton().Init(cfg.Singleton().Niutrans)
+	volcengine.Singleton().Init(cfg.Singleton().VolcEngine)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),
 		youdao.Singleton(), ling_va.Singleton(), baidu.Singleton(),
 		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
 		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
+		volcengine.Singleton(),
 	)
 
 	win.Run(ctx)

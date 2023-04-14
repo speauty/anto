@@ -38,23 +38,33 @@ type Settings struct {
 
 	ptrEnv *walk.ComboBox
 
-	ptrNiutransAppKey                 *walk.LineEdit
-	ptrLingVADataId                   *walk.LineEdit
-	ptrLingVAMaxSingleTextLength      *walk.LineEdit
-	ptrBaiduAppId                     *walk.LineEdit
-	ptrBaiduAppKey                    *walk.LineEdit
-	ptrBaiduMaxSingleTextLength       *walk.LineEdit
-	ptrTencentCloudMTSecretId         *walk.LineEdit
-	ptrTencentCloudMTSecretKey        *walk.LineEdit
-	ptrTencentMaxSingleTextLength     *walk.LineEdit
-	ptrOpenAPIYouDaoAppKey            *walk.LineEdit
-	ptrOpenAPIYouDaoAppSecret         *walk.LineEdit
-	ptrOpenAPIMaxSingleTextLength     *walk.LineEdit
-	ptrAliCloudMTAkId                 *walk.LineEdit
-	ptrAliCloudMTAkSecret             *walk.LineEdit
-	ptrAliCloudMTMaxSingleTextLength  *walk.LineEdit
-	ptrCaiYunAIToken                  *walk.LineEdit
-	ptrCaiYunAIMaxSingleTextLength    *walk.LineEdit
+	ptrNiutransAppKey *walk.LineEdit
+
+	ptrLingVADataId              *walk.LineEdit
+	ptrLingVAMaxSingleTextLength *walk.LineEdit
+
+	ptrBaiduAppId               *walk.LineEdit
+	ptrBaiduAppKey              *walk.LineEdit
+	ptrBaiduMaxSingleTextLength *walk.LineEdit
+
+	ptrTencentCloudMTSecretId     *walk.LineEdit
+	ptrTencentCloudMTSecretKey    *walk.LineEdit
+	ptrTencentMaxSingleTextLength *walk.LineEdit
+
+	ptrOpenAPIYouDaoAppKey        *walk.LineEdit
+	ptrOpenAPIYouDaoAppSecret     *walk.LineEdit
+	ptrOpenAPIMaxSingleTextLength *walk.LineEdit
+
+	ptrAliCloudMTAkId                *walk.LineEdit
+	ptrAliCloudMTAkSecret            *walk.LineEdit
+	ptrAliCloudMTMaxSingleTextLength *walk.LineEdit
+
+	ptrCaiYunAIToken               *walk.LineEdit
+	ptrCaiYunAIMaxSingleTextLength *walk.LineEdit
+
+	ptrVolcEngineAccessKey *walk.LineEdit
+	ptrVolcEngineSecretKey *walk.LineEdit
+
 	ptrHuaweiCloudAKId                *walk.LineEdit
 	ptrHuaweiCloudSKKey               *walk.LineEdit
 	ptrHuaweiCloudAKProjectId         *walk.LineEdit
@@ -121,6 +131,20 @@ func (customPage *Settings) GetWidget() Widget {
 										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
 										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
 											SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+									).AppendZeroHSpacer().GetWidgets(),
+								)),
+							).AppendZeroHSpacer().GetWidgets(),
+						)),
+						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("火山翻译").SetLayoutVBox(false).SetWidgets(
+							pack.NewWidgetGroup().Append(
+								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+									pack.NewWidgetGroup().Append(
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用Key")),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineAccessKey).
+											SetText(cfg.Singleton().VolcEngine.AccessKey).SetCustomSize(stdLineEditSize)),
+										pack.UILabel(pack.NewUILabelArgs(nil).SetText("密钥Key")),
+										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineSecretKey).
+											SetText(cfg.Singleton().VolcEngine.SecretKey).SetCustomSize(stdLineEditSize)),
 									).AppendZeroHSpacer().GetWidgets(),
 								)),
 							).AppendZeroHSpacer().GetWidgets(),
@@ -347,7 +371,7 @@ func (customPage *Settings) eventSync() {
 			cntModified++
 		}
 	}
-	// ptrCaiYunAIToken
+
 	{
 		caiYunAIToken := customPage.ptrCaiYunAIToken.Text()
 		if caiYunAIToken != cfg.Singleton().CaiYunAI.Token {
@@ -362,6 +386,20 @@ func (customPage *Settings) eventSync() {
 		}
 		if caiYunAIMaxSingleTextLengthInt != cfg.Singleton().CaiYunAI.MaxSingleTextLength {
 			cfg.Singleton().CaiYunAI.MaxSingleTextLength = caiYunAIMaxSingleTextLengthInt
+			cntModified++
+		}
+	}
+
+	{
+		volcEngineAccessKey := customPage.ptrVolcEngineAccessKey.Text()
+		if volcEngineAccessKey != cfg.Singleton().VolcEngine.AccessKey {
+			cfg.Singleton().VolcEngine.AccessKey = volcEngineAccessKey
+			cntModified++
+		}
+
+		volcEngineSecretKey := customPage.ptrVolcEngineSecretKey.Text()
+		if volcEngineSecretKey != cfg.Singleton().VolcEngine.SecretKey {
+			cfg.Singleton().VolcEngine.SecretKey = volcEngineSecretKey
 			cntModified++
 		}
 	}

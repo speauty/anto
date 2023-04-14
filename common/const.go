@@ -48,6 +48,10 @@ caiyun_ai:                      # 彩云小翻译
   max_single_text_length: 5000 # 单次翻译最大长度
 
 niutrans:
-  app_key: 
+  app_key:
+
+volc_engine:
+  access_key:
+  secret_key:
 `
 )
