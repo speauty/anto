@@ -1,7 +1,7 @@
 deployWin: rs build compress
 
 build:
-	go build "-ldflags=-w -s -H=windowsgui" -o .\bin\anto.exe anto
+	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o .\bin\anto.exe anto
 
 compress:
 	upx -9 .\bin\anto.exe
