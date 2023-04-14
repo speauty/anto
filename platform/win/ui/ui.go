@@ -5,7 +5,6 @@ import (
 	"context"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"github.com/lxn/win"
 	"sync"
 )
 
@@ -37,7 +36,7 @@ type Gui struct {
 func (customG *Gui) Init(cfg *Cfg) error {
 	customG.cfg = cfg
 
-	if err := customG.genMainWindow(); err != nil {
+	if err := customG.initMainWindow(); err != nil {
 		return err
 	}
 
@@ -67,12 +66,6 @@ func (customG *Gui) Close() {
 	_ = customG.win.Close()
 }
 
-func (customG *Gui) eventCustomClose(canceled *bool, reason walk.CloseReason) {
-	reason = walk.CloseReasonUser
-	*canceled = false
-	customG.ctxCancelFn()
-}
-
 func (customG *Gui) GetWindow() *walk.MainWindow {
 	return customG.win
 }
@@ -91,38 +84,15 @@ func (customG *Gui) RegisterMenus(menus []MenuItem) {
 	return
 }
 
-func (customG *Gui) genMainWindow() error {
+func (customG *Gui) initMainWindow() error {
 	return MainWindow{
-		AssignTo:   &customG.win,
-		Title:      customG.cfg.Title,
-		Icon:       "./favicon.ico",
-		Visible:    false,
-		Persistent: true,
-		Layout:     VBox{MarginsZero: true},
-		MenuItems:  customG.menus,
-		Children:   customG.pageCtl.GetWidgets(),
+		AssignTo: &customG.win,
+		Title:    customG.cfg.Title, Icon: "./favicon.ico",
+		Visible: false, Persistent: true,
+		Layout:    VBox{MarginsZero: true},
+		MenuItems: customG.menus,
+		Children:  customG.pageCtl.GetWidgets(),
 	}.Create()
-}
-
-func (customG *Gui) setWindowFlag() {
-	win.SetWindowLong(customG.GetWindow().Handle(), win.GWL_STYLE,
-		win.GetWindowLong(customG.GetWindow().Handle(), win.GWL_STYLE) & ^win.WS_MAXIMIZEBOX & ^win.WS_THICKFRAME)
-}
-
-func (customG *Gui) setWindowCenter() {
-	scrWidth := win.GetSystemMetrics(win.SM_CXSCREEN)
-	scrHeight := win.GetSystemMetrics(win.SM_CYSCREEN)
-	_ = customG.GetWindow().SetBounds(walk.Rectangle{
-		X:      int((scrWidth - width) / 2),
-		Y:      int((scrHeight - height) / 2),
-		Width:  width,
-		Height: height,
-	})
-}
-
-func (customG *Gui) setWindowMinAndMaxSize() {
-	minMaxSize := walk.Size{Width: width, Height: height}
-	_ = customG.GetWindow().SetMinMaxSize(minMaxSize, minMaxSize)
 }
 
 func (customG *Gui) log() *log.Log {

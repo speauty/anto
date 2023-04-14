@@ -3,7 +3,7 @@ package main
 import (
 	"anto/bootstrap"
 	"anto/cfg"
-	_const "anto/common"
+	"anto/common"
 	"anto/dependency/repository"
 	"anto/dependency/service/translator/ali_cloud_mt"
 	"anto/dependency/service/translator/baidu"
@@ -26,8 +26,8 @@ func main() {
 	if err := cfg.Singleton().Load(""); err != nil {
 		panic(err)
 	}
-	cfg.Singleton().App.Author = _const.Author
-	cfg.Singleton().App.Version = _const.Version
+	cfg.Singleton().App.Author = common.Author
+	cfg.Singleton().App.Version = common.Version
 	log.Singleton()
 
 	cfg.Singleton().UI.Title = cfg.Singleton().NewUITitle()

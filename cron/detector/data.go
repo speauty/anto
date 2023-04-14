@@ -1,7 +1,7 @@
 package detector
 
 import (
-	_type "anto/common"
+	"anto/common"
 	"anto/cron/reader"
 	"anto/cron/translate"
 	"anto/dependency/service/translator"
@@ -11,8 +11,8 @@ type StrDetectorData struct {
 	Translator      translator.InterfaceTranslator
 	FromLang        string
 	ToLang          string
-	TranslateMode   _type.TranslateMode
-	MainTrackReport _type.LangDirection
+	TranslateMode   common.TranslateMode
+	MainTrackReport common.LangDirection
 	SrtFile         string
 	SrtDir          string
 	FlagTrackExport int

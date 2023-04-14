@@ -6,6 +6,7 @@ import (
 	"anto/cron/reader"
 	"anto/cron/translate"
 	"anto/cron/writer"
+	"anto/lib/log"
 	"anto/lib/nohup"
 	"anto/platform/win/page"
 	"anto/platform/win/ui"
@@ -18,6 +19,7 @@ func Run(ctx context.Context) {
 	ui.Singleton().RegisterPages(page.GetSettings(), page.GetSubripTranslate())
 
 	if err := ui.Singleton().Init(cfg.Singleton().UI); err != nil {
+		log.Singleton().ErrorF("UI启动崩溃, 错误: %s", err)
 		panic(err)
 	}
 

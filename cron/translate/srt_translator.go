@@ -1,7 +1,7 @@
 package translate
 
 import (
-	_type "anto/common"
+	"anto/common"
 	"anto/cron"
 	"anto/cron/writer"
 	"anto/dependency/service/translator"
@@ -88,7 +88,7 @@ func (customCron *SrtTranslator) jobTranslator() {
 					var blockChunked []string
 					tmpBlockStr := ""
 					for _, block := range currentData.PrtSrt.Blocks {
-						if block.SubTrack != "" && currentData.PtrOpts.TranslateMode == _type.ModeDelta {
+						if block.SubTrack != "" && currentData.PtrOpts.TranslateMode == common.ModeDelta {
 							continue
 						}
 
