@@ -18,23 +18,45 @@
 - ### ~~框架及目录~~
 
   ```shell
-  ├─.idea 		# Goland的项目记录，已忽略
-  ├─.run 			# Goland的Run/Debug配置，其中包含一个运行的配置，我日常开发使用的
-  ├─bin			# 编译目录，已忽略
-  │  ├─assets		# 依赖的静态资源目录
-  │  └─logs		# 运行日志目录
-  ├─cfg			# 配置目录，采用spf13/viper加载yml配置文件（默认是可执行文件同级目录下的cfg.yml）
-  ├─const			# 常量目录，各种
-  ├─menu			# GUI的菜单动作
-  ├─page			# GUI的页面
-  └─tst			# 内库目录，lib
-  │  ├─tt_log		# 日志目录，包装的zap日志
-  │  ├─tt_srt		# srt解析和压缩目录，后面相应的翻译，可能会放在这里面，不确定
-  │  └─tt_ui		# lxn/walk的包装目录
-  │      ├─handle	# 一些函数句柄，这个随便放的
-  │      ├─msg	# 窗口消息提示简单包装目录
-  │      └─pack	# 窗口组件的部分包装目录
-  └─util			# 工具函数
+  ├─.idea 	# Goland的项目记录，已忽略                     
+  ├─.run  	# Goland的Run/Debug配置，其中包含一个运行的配置，我日常开发使用的
+  ├─bin   	# 编译目录，已忽略                     
+  │  ├─assets	# 依赖的静态资源目录
+  │  └─logs	# 运行日志目录
+  ├─bootstrap	# 一些初始化安装实现目录
+  ├─cfg		# 配置目录，采用spf13/viper加载yml配置文件（默认是可执行文件同级目录下的cfg.yml）
+  ├─common 	# 公共目录，现在放了一些数据结构定义
+  ├─cron		# 内置任务
+  │  ├─detector 	# SRT检测
+  │  ├─reader 	# SRT读取
+  │  ├─translate 	# SRT翻译
+  │  └─writer 	# SRT写入
+  ├─dependency 	# 依赖目录
+  │  ├─repository # 服务管理仓库
+  │  └─service 	# 依赖的服务
+  │      └─translator 			# 翻译服务
+  │          ├─ali_cloud_mt    	# 阿里云翻译
+  │          ├─baidu 				# 百度翻译
+  │          ├─caiyunai       	# 彩云小译 
+  │          ├─deepl 				# DeepL翻译
+  │          ├─huawei_cloud_nlp 	#华为云翻译
+  │          ├─ling_va 			# LingVA翻译
+  │          ├─niutrans 			# 小牛翻译
+  │          ├─openapi_youdao 	# 有道智云翻译
+  │          ├─tencent_cloud_mt 	# 腾讯云翻译
+  │          └─youdao 			# 有道翻译
+  ├─lib 		# 核心库
+  │  ├─log 	# 日志类实现, 二次包装zap
+  │  ├─nohup 	# 常驻进程模拟
+  │  ├─srt 	# SRT解析等
+  │  └─util 	# 工具函数
+  └─platform 		# 平台
+      └─win 		# windows
+          ├─page 	# 页面
+          └─ui 	# UI包装
+              ├─handle 	# 操作包装
+              ├─msg 		# 弹窗
+              └─pack 		# 组件包装
   ```
 
   
