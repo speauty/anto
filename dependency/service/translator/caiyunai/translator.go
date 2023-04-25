@@ -5,6 +5,7 @@ import (
 	"anto/lib/log"
 	"anto/lib/util"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -66,7 +67,7 @@ func (customT *Translator) GetLangSupported() []translator.LangPair { return cus
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool                           { return customT.cfg != nil && customT.cfg.Token != "" }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	texts := strings.Split(args.TextContent, customT.GetSep())
 	req := new(translateReq)
@@ -78,7 +79,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	httpReq, _ := http.NewRequest(http.MethodPost, api, bytes.NewReader(reqBytes))
 	httpReq.Header.Set("content-type", "application/json")
 	httpReq.Header.Set("x-authorization", fmt.Sprintf("token %s", customT.cfg.Token))
-	respBytes, err := translator.RequestSimpleHttp(customT, httpReq)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, httpReq)
 	if err != nil {
 		return nil, err
 	}

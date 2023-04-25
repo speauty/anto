@@ -3,6 +3,7 @@ package tencent_cloud_mt
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"anto/lib/restrictor"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -78,7 +79,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.isClientOk && customT.cfg.SecretId != "" && customT.cfg.SecretKey != "" && customT.cfg.Region != ""
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	req := &remoteReq{
 		BaseRequest: &tencentHttp.BaseRequest{},
@@ -92,13 +93,16 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	}
 
 	req.Init().WithApiInfo("tmt", "2018-03-21", "TextTranslateBatch")
-	req.SetContext(context.Background())
+	req.SetContext(ctx)
 	if customT.tencentClient.GetCredential() == nil {
 		log.Singleton().ErrorF("引擎: %s, 错误: 获取凭证失败", customT.GetName())
 		return nil, fmt.Errorf("引擎: %s, 错误: 获取凭证失败", customT.GetName())
 	}
 	resp := &remoteResp{
 		BaseResponse: &tencentHttp.BaseResponse{},
+	}
+	if err := restrictor.Singleton().Wait(customT.GetId(), ctx); err != nil {
+		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
 	}
 	err := customT.tencentClient.Send(req, resp)
 	if err != nil {

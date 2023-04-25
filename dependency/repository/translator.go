@@ -3,6 +3,7 @@ package repository
 import (
 	_type "anto/common"
 	serviceTranslator "anto/dependency/service/translator"
+	"anto/lib/restrictor"
 	"sort"
 	"sync"
 )
@@ -25,11 +26,21 @@ type Translators struct {
 }
 
 func (customT *Translators) Register(translators ...serviceTranslator.InterfaceTranslator) {
+	tmpRestrictor := restrictor.Singleton()
 	for _, translator := range translators {
 		if _, isExisted := customT.list.Load(translator.GetId()); isExisted {
 			continue
 		}
 		customT.list.Store(translator.GetId(), translator)
+		tmpLimiter := tmpRestrictor.Get(translator.GetId())
+		limited := translator.GetQPS() / 4 * 3 // 缓冲
+		if limited < 1 {
+			limited = 1
+		}
+		tmpLimiter.SetLimit(1)
+		tmpLimiter.SetBurst(limited)
+
+		tmpRestrictor.Set(translator.GetId(), tmpLimiter)
 	}
 	customT.genNames2ComboBox()
 }

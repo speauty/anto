@@ -4,6 +4,7 @@ import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
 	"anto/lib/util"
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -68,7 +69,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.cfg != nil && customT.cfg.AppId != "" && customT.cfg.AppKey != ""
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	salt := util.Uid()
 	sign := customT.signBuilder(args.TextContent, salt)
@@ -77,7 +78,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		url.QueryEscape(args.TextContent), args.FromLang, args.ToLang,
 		customT.cfg.AppId, salt, sign,
 	)
-	respBytes, err := translator.RequestSimpleGet(customT, urlQueried)
+	respBytes, err := translator.RequestSimpleGet(ctx, customT, urlQueried)
 	if err != nil {
 		return nil, err
 	}

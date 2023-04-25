@@ -3,6 +3,8 @@ package ali_cloud_mt
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"anto/lib/restrictor"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
@@ -74,7 +76,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.cfg != nil && customT.cfg.AKId != "" && customT.cfg.AKSecret != "" && customT.isClientOk == true
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	ret := new(translator.TranslateRes)
 
@@ -96,6 +98,9 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		req.FormatType = "text"
 		req.Scene = "general"
 		req.SourceText = string(bytes)
+		if err := restrictor.Singleton().Wait(customT.GetId(), ctx); err != nil {
+			return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
+		}
 		resp, err := customT.mtClient.GetBatchTranslate(req)
 		if err != nil {
 			log.Singleton().ErrorF("引擎: %s, 错误: %s", customT.GetName(), err)

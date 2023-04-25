@@ -4,6 +4,7 @@ import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
 	"anto/lib/util"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -31,7 +32,7 @@ func New() *Translator {
 		id:            "openapi_youdao",
 		name:          "有道智云",
 		api:           "https://openapi.youdao.com/v2/api",
-		qps:           50,
+		qps:           1,
 		procMax:       20,
 		textMaxLen:    5000,
 		sep:           "\n",
@@ -70,7 +71,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.cfg != nil && customT.cfg.AppKey != "" && customT.cfg.AppSecret != ""
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	texts := strings.Split(args.TextContent, customT.GetSep())
 	newReq := &remoteReq{
@@ -82,7 +83,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	newReq.Sign = customT.signBuilder(strings.Join(texts, ""), newReq.Salt, newReq.CurrentTime)
 	params, _ := query.Values(newReq)
 	urlQueried := fmt.Sprintf("%s?%s", customT.api, params.Encode())
-	respBytes, err := translator.RequestSimpleGet(customT, urlQueried)
+	respBytes, err := translator.RequestSimpleGet(ctx, customT, urlQueried)
 	if err != nil {
 		return nil, err
 	}

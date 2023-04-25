@@ -10,10 +10,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"golang.org/x/time/rate"
 	"runtime"
 	"sync"
-	"time"
 )
 
 const (
@@ -43,7 +41,6 @@ type SrtTranslator struct {
 	chanMsg         chan string
 	chanMsgRedirect chan string
 	numCoroutine    int
-	rateLimiter     sync.Map
 }
 
 func (customCron *SrtTranslator) Push(data *SrtTranslateData) {
@@ -132,11 +129,7 @@ func (customCron *SrtTranslator) jobTranslator() {
 					flagTranslated := false
 
 					for _, currentBlock := range blockChunked {
-
-						for !customCron.checkRateLimiter(ctx, currentData.PtrOpts.Translator) {
-						}
-
-						translateRes, err := currentData.PtrOpts.Translator.Translate(&translator.TranslateArgs{
+						translateRes, err := currentData.PtrOpts.Translator.Translate(ctx, &translator.TranslateArgs{
 							FromLang:    currentData.PtrOpts.FromLang,
 							ToLang:      currentData.PtrOpts.ToLang,
 							TextContent: currentBlock,
@@ -187,29 +180,4 @@ func (customCron *SrtTranslator) init() {
 
 func (customCron *SrtTranslator) log() *log.Log {
 	return log.Singleton()
-}
-
-func (customCron *SrtTranslator) getRateLimiter(engine translator.InterfaceTranslator) *rate.Limiter {
-	currentLimiter, isOk := customCron.rateLimiter.Load(engine.GetId())
-	if !isOk {
-		cntTokens := engine.GetQPS() / 4 * 3
-		if cntTokens <= 0 {
-			cntTokens = 1
-		}
-		tmpLimiter := rate.NewLimiter(rate.Every(time.Second), cntTokens)
-		currentLimiter = tmpLimiter
-		customCron.rateLimiter.Store(engine.GetId(), currentLimiter)
-	}
-	return currentLimiter.(*rate.Limiter)
-}
-
-func (customCron *SrtTranslator) checkRateLimiter(ctx context.Context, engine translator.InterfaceTranslator) bool {
-	currentLimiter := customCron.getRateLimiter(engine)
-	if currentLimiter == nil || currentLimiter.Allow() {
-		return true
-	}
-	if err := currentLimiter.Wait(ctx); err != nil {
-		return false
-	}
-	return true
 }

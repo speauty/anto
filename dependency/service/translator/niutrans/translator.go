@@ -3,6 +3,7 @@ package niutrans
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -59,7 +60,7 @@ func (customT *Translator) GetLangSupported() []translator.LangPair { return cus
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool                           { return customT.cfg != nil && customT.cfg.AppKey != "" }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	tr := &translateRequest{
 		Apikey:  customT.cfg.AppKey,
@@ -67,7 +68,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		From:    args.FromLang,
 		To:      args.ToLang,
 	}
-	respBytes, err := translator.RequestSimplePost(customT, apiTranslate, tr)
+	respBytes, err := translator.RequestSimplePost(ctx, customT, apiTranslate, tr)
 	if err != nil {
 		return nil, err
 	}

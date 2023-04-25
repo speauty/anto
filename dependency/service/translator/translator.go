@@ -1,5 +1,7 @@
 package translator
 
+import "context"
+
 type InterfaceTranslator interface {
 	Init(cfg interface{})
 	GetId() string
@@ -11,7 +13,7 @@ type InterfaceTranslator interface {
 	GetLangSupported() []LangPair
 	GetSep() string
 	IsValid() bool
-	Translate(*TranslateArgs) (*TranslateRes, error)
+	Translate(context.Context, *TranslateArgs) (*TranslateRes, error)
 }
 
 type TranslateArgs struct {

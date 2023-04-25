@@ -3,6 +3,7 @@ package ling_va
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -64,7 +65,7 @@ func (customT *Translator) GetLangSupported() []translator.LangPair { return cus
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool                           { return customT.cfg.DataId != "" }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
 	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s/", customT.cfg.DataId)
@@ -72,7 +73,7 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
 	)
-	respBytes, err := translator.RequestSimpleGet(customT, queryUrl)
+	respBytes, err := translator.RequestSimpleGet(ctx, customT, queryUrl)
 	if err != nil {
 		return nil, err
 	}

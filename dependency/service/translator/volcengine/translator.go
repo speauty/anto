@@ -3,6 +3,8 @@ package volcengine
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"anto/lib/restrictor"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
@@ -70,7 +72,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.cfg != nil && customT.cfg.AccessKey != "" && customT.cfg.SecretKey != ""
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
 	params := &translateRequestParams{
@@ -79,6 +81,9 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 	}
 	params.TextList = append(params.TextList, args.TextContent)
 	jsonBytes, _ := json.Marshal(params)
+	if err := restrictor.Singleton().Wait(customT.GetId(), ctx); err != nil {
+		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
+	}
 	respBytes, _, err := customT.client().Json("TranslateText", nil, string(jsonBytes))
 	if err != nil {
 		return nil, err

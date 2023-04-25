@@ -3,6 +3,8 @@ package huawei_cloud_nlp
 import (
 	"anto/dependency/service/translator"
 	"anto/lib/log"
+	"anto/lib/restrictor"
+	"context"
 	"fmt"
 	"github.com/golang-module/carbon"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
@@ -73,7 +75,7 @@ func (customT *Translator) IsValid() bool {
 	return customT.cfg != nil && customT.cfg.AKId != "" && customT.cfg.SkKey != "" && customT.cfg.ProjectId != ""
 }
 
-func (customT *Translator) Translate(args *translator.TranslateArgs) (*translator.TranslateRes, error) {
+func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 	ret := new(translator.TranslateRes)
 
@@ -85,7 +87,9 @@ func (customT *Translator) Translate(args *translator.TranslateArgs) (*translato
 		From:  langFrom[args.FromLang],
 		Text:  args.TextContent,
 	}
-
+	if err := restrictor.Singleton().Wait(customT.GetId(), ctx); err != nil {
+		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
+	}
 	resp, err := customT.getClient().RunTextTranslation(request)
 
 	if err != nil {
