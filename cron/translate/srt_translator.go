@@ -192,7 +192,11 @@ func (customCron *SrtTranslator) log() *log.Log {
 func (customCron *SrtTranslator) getRateLimiter(engine translator.InterfaceTranslator) *rate.Limiter {
 	currentLimiter, isOk := customCron.rateLimiter.Load(engine.GetId())
 	if !isOk {
-		tmpLimiter := rate.NewLimiter(rate.Every(time.Second), engine.GetQPS()/4*3)
+		cntTokens := engine.GetQPS() / 4 * 3
+		if cntTokens <= 0 {
+			cntTokens = 1
+		}
+		tmpLimiter := rate.NewLimiter(rate.Every(time.Second), cntTokens)
 		currentLimiter = tmpLimiter
 		customCron.rateLimiter.Store(engine.GetId(), currentLimiter)
 	}
