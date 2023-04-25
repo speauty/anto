@@ -3,8 +3,6 @@ package restrictor
 import (
 	"anto/lib/log"
 	"context"
-	"fmt"
-	"github.com/golang-module/carbon"
 	"golang.org/x/time/rate"
 	"sync"
 )
@@ -42,8 +40,6 @@ func (o *Restrictor) Allow(key string) bool {
 }
 
 func (o *Restrictor) Wait(key string, ctx context.Context) error {
-	tmpLimiter := o.Get(key)
-	fmt.Println(carbon.Now(), key, tmpLimiter.Limit(), tmpLimiter.Burst())
 	err := o.Get(key).Wait(ctx)
 	if err != nil {
 		log.Singleton().ErrorF("等待令牌异常(关键字: %s), 错误: %s", key, err.Error())
