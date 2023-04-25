@@ -1,6 +1,7 @@
 package common
 
 const (
+	AppName = "anto"
 	Author  = "speauty"
 	Version = "v2.9.4"
 

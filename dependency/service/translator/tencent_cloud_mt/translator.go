@@ -63,6 +63,7 @@ func (customT *Translator) Init(cfg interface{}) {
 }
 
 func (customT *Translator) GetId() string       { return customT.id }
+func (customT *Translator) GetShortId() string  { return "tc" }
 func (customT *Translator) GetName() string     { return customT.name }
 func (customT *Translator) GetCfg() interface{} { return nil }
 func (customT *Translator) GetQPS() int         { return customT.qps }

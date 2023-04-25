@@ -5,6 +5,7 @@ import "context"
 type InterfaceTranslator interface {
 	Init(cfg interface{})
 	GetId() string
+	GetShortId() string
 	GetName() string
 	GetCfg() interface{}
 	GetQPS() int

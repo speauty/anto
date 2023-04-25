@@ -1,11 +1,12 @@
 package translate
 
 import (
-	_type "anto/common"
+	_const "anto/common"
 	"anto/cron/writer"
 	"anto/dependency/service/translator"
 	"anto/lib/srt"
 	"fmt"
+	"strings"
 )
 
 type SrtTranslateData struct {
@@ -18,7 +19,7 @@ func (customData *SrtTranslateData) toSrtWriterData() *writer.SrtWriterData {
 		FileNameSaved: customData.fileNameSavedBuilder(),
 		PrtSrt:        customData.PrtSrt,
 		PtrOpts: &srt.EncodeOpt{
-			FlagIsInverse:   customData.PtrOpts.MainTrackReport == _type.LangDirectionTo,
+			FlagIsInverse:   customData.PtrOpts.MainTrackReport == _const.LangDirectionTo,
 			FlagTrackExport: customData.PtrOpts.FlagTrackExport,
 		},
 	}
@@ -28,7 +29,7 @@ func (customData *SrtTranslateData) toSrtWriterData() *writer.SrtWriterData {
 func (customData *SrtTranslateData) fileNameSavedBuilder() string {
 	newFileName := customData.PrtSrt.FilePath[0 : len(customData.PrtSrt.FilePath)-4]
 	newFileName = fmt.Sprintf(
-		"%s.%s2%s.srt", newFileName, customData.PtrOpts.FromLang, customData.PtrOpts.ToLang,
+		"%s.%s.%s.%s2%s.srt", newFileName, _const.AppName, customData.PtrOpts.Translator.GetShortId(), strings.ToLower(customData.PtrOpts.FromLang), strings.ToLower(customData.PtrOpts.ToLang),
 	)
 	return newFileName
 }
@@ -37,7 +38,7 @@ type SrtTranslateOpts struct {
 	Translator      translator.InterfaceTranslator
 	FromLang        string
 	ToLang          string
-	TranslateMode   _type.TranslateMode
-	MainTrackReport _type.LangDirection
+	TranslateMode   _const.TranslateMode
+	MainTrackReport _const.LangDirection
 	FlagTrackExport int
 }
