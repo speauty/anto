@@ -28,9 +28,9 @@ func Singleton() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:            "tecent_mt",
+		id:            "tencent_mt",
 		name:          "腾讯云MT",
-		qps:           50,
+		qps:           5,
 		procMax:       20,
 		textMaxLen:    2000,
 		sep:           "\n",

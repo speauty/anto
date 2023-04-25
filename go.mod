@@ -14,6 +14,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.628
 	github.com/twharmon/gouid v0.5.2
 	github.com/volcengine/volc-sdk-golang v1.0.95
+	golang.org/x/time v0.1.0
 )
 
 require (
