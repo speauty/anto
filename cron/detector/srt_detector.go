@@ -2,6 +2,7 @@
 package detector
 
 import (
+	_type "anto/common"
 	"anto/cron"
 	"anto/cron/reader"
 	"anto/lib/log"
@@ -12,6 +13,7 @@ import (
 	"io/fs"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 )
 
@@ -98,7 +100,7 @@ func (customCron *SrtDetector) jobDetector() {
 							}
 							return nil
 						}
-						if !util.IsSrtFile(path) || info.Size() == 0 {
+						if !util.IsSrtFile(path) || strings.Contains(path, _type.AppName) || info.Size() == 0 {
 							return nil
 						}
 						reader.Singleton().Push(currentData.toReaderData(path))
