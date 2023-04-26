@@ -1,4 +1,7 @@
-deployWin: rs build compress
+.PHONY: deploy build compress rs tidy
+
+# 发布win应用
+deploy: rs build compress
 
 build:
 	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o .\bin\anto.exe anto
