@@ -8,11 +8,12 @@ import (
 	"anto/platform/win/ui/pack"
 	"errors"
 	"fmt"
+	"strconv"
+	"sync"
+
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
-	"strconv"
-	"sync"
 )
 
 var (
@@ -35,8 +36,6 @@ type Settings struct {
 	name       string
 	mainWindow *walk.MainWindow
 	rootWidget *walk.Composite
-
-	ptrEnv *walk.ComboBox
 
 	ptrNiutransAppKey *walk.LineEdit
 
@@ -96,145 +95,15 @@ func (customPage *Settings) GetWidget() Widget {
 			pack.NewWidgetGroup().Append(
 				pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetWidgets(
 					pack.NewWidgetGroup().Append(
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("小牛翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrNiutransAppKey).
-											SetText(cfg.Singleton().Niutrans.AppKey).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("数据ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVADataId).
-											SetText(cfg.Singleton().LingVA.DataId).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
-											SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("火山翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用Key")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineAccessKey).
-											SetText(cfg.Singleton().VolcEngine.AccessKey).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("密钥Key")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineSecretKey).
-											SetText(cfg.Singleton().VolcEngine.SecretKey).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("百度翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppId).
-											SetText(cfg.Singleton().Baidu.AppId).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppKey).
-											SetText(cfg.Singleton().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().Baidu.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("腾讯云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretId).
-											SetText(cfg.Singleton().TencentCloudMT.SecretId).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretKey).
-											SetText(cfg.Singleton().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("有道智云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppKey).
-											SetText(cfg.Singleton().OpenAPIYouDao.AppKey).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
-											SetText(cfg.Singleton().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("阿里云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkId).
-											SetText(cfg.Singleton().AliCloudMT.AKId).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkSecret).
-											SetText(cfg.Singleton().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
-
-						pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
-							pack.NewWidgetGroup().Append(
-								pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-									pack.NewWidgetGroup().Append(
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.Singleton().HuaweiCloudNlp.AKId)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.Singleton().HuaweiCloudNlp.SkKey)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("项目ID")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.Singleton().HuaweiCloudNlp.ProjectId)),
-										pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
-										pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
-											SetText(fmt.Sprintf("%d", cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength))),
-									).AppendZeroHSpacer().GetWidgets(),
-								)),
-							).AppendZeroHSpacer().GetWidgets(),
-						)),
+						customPage.getNiuWidget(),
+						customPage.getLingVAWidget(),
+						customPage.getCaiYunAIWidget(),
+						customPage.getVolcWidget(),
+						customPage.getBaiduWidget(),
+						customPage.getTencentCloudMTWidget(),
+						customPage.getOpenAPIYouDaoWidget(),
+						customPage.getAliCloudMTWidget(),
+						customPage.getHuaweiCloudNlpWidget(),
 
 						pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 							pack.NewWidgetGroup().Append(
@@ -247,8 +116,171 @@ func (customPage *Settings) GetWidget() Widget {
 	)
 }
 
-func (customPage *Settings) Reset() {
+func (customPage *Settings) Reset() {}
 
+func (customPage *Settings) getNiuWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("小牛翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrNiutransAppKey).
+						SetText(cfg.Singleton().Niutrans.AppKey).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getLingVAWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("LingVA").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("数据ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVADataId).
+						SetText(cfg.Singleton().LingVA.DataId).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getCaiYunAIWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("彩云小译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIToken).
+						SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getVolcWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("火山翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用Key")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineAccessKey).
+						SetText(cfg.Singleton().VolcEngine.AccessKey).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("密钥Key")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrVolcEngineSecretKey).
+						SetText(cfg.Singleton().VolcEngine.SecretKey).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getBaiduWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("百度翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppId).
+						SetText(cfg.Singleton().Baidu.AppId).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduAppKey).
+						SetText(cfg.Singleton().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().Baidu.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getTencentCloudMTWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("腾讯云翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretId).
+						SetText(cfg.Singleton().TencentCloudMT.SecretId).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentCloudMTSecretKey).
+						SetText(cfg.Singleton().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getOpenAPIYouDaoWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("有道智云翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppKey).
+						SetText(cfg.Singleton().OpenAPIYouDao.AppKey).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIYouDaoAppSecret).
+						SetText(cfg.Singleton().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getAliCloudMTWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("阿里云翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkId).
+						SetText(cfg.Singleton().AliCloudMT.AKId).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTAkSecret).
+						SetText(cfg.Singleton().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdLineEditSize)),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
+func (customPage *Settings) getHuaweiCloudNlpWidget() Widget {
+	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("华为云翻译").SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKId).SetText(cfg.Singleton().HuaweiCloudNlp.AKId)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("应用密钥")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudSKKey).SetText(cfg.Singleton().HuaweiCloudNlp.SkKey)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("项目ID")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.Singleton().HuaweiCloudNlp.ProjectId)),
+					pack.UILabel(pack.NewUILabelArgs(nil).SetText("单次最长请求")),
+					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
+						SetText(fmt.Sprintf("%d", cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength))),
+				).AppendZeroHSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
 }
 
 func (customPage *Settings) eventSync() {
