@@ -6,10 +6,11 @@ import (
 	"anto/platform/win/ui"
 	"anto/platform/win/ui/msg"
 	"fmt"
+	"sync"
+
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
-	"sync"
 )
 
 var (
@@ -66,6 +67,13 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 			Text: "字幕翻译",
 			OnTriggered: func() {
 				currentPage := page2.GetSubripTranslate()
+				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+			},
+		},
+		Action{
+			Text: "关于我们",
+			OnTriggered: func() {
+				currentPage := page2.GetAboutUs()
 				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 			},
 		},

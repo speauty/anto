@@ -16,7 +16,7 @@ import (
 func Run(ctx context.Context) {
 	ui.Singleton().RegisterMenus(GetInstance().GetMenus())
 
-	ui.Singleton().RegisterPages(page.GetSettings(), page.GetSubripTranslate())
+	ui.Singleton().RegisterPages(page.GetSettings(), page.GetSubripTranslate(), page.GetAboutUs())
 
 	if err := ui.Singleton().Init(cfg.Singleton().UI); err != nil {
 		log.Singleton().ErrorF("UI启动崩溃, 错误: %s", err)
