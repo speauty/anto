@@ -3,9 +3,10 @@ package ui
 import (
 	"anto/lib/log"
 	"context"
+	"sync"
+
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"sync"
 )
 
 const width = 800
