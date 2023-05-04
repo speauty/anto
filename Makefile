@@ -1,4 +1,4 @@
-.PHONY: deploy build compress rs tidy
+.PHONY: deploy build compress rs tidy run
 
 # 发布win应用
 deploy: rs build compress
@@ -14,3 +14,6 @@ rs:
 
 tidy:
 	go mod tidy
+
+run: build
+	cd .\bin&& anto.exe
