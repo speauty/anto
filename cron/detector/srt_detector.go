@@ -9,12 +9,13 @@ import (
 	"anto/lib/util"
 	"context"
 	"fmt"
-	"github.com/golang-module/carbon"
 	"io/fs"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/golang-module/carbon"
 )
 
 const (
@@ -73,19 +74,19 @@ func (customCron *SrtDetector) jobDetector() {
 	for idx := 0; idx < customCron.numCoroutine; idx++ {
 		go func(ctx context.Context, chanDetector chan *StrDetectorData, chanMsg chan string, idx int) {
 			coroutineName := fmt.Sprintf("检测协程(%d)", idx)
-			for true {
+			for {
 				select {
 				case <-ctx.Done():
 					customCron.log().WarnF("%s关闭(ctx.done), %s被迫退出", cronName, coroutineName)
 					runtime.Goexit()
 				case currentData, isOpen := <-chanDetector:
 					timeStart := carbon.Now()
-					if isOpen == false && currentData == nil {
+					if !isOpen {
 						customCron.log().WarnF("%s-通道关闭, %s被迫退出", cronName, coroutineName)
 						runtime.Goexit()
 					}
 					if currentData.SrtFile != "" {
-						if len(currentData.SrtFile) > 4 && currentData.SrtFile[len(currentData.SrtFile)-4:] == ".srt" {
+						if !strings.Contains(currentData.SrtFile, _type.AppName) && len(currentData.SrtFile) > 4 && currentData.SrtFile[len(currentData.SrtFile)-4:] == ".srt" {
 							reader.Singleton().Push(currentData.toReaderData(currentData.SrtFile))
 							chanMsg <- fmt.Sprintf("检测到文件(%s), 耗时(s): %d", currentData.SrtFile, util.GetSecondsFromTime(timeStart))
 						}
