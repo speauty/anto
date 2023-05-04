@@ -2,13 +2,10 @@ package bootstrap
 
 import (
 	_const "anto/common"
-	_ "embed"
+	"anto/resource"
 	"fmt"
 	"os"
 )
-
-//go:embed favicon.ico
-var bytesFav []byte
 
 type ResourceBuilder struct {
 }
@@ -57,7 +54,7 @@ func (customRB *ResourceBuilder) installICO() {
 		panic(fmt.Errorf("创建图标文件失败, 错误: %s", err))
 	}
 
-	if _, err = fd.Write(bytesFav); err != nil {
+	if _, err = fd.Write(resource.RFavicon); err != nil {
 		panic(fmt.Errorf("写入图标文件失败, 错误: %s", err))
 	}
 }

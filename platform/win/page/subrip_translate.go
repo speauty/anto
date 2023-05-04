@@ -12,9 +12,11 @@ import (
 	"anto/platform/win/ui/pack"
 	"errors"
 	"fmt"
+	"os"
+	"sync"
+
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"sync"
 )
 
 var (
@@ -59,6 +61,8 @@ type SubripTranslate struct {
 	ptrSrtDir  *walk.Label
 
 	ptrLog *walk.TextEdit
+
+	dropFilesEventId int
 }
 
 func (customPage *SubripTranslate) GetId() string {
@@ -159,6 +163,30 @@ func (customPage *SubripTranslate) Reset() {
 
 	if customPage.ptrSrtDir != nil {
 		_ = customPage.ptrSrtDir.SetText("")
+	}
+
+	if customPage.dropFilesEventId == 0 {
+		dfEvent := customPage.rootWidget.DropFiles()
+		customPage.dropFilesEventId = dfEvent.Attach(func(files []string) {
+			if len(files) < 1 {
+				return
+			}
+			currentFile := files[0]
+			fsInfo, err := os.Stat(currentFile)
+			if err != nil {
+				return
+			}
+			if fsInfo.IsDir() {
+				customPage.ptrSrtDir.SetText(currentFile)
+			} else {
+				if util.IsSrtFile(currentFile) {
+					customPage.ptrSrtFile.SetText(currentFile)
+				} else {
+					// @todo 触发两次弹窗提示，暂时注释
+					// msg.Err(customPage.mainWindow, fmt.Errorf("无效字幕文件(%s)", filepath.Base(currentFile)))
+				}
+			}
+		})
 	}
 }
 

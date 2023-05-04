@@ -3,7 +3,7 @@ package common
 const (
 	AppName = "anto"
 	Author  = "speauty"
-	Version = "v2.9.4"
+	Version = "v3.0.0"
 
 	GoUidLen = 8
 
