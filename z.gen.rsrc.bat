@@ -1,1 +1,0 @@
-rsrc -manifest anto.manifest -ico favicon.ico -o rsrc.syso

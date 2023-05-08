@@ -1,19 +1,13 @@
-.PHONY: deploy build compress rs tidy run
+.PHONY: deploy_gui_win gui_win_rs gui_win_build gui_win_compress
 
 # 发布win应用
-deploy: rs build compress
+deploy_gui_win: gui_win_rs gui_win_build gui_win_compress
 
-build:
-	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o .\bin\anto.exe anto
+gui_win_rs:
+	rsrc -manifest ./cmd/gui_win/gui_win.manifest -ico favicon.ico -o ./cmd/gui_win/rsrc.syso
 
-compress:
-	upx -9 .\bin\anto.exe
+gui_win_build:
+	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o ./bin/anto.win.exe anto/cmd/gui_win
 
-rs:
-	rsrc -manifest anto.manifest -ico favicon.ico -o rsrc.syso
-
-tidy:
-	go mod tidy
-
-run: build
-	cd .\bin&& anto.exe
+gui_win_compress:
+	upx -9 ./bin/anto.win.exe

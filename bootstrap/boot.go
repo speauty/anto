@@ -1,7 +1,6 @@
-package main
+package bootstrap
 
 import (
-	"anto/bootstrap"
 	"anto/cfg"
 	"anto/common"
 	"anto/dependency/repository"
@@ -16,14 +15,11 @@ import (
 	"anto/dependency/service/translator/volcengine"
 	"anto/dependency/service/translator/youdao"
 	"anto/lib/log"
-	"anto/platform/win"
 	"context"
 )
 
-func main() {
-	ctx := context.Background()
-
-	new(bootstrap.ResourceBuilder).Install()
+func Boot(_ context.Context) {
+	new(ResourceBuilder).Install()
 
 	if err := cfg.Singleton().Load(""); err != nil {
 		panic(err)
@@ -52,6 +48,4 @@ func main() {
 		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
 		volcengine.Singleton(),
 	)
-
-	win.Run(ctx)
 }
