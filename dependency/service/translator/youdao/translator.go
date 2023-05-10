@@ -83,15 +83,22 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		log.Singleton().ErrorF("接口响应异常, 引擎: %s, 错误: %s", customT.GetName(), err, zap.String("result", string(respBytes)))
 		return nil, fmt.Errorf("翻译异常, 代码: %d", youDaoResp.ErrorCode)
 	}
-
+	srcArrSplit := strings.Split(args.TextContent, customT.sep)
+	if len(srcArrSplit) != len(youDaoResp.TransResult) {
+		return nil, translator.ErrSrcAndTgtNotMatched
+	}
 	ret := new(translator.TranslateRes)
-	for _, transBlockArray := range youDaoResp.TransResult {
+	for idx, transBlockArray := range youDaoResp.TransResult {
+		var tgtArrEvaluated []string
+		// ?+空格 会导致意外分行, 搞不清楚这个服务的换行标识是什么, 多标准的么
 		for _, block := range transBlockArray {
-			ret.Results = append(ret.Results, &translator.TranslateResBlock{
-				Id:             block.Src,
-				TextTranslated: block.Tgt,
-			})
+			tgtArrEvaluated = append(tgtArrEvaluated, block.Tgt)
 		}
+		ret.Results = append(ret.Results, &translator.TranslateResBlock{
+			Id:             srcArrSplit[idx],
+			TextTranslated: strings.Join(tgtArrEvaluated, " "),
+		})
+
 	}
 
 	ret.TimeUsed = int(carbon.Now().DiffInSeconds(timeStart))
