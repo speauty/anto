@@ -1,7 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"anto/bootstrap"
+	"anto/platform/cli"
+	"context"
+)
 
 func main() {
-	fmt.Println("cli client")
+	ctx := context.Background()
+	bootstrap.Boot(ctx)
+
+	cli.Execute()
 }
