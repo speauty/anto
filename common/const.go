@@ -1,9 +1,10 @@
 package common
 
 const (
-	AppName = "anto"
-	Author  = "speauty"
-	Version = "v3.0.0"
+	AppName                        = "anto"
+	Author                         = "speauty"
+	Version                        = "v3.0.2"
+	DownloadLatestVersionUrlFormat = "https://github.com/speauty/anto/releases/download/%s/anto.%s.win.exe"
 
 	GoUidLen = 8
 

@@ -177,10 +177,10 @@ func (customPage *SubripTranslate) Reset() {
 				return
 			}
 			if fsInfo.IsDir() {
-				customPage.ptrSrtDir.SetText(currentFile)
+				_ = customPage.ptrSrtDir.SetText(currentFile)
 			} else {
 				if util.IsSrtFile(currentFile) {
-					customPage.ptrSrtFile.SetText(currentFile)
+					_ = customPage.ptrSrtFile.SetText(currentFile)
 				} else {
 					// @todo 触发两次弹窗提示，暂时注释
 					// msg.Err(customPage.mainWindow, fmt.Errorf("无效字幕文件(%s)", filepath.Base(currentFile)))

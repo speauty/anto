@@ -1,16 +1,24 @@
 package win
 
 import (
+	"anto/cfg"
 	"anto/lib/log"
 	page2 "anto/platform/win/page"
 	"anto/platform/win/ui"
 	"anto/platform/win/ui/msg"
+	"errors"
 	"fmt"
-	"sync"
-
+	"github.com/golang-module/carbon"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
+	"io"
+	"io/fs"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sync"
+	"time"
 )
 
 var (
@@ -26,41 +34,36 @@ func GetInstance() *TTMenu {
 }
 
 type TTMenu struct {
-	mainWindow            *walk.MainWindow
-	actionStatusBarHandle *walk.Action
+	mainWindow           *walk.MainWindow
+	actionDownloadHandle *walk.Action
 }
 
 func (customM *TTMenu) GetMenus() []MenuItem {
 	return []MenuItem{
-		/*Menu{
+		Menu{
 			Text: "文件",
 			Items: []MenuItem{
 				Action{
 					Text: "设置",
 					OnTriggered: func() {
-						currentPage := page.GetSettings()
+						currentPage := page2.GetSettings()
 						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 					},
 				},
 				Separator{},
 				Action{
-					AssignTo:    &customM.actionStatusBarHandle,
-					Text:        "状态栏",
-					Checked:     true,
-					OnTriggered: customM.eventActionStatusBar,
+					AssignTo:    &customM.actionDownloadHandle,
+					Text:        "下载最新版",
+					OnTriggered: customM.eventActionDownloadLatestVersion,
 				},
 				Separator{},
 				Action{
-					Text:        "退出",
-					OnTriggered: customM.eventActionQuit,
+					Text: "清除日志", OnTriggered: customM.eventActionDelLog,
 				},
-			},
-		},*/
-		Action{
-			Text: "设置",
-			OnTriggered: func() {
-				currentPage := page2.GetSettings()
-				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+				Separator{},
+				Action{
+					Text: "退出", OnTriggered: customM.eventActionQuit,
+				},
 			},
 		},
 		Action{
@@ -77,34 +80,65 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 			},
 		},
-		Menu{
-			Text:    "帮助",
-			Visible: false,
-			Items: []MenuItem{
-				Action{
-					Text: "使用手册",
-					OnTriggered: func() {
-						currentPage := page2.GetUsage()
-						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
-					},
-				},
-				Action{
-					Text: "关于我们",
-					OnTriggered: func() {
-						currentPage := page2.GetAboutUs()
-						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
-					},
-				},
-			},
-		},
 	}
 }
 
-func (customM *TTMenu) eventActionStatusBar() {
+func (customM *TTMenu) eventActionDownloadLatestVersion() {
+	if customM.actionDownloadHandle.Enabled() {
+		_ = customM.actionDownloadHandle.SetEnabled(false)
+	} else {
+		return
+	}
 	mainWindow := ui.Singleton().GetWindow()
-	mainWindow.StatusBar().SetVisible(!mainWindow.StatusBar().Visible())
-	if customM.actionStatusBarHandle != nil {
-		_ = customM.actionStatusBarHandle.SetChecked(mainWindow.StatusBar().Visible())
+	isOk, _ := msg.Confirm(mainWindow, fmt.Sprintf("下载应用的最新版本，是否继续？"))
+	if isOk {
+		go func() {
+			defer func() {
+				_ = customM.actionDownloadHandle.SetEnabled(true)
+			}()
+			resp, err := http.Get(cfg.Singleton().App.GetDownloadUrl())
+			if err != nil {
+				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
+				return
+			}
+			defer func() {
+				_ = resp.Body.Close()
+			}()
+			appBytes, _ := io.ReadAll(resp.Body)
+			if resp.StatusCode == http.StatusNotFound {
+				msg.Err(mainWindow, errors.New("下载最新版本异常, 错误: 暂未找到"))
+				return
+			}
+			fileName := fmt.Sprintf("anto.%s.%s.win.exe", cfg.Singleton().App.Version, carbon.Now().Layout(carbon.ShortDateLayout))
+			if err := os.WriteFile(fileName, appBytes, os.ModePerm); err != nil {
+				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
+				return
+			}
+			msg.Info(mainWindow, fmt.Sprintf("下载最新版本成功[%s], 关闭当前应用, 双击打开对应exe文件即可", fileName))
+		}()
+	}
+}
+
+func (customM *TTMenu) eventActionDelLog() {
+	mainWindow := ui.Singleton().GetWindow()
+	isOk, _ := msg.Confirm(mainWindow, fmt.Sprintf("清除日志会删除今日之前的所有日志文件，是否继续？"))
+	if isOk {
+		now := time.Now()
+		currentDayZero := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+		cntDel := 0
+		_ = filepath.Walk("logs", func(path string, info fs.FileInfo, err error) error {
+			if info.ModTime().Before(currentDayZero) {
+				if err := os.Remove(path); err == nil {
+					cntDel++
+				}
+			}
+			return nil
+		})
+		if cntDel > 0 {
+			msg.Info(ui.Singleton().GetWindow(), fmt.Sprintf("删除历史日志文件(数量: %d)", cntDel))
+		} else {
+			msg.Info(ui.Singleton().GetWindow(), "暂无历史日志文件")
+		}
 	}
 }
 

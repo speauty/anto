@@ -53,6 +53,4 @@ func (customPage *Usage) GetWidget() Widget {
 	)
 }
 
-func (customPage *Usage) Reset() {
-
-}
+func (customPage *Usage) Reset() {}
