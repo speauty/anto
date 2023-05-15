@@ -1,6 +1,9 @@
-.PHONY: deploy_gui_win gui_win_rs gui_win_build gui_win_compress
+.PHONY: tidy
 
-# 发布win应用
+tidy:
+	go mod tidy
+
+.PHONY: deploy_gui_win gui_win_rs gui_win_build gui_win_compress
 deploy_gui_win: gui_win_rs gui_win_build gui_win_compress
 
 gui_win_rs:
