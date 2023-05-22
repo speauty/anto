@@ -3,7 +3,7 @@ package translate
 import (
 	_const "anto/common"
 	"anto/cron/writer"
-	"anto/dependency/service/translator"
+	"anto/domain/service/translator"
 	"anto/lib/srt"
 	"fmt"
 	"strings"

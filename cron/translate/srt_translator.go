@@ -4,7 +4,7 @@ import (
 	"anto/common"
 	"anto/cron"
 	"anto/cron/writer"
-	"anto/dependency/service/translator"
+	"anto/domain/service/translator"
 	"anto/lib/log"
 	"anto/lib/util"
 	"context"
