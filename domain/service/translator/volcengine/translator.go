@@ -63,7 +63,7 @@ func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
 func (customT *Translator) GetId() string                           { return customT.id }
 func (customT *Translator) GetShortId() string                      { return "ve" }
 func (customT *Translator) GetName() string                         { return customT.name }
-func (customT *Translator) GetCfg() interface{}                     { return nil }
+func (customT *Translator) GetCfg() interface{}                     { return customT.cfg }
 func (customT *Translator) GetQPS() int                             { return customT.qps }
 func (customT *Translator) GetProcMax() int                         { return customT.procMax }
 func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }

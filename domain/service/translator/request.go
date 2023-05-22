@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func RequestSimpleGet(ctx context.Context, engine InterfaceTranslator, url string) ([]byte, error) {
+func RequestSimpleGet(ctx context.Context, engine ImplTranslator, url string) ([]byte, error) {
 
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("content-type", "application/json")
@@ -19,7 +19,7 @@ func RequestSimpleGet(ctx context.Context, engine InterfaceTranslator, url strin
 	return RequestSimpleHttp(ctx, engine, req)
 }
 
-func RequestSimplePost(ctx context.Context, engine InterfaceTranslator, httpUrl string, bodyParams interface{}) ([]byte, error) {
+func RequestSimplePost(ctx context.Context, engine ImplTranslator, httpUrl string, bodyParams interface{}) ([]byte, error) {
 	reqBytes, _ := json.Marshal(bodyParams)
 	req, _ := http.NewRequest(http.MethodPost, httpUrl, bytes.NewReader(reqBytes))
 	req.Header.Set("content-type", "application/json")
@@ -27,7 +27,7 @@ func RequestSimplePost(ctx context.Context, engine InterfaceTranslator, httpUrl 
 	return RequestSimpleHttp(ctx, engine, req)
 }
 
-func RequestSimpleHttp(ctx context.Context, engine InterfaceTranslator, r *http.Request) ([]byte, error) {
+func RequestSimpleHttp(ctx context.Context, engine ImplTranslator, r *http.Request) ([]byte, error) {
 	if err := restrictor.Singleton().Wait(engine.GetId(), ctx); err != nil {
 		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
 	}

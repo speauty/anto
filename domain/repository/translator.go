@@ -1,7 +1,6 @@
 package repository
 
 import (
-	_type "anto/common"
 	serviceTranslator "anto/domain/service/translator"
 	"anto/lib/restrictor"
 	"sort"
@@ -22,10 +21,10 @@ func GetTranslators() *Translators {
 
 type Translators struct {
 	list  sync.Map
-	names []*_type.StdComboBoxModel
+	names []string
 }
 
-func (customT *Translators) Register(translators ...serviceTranslator.InterfaceTranslator) {
+func (customT *Translators) Register(translators ...serviceTranslator.ImplTranslator) {
 	tmpRestrictor := restrictor.Singleton()
 	for _, translator := range translators {
 		if _, isExisted := customT.list.Load(translator.GetId()); isExisted {
@@ -42,36 +41,43 @@ func (customT *Translators) Register(translators ...serviceTranslator.InterfaceT
 
 		tmpRestrictor.Set(translator.GetId(), tmpLimiter)
 	}
-	customT.genNames2ComboBox()
+	customT.genNames()
 }
 
-func (customT *Translators) GetById(id string) serviceTranslator.InterfaceTranslator {
+func (customT *Translators) GetById(id string) serviceTranslator.ImplTranslator {
 	obj, isExisted := customT.list.Load(id)
 	if !isExisted {
 		return nil
 	}
-	return obj.(serviceTranslator.InterfaceTranslator)
+	return obj.(serviceTranslator.ImplTranslator)
 }
 
-func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
+func (customT *Translators) GetByName(name string) (currentTranslator serviceTranslator.ImplTranslator) {
+	customT.list.Range(func(id, translatorItem any) bool {
+		if translatorItem.(serviceTranslator.ImplTranslator).GetName() == name {
+			currentTranslator = translatorItem.(serviceTranslator.ImplTranslator)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+func (customT *Translators) GetNames() []string {
 	return customT.names
 }
 
-func (customT *Translators) genNames2ComboBox() {
-	customT.names = []*_type.StdComboBoxModel{}
+func (customT *Translators) genNames() {
 	customT.list.Range(func(idx, translator any) bool {
-		if translator.(serviceTranslator.InterfaceTranslator).IsValid() {
-			customT.names = append(customT.names, &_type.StdComboBoxModel{
-				Key:  translator.(serviceTranslator.InterfaceTranslator).GetId(),
-				Name: translator.(serviceTranslator.InterfaceTranslator).GetName(),
-			})
+		if translator.(serviceTranslator.ImplTranslator).IsValid() {
+			customT.names = append(customT.names, translator.(serviceTranslator.ImplTranslator).GetName())
 		}
 		return true
 	})
 
 	if len(customT.names) > 1 {
 		sort.Slice(customT.names, func(i, j int) bool {
-			return customT.names[i].Key < customT.names[j].Key
+			return customT.names[i] < customT.names[j]
 		})
 	}
 }

@@ -31,9 +31,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "caiyun_ai",
 		name:          "彩云小译",
-		qps:           10,
-		procMax:       20,
-		textMaxLen:    5000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -42,31 +39,20 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 }
 
-func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "cy" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return nil }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "cy" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
-func (customT *Translator) IsValid() bool                           { return customT.cfg != nil && customT.cfg.Token != "" }
+func (customT *Translator) IsValid() bool                           { return customT.cfg != nil && customT.cfg.GetAK() != "" }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
@@ -79,7 +65,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 	reqBytes, _ := json.Marshal(req)
 	httpReq, _ := http.NewRequest(http.MethodPost, api, bytes.NewReader(reqBytes))
 	httpReq.Header.Set("content-type", "application/json")
-	httpReq.Header.Set("x-authorization", fmt.Sprintf("token %s", customT.cfg.Token))
+	httpReq.Header.Set("x-authorization", fmt.Sprintf("token %s", customT.cfg.GetAK()))
 	respBytes, err := translator.RequestSimpleHttp(ctx, customT, httpReq)
 	if err != nil {
 		return nil, err

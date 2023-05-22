@@ -31,9 +31,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "huawei_cloud_nlp",
 		name:          "华为云NLP",
-		qps:           20,
-		procMax:       10,
-		textMaxLen:    2000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -42,38 +39,27 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 }
 
-func (customT *Translator) Init(cfg interface{}) {
-	customT.cfg = cfg.(*Cfg)
-	if customT.cfg.Region == "" {
-		customT.cfg.Region = "cn-north-4"
+func (customT *Translator) Init(cfg translator.ImplConfig) {
+	customT.cfg = cfg
+	if customT.cfg.(*Cfg).GetRegion() == "" {
+		_ = customT.cfg.(*Cfg).SetRegion("cn-north-4")
 	}
 }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "hw" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return customT.cfg }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "hw" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 
 func (customT *Translator) IsValid() bool {
-	return customT.cfg != nil && customT.cfg.AKId != "" && customT.cfg.SkKey != "" && customT.cfg.ProjectId != ""
+	return customT.cfg != nil && customT.cfg.GetAK() != "" && customT.cfg.GetSK() != "" && customT.cfg.GetPK() != ""
 }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
@@ -120,7 +106,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 }
 
 func (customT *Translator) getAuth() *basic.Credentials {
-	return basic.NewCredentialsBuilder().WithAk(customT.cfg.AKId).WithSk(customT.cfg.SkKey).Build()
+	return basic.NewCredentialsBuilder().WithAk(customT.cfg.GetAK()).WithSk(customT.cfg.GetSK()).Build()
 }
 
 func (customT *Translator) getClient() *nlp.NlpClient {

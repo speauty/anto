@@ -23,4 +23,3 @@ gui_win_build:
 
 gui_win_compress:
 	upx -9 ./bin/anto.win.exe
-

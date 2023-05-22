@@ -2,15 +2,12 @@ package translator
 
 import "context"
 
-type InterfaceTranslator interface {
-	Init(cfg interface{})
+type ImplTranslator interface {
+	Init(ImplConfig)
 	GetId() string
 	GetShortId() string
 	GetName() string
-	GetCfg() interface{}
-	GetQPS() int
-	GetProcMax() int
-	GetTextMaxLen() int
+	GetCfg() ImplConfig
 	GetLangSupported() []LangPair
 	GetSep() string
 	IsValid() bool

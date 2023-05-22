@@ -12,6 +12,7 @@ require (
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
 	github.com/spf13/viper v1.15.0
+	github.com/sqweek/dialog v0.0.0-20220809060634-e981b270ebbf
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.628
 	github.com/twharmon/gouid v0.5.2
 	github.com/volcengine/volc-sdk-golang v1.0.95
@@ -20,6 +21,7 @@ require (
 
 require (
 	fyne.io/systray v1.10.1-0.20230403195833-7dc3c09283d6 // indirect
+	github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fredbi/uri v0.1.0 // indirect

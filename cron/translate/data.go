@@ -35,7 +35,7 @@ func (customData *SrtTranslateData) fileNameSavedBuilder() string {
 }
 
 type SrtTranslateOpts struct {
-	Translator      translator.InterfaceTranslator
+	Translator      translator.ImplTranslator
 	FromLang        string
 	ToLang          string
 	TranslateMode   _const.TranslateMode

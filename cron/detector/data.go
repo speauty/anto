@@ -8,7 +8,7 @@ import (
 )
 
 type StrDetectorData struct {
-	Translator      translator.InterfaceTranslator
+	Translator      translator.ImplTranslator
 	FromLang        string
 	ToLang          string
 	TranslateMode   common.TranslateMode
