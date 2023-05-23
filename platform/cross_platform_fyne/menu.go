@@ -9,6 +9,11 @@ func menus() *fyne.MainMenu {
 	appGui := API()
 
 	{
+		pages.APIPageEnv().SetWindow(appGui.MainWindow())
+		pages.APIPageConfig().SetWindow(appGui.MainWindow())
+		pages.APIPageAbout().SetWindow(appGui.MainWindow())
+		pages.APIPageSubtitleTranslate().SetWindow(appGui.MainWindow())
+
 		appGui.RegisterPages(
 			pages.APIPageEnv(), pages.APIPageConfig(), pages.APIPageAbout(),
 			pages.APIPageSubtitleTranslate(),

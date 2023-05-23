@@ -33,7 +33,7 @@ func Confirm(window fyne.Window, content, title string, callback func(bool)) {
 	confirm.Show()
 }
 
-func Error(window fyne.Window, err error, node string) {
+func Error(window fyne.Window, err error) {
 	info := dialog.NewError(err, window)
 	info.SetDismissText("关闭")
 	info.Show()

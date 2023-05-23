@@ -26,18 +26,19 @@ func APIPageAbout() *PageAbout {
 }
 
 type PageAbout struct {
+	window    fyne.Window
 	id        string
 	name      string
 	isDefault bool
 }
 
-func (page *PageAbout) GetID() string {
-	return page.id
-}
+func (page *PageAbout) GetID() string { return page.id }
 
-func (page *PageAbout) GetName() string {
-	return page.name
-}
+func (page *PageAbout) GetName() string { return page.name }
+
+func (page *PageAbout) GetWindow() fyne.Window { return page.window }
+
+func (page *PageAbout) SetWindow(win fyne.Window) { page.window = win }
 
 func (page *PageAbout) IsDefault() bool {
 	return page.isDefault

@@ -27,30 +27,25 @@ func APIPageEnv() *PageEnv {
 }
 
 type PageEnv struct {
+	window    fyne.Window
 	id        string
 	name      string
 	isDefault bool
 }
 
-func (page *PageEnv) GetID() string {
-	return page.id
-}
+func (page *PageEnv) GetID() string { return page.id }
 
-func (page *PageEnv) GetName() string {
-	return page.name
-}
+func (page *PageEnv) GetName() string { return page.name }
 
-func (page *PageEnv) IsDefault() bool {
-	return page.isDefault
-}
+func (page *PageEnv) GetWindow() fyne.Window { return page.window }
 
-func (page *PageEnv) OnClose() {
+func (page *PageEnv) SetWindow(win fyne.Window) { page.window = win }
 
-}
+func (page *PageEnv) IsDefault() bool { return page.isDefault }
 
-func (page *PageEnv) OnReset() {
+func (page *PageEnv) OnClose() {}
 
-}
+func (page *PageEnv) OnReset() {}
 
 func (page *PageEnv) OnRender() fyne.CanvasObject {
 	hostname, _ := os.Hostname()
@@ -69,9 +64,9 @@ func (page *PageEnv) OnRender() fyne.CanvasObject {
 				"桌面应用", "v1.0.0", "调试",
 			)),
 			widget.NewSeparator(),
-			widget.NewLabel("统计(待实现)"),
-			widget.NewLabel("字幕翻译: 总计(0) 成功(0) 成功率(0) 总耗时(0) 平均耗时(0) 最长耗时(0) 最短耗时(0)"),
-			widget.NewSeparator(),
+			//widget.NewLabel("统计(待实现)"),
+			//widget.NewLabel("字幕翻译: 总计(0) 成功(0) 成功率(0) 总耗时(0) 平均耗时(0) 最长耗时(0) 最短耗时(0)"),
+			//widget.NewSeparator(),
 		)),
 	)
 }

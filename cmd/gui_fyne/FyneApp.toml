@@ -1,6 +1,8 @@
+Website = "https://github.com/speauty/anto"
+
 [Details]
-  Icon = ""
-  Name = "anto"
+  Icon = "favicon.ico"
+  Name = "ANTO"
   ID = "com.anto.app"
-  Version = "0.0.0"
-  Build = 0
+  Version = "1.0.0"
+  Build = 3

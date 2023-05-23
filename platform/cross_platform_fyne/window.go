@@ -1,6 +1,7 @@
 package cross_platform_fyne
 
 import (
+	"context"
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -21,6 +22,8 @@ func API() *AppGui {
 }
 
 type AppGui struct {
+	ctx            context.Context
+	ctxCancelFn    context.CancelFunc
 	config         *Config
 	app            fyne.App
 	mainWindow     fyne.Window
@@ -74,7 +77,12 @@ func (ag *AppGui) RegisterMainMenus(fyneMenu *fyne.MainMenu) {
 	ag.mainWindow.SetMainMenu(fyneMenu)
 }
 
-func (ag *AppGui) Run() {
+func (ag *AppGui) Run(ctx context.Context, fnCancel context.CancelFunc) {
+	ag.ctx = ctx
+	ag.ctxCancelFn = fnCancel
+
+	ag.mainWindow.SetCloseIntercept(ag.eventClose)
+
 	defer func() {
 		if err := recover(); err != nil {
 			ag.PushToConsole(fmt.Sprintf("时间: %s, 致命错误: %s", carbon.Now(), err))
@@ -94,6 +102,11 @@ func (ag *AppGui) Run() {
 		}
 	}()
 	ag.app.Run()
+}
+
+func (ag *AppGui) eventClose() {
+	ag.ctxCancelFn()
+	ag.app.Quit()
 }
 
 func (ag *AppGui) initApp() {
