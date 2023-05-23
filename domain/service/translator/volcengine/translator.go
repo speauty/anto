@@ -38,9 +38,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "volcengine",
 		name:          "火山翻译",
-		qps:           10,
-		procMax:       20,
-		textMaxLen:    5000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -49,28 +46,22 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 	mtClient      *base.Client
 }
 
-func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
 func (customT *Translator) GetId() string                           { return customT.id }
 func (customT *Translator) GetShortId() string                      { return "ve" }
 func (customT *Translator) GetName() string                         { return customT.name }
-func (customT *Translator) GetCfg() interface{}                     { return customT.cfg }
-func (customT *Translator) GetQPS() int                             { return customT.qps }
-func (customT *Translator) GetProcMax() int                         { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool {
-	return customT.cfg != nil && customT.cfg.AccessKey != "" && customT.cfg.SecretKey != ""
+	return customT.cfg != nil && customT.cfg.GetAK() != "" && customT.cfg.GetSK() != ""
 }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
@@ -134,8 +125,8 @@ func (customT *Translator) client() *base.Client {
 			},
 		}
 		client := base.NewClient(serviceInfo, apiInfoList)
-		client.SetAccessKey(customT.cfg.AccessKey)
-		client.SetSecretKey(customT.cfg.SecretKey)
+		client.SetAccessKey(customT.cfg.GetAK())
+		client.SetSecretKey(customT.cfg.GetSK())
 		customT.mtClient = client
 	}
 

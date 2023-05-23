@@ -32,7 +32,7 @@ func (customT *Translators) Register(translators ...serviceTranslator.ImplTransl
 		}
 		customT.list.Store(translator.GetId(), translator)
 		tmpLimiter := tmpRestrictor.Get(translator.GetId())
-		limited := translator.GetQPS() / 4 * 3 // 缓冲
+		limited := translator.GetCfg().GetQPS() / 4 * 3 // 缓冲
 		if limited < 1 {
 			limited = 1
 		}

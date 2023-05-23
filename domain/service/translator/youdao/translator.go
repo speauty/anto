@@ -31,9 +31,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "youdao",
 		name:          "有道翻译",
-		qps:           50,
-		procMax:       20,
-		textMaxLen:    2000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -42,22 +39,17 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 }
 
-func (customT *Translator) Init(_ interface{}) {}
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
 func (customT *Translator) GetId() string                           { return customT.id }
 func (customT *Translator) GetShortId() string                      { return "yd" }
 func (customT *Translator) GetName() string                         { return customT.name }
-func (customT *Translator) GetCfg() interface{}                     { return nil }
-func (customT *Translator) GetQPS() int                             { return customT.qps }
-func (customT *Translator) GetProcMax() int                         { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool                           { return true }

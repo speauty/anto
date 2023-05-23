@@ -29,8 +29,6 @@ func Boot(_ context.Context) {
 	cfg.Singleton().App.Version = common.Version
 	log.Singleton()
 
-	cfg.Singleton().UI.Title = cfg.Singleton().NewUITitle()
-
 	huawei_cloud_nlp.Singleton().Init(cfg.Singleton().HuaweiCloudNlp)
 	ling_va.Singleton().Init(cfg.Singleton().LingVA)
 	baidu.Singleton().Init(cfg.Singleton().Baidu)
@@ -40,6 +38,7 @@ func Boot(_ context.Context) {
 	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
 	niutrans.Singleton().Init(cfg.Singleton().Niutrans)
 	volcengine.Singleton().Init(cfg.Singleton().VolcEngine)
+	youdao.Singleton().Init(cfg.Singleton().YouDao)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),

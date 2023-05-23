@@ -1,4 +1,4 @@
-package caiyunai
+package youdao
 
 import (
 	"anto/domain/service/translator"
@@ -8,29 +8,19 @@ import (
 
 type Cfg struct {
 	*translator.DefaultConfig
-	Token               string `mapstructure:"token"`
-	MaxSingleTextLength int    `mapstructure:"max_single_text_length"`
-	QPS                 int    `mapstructure:"qps"`
-	MaxCoroutineNum     int    `mapstructure:"max_coroutine_num"`
+	MaxSingleTextLength int `mapstructure:"max_single_text_length"` // 单次翻译最大长度
+	QPS                 int `mapstructure:"qps"`
+	MaxCoroutineNum     int `mapstructure:"max_coroutine_num"`
 }
-
-func (customC *Cfg) GetAK() string { return customC.Token }
 
 func (customC *Cfg) GetMaxSingleTextLength() int { return customC.MaxSingleTextLength }
 func (customC *Cfg) GetQPS() int                 { return customC.QPS }
 func (customC *Cfg) GetMaxCoroutineNum() int     { return customC.MaxCoroutineNum }
 
 func (customC *Cfg) Default() translator.ImplConfig {
-	// 这是官网给出的测试Token, 随便造
 	return &Cfg{
-		Token:               "3975l6lr5pcbvidl6jl2",
-		MaxSingleTextLength: 5000, QPS: 10, MaxCoroutineNum: 20,
+		MaxSingleTextLength: 5000, QPS: 50, MaxCoroutineNum: 20,
 	}
-}
-
-func (customC *Cfg) SetAK(ak string) error {
-	customC.Token = ak
-	return nil
 }
 
 func (customC *Cfg) SetMaxSingleTextLength(textLen int) error {
@@ -50,10 +40,9 @@ func (customC *Cfg) SetMaxCoroutineNum(coroutineNum int) error {
 
 func (customC *Cfg) Sync() error {
 
-	viper.Set("caiyun_ai.token", customC.Token)
-	viper.Set("caiyun_ai.max_single_text_length", customC.MaxSingleTextLength)
-	viper.Set("caiyun_ai.qps", customC.QPS)
-	viper.Set("caiyun_ai.max_coroutine_num", customC.MaxCoroutineNum)
+	viper.Set("youdao.max_single_text_length", customC.MaxSingleTextLength)
+	viper.Set("youdao.qps", customC.QPS)
+	viper.Set("youdao.max_coroutine_num", customC.MaxCoroutineNum)
 
 	if err := viper.WriteConfig(); err != nil {
 		return fmt.Errorf("写入配置[%s]失败, 错误: %s", Singleton().GetName(), err)

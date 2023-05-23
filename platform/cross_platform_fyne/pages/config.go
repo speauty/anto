@@ -3,21 +3,13 @@ package pages
 import (
 	"anto/domain/repository"
 	serviceTranslator "anto/domain/service/translator"
-	"anto/domain/service/translator/ali_cloud_mt"
-	"anto/domain/service/translator/baidu"
-	"anto/domain/service/translator/caiyunai"
-	"anto/domain/service/translator/huawei_cloud_nlp"
-	"anto/domain/service/translator/ling_va"
-	"anto/domain/service/translator/niutrans"
-	"anto/domain/service/translator/openapi_youdao"
-	"anto/domain/service/translator/tencent_cloud_mt"
-	"anto/domain/service/translator/volcengine"
 	"errors"
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
+	"reflect"
 	"strconv"
 	"sync"
 )
@@ -101,9 +93,9 @@ func (page *PageConfig) OnRender() fyne.CanvasObject {
 		engineName, _ := currentEngineName.Get()
 		currentEngine = repository.GetTranslators().GetByName(engineName)
 		_ = currentEngineId.Set(currentEngine.GetId())
-		_ = currentEngineMaxLength.Set(fmt.Sprintf("%d", currentEngine.GetTextMaxLen()))
-		_ = currentEngineQPS.Set(fmt.Sprintf("%d", currentEngine.GetQPS()))
-		_ = currentEngineProcMax.Set(fmt.Sprintf("%d", currentEngine.GetProcMax()))
+		_ = currentEngineMaxLength.Set(fmt.Sprintf("%d", currentEngine.GetCfg().GetMaxSingleTextLength()))
+		_ = currentEngineQPS.Set(fmt.Sprintf("%d", currentEngine.GetCfg().GetQPS()))
+		_ = currentEngineProcMax.Set(fmt.Sprintf("%d", currentEngine.GetCfg().GetMaxCoroutineNum()))
 
 		_ = currentEngineAppKey.Set("")
 		_ = currentEngineAppSecret.Set("")
@@ -111,49 +103,50 @@ func (page *PageConfig) OnRender() fyne.CanvasObject {
 		entryAppKey.Disable()
 		entryAppSecret.Disable()
 		entryProjectKey.Disable()
-		switch currentEngine.GetCfg().(type) {
-		case *ling_va.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*ling_va.Cfg).DataId)
-			entryAppKey.Enable()
-		case *huawei_cloud_nlp.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).AKId)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).SkKey)
-			_ = currentEngineProjectKey.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).ProjectId)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-			entryProjectKey.Enable()
-		case *niutrans.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*niutrans.Cfg).AppKey)
-			entryAppKey.Enable()
-		case *caiyunai.Cfg:
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*caiyunai.Cfg).Token)
-			entryAppSecret.Enable()
-		case *openapi_youdao.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*openapi_youdao.Cfg).AppKey)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*openapi_youdao.Cfg).AppSecret)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-		case *volcengine.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*volcengine.Cfg).AccessKey)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*volcengine.Cfg).SecretKey)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-		case *baidu.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*baidu.Cfg).AppId)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*baidu.Cfg).AppKey)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-		case *tencent_cloud_mt.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*tencent_cloud_mt.Cfg).SecretId)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*tencent_cloud_mt.Cfg).SecretKey)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-		case *ali_cloud_mt.Cfg:
-			_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*ali_cloud_mt.Cfg).AKId)
-			_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*ali_cloud_mt.Cfg).AKSecret)
-			entryAppKey.Enable()
-			entryAppSecret.Enable()
-		}
+		fmt.Println(reflect.TypeOf(currentEngine.GetCfg()))
+		//switch currentEngine.GetCfg().(type) {
+		//case *ling_va.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*ling_va.Cfg).DataId)
+		//	entryAppKey.Enable()
+		//case *huawei_cloud_nlp.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).AKId)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).SkKey)
+		//	_ = currentEngineProjectKey.Set(currentEngine.GetCfg().(*huawei_cloud_nlp.Cfg).ProjectId)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//	entryProjectKey.Enable()
+		//case *niutrans.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*niutrans.Cfg).AppKey)
+		//	entryAppKey.Enable()
+		//case *caiyunai.Cfg:
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*caiyunai.Cfg).Token)
+		//	entryAppSecret.Enable()
+		//case *openapi_youdao.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*openapi_youdao.Cfg).AppKey)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*openapi_youdao.Cfg).AppSecret)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//case *volcengine.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*volcengine.Cfg).AccessKey)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*volcengine.Cfg).SecretKey)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//case *baidu.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*baidu.Cfg).AppId)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*baidu.Cfg).AppKey)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//case *tencent_cloud_mt.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*tencent_cloud_mt.Cfg).SecretId)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*tencent_cloud_mt.Cfg).SecretKey)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//case *ali_cloud_mt.Cfg:
+		//	_ = currentEngineAppKey.Set(currentEngine.GetCfg().(*ali_cloud_mt.Cfg).AKId)
+		//	_ = currentEngineAppSecret.Set(currentEngine.GetCfg().(*ali_cloud_mt.Cfg).AKSecret)
+		//	entryAppKey.Enable()
+		//	entryAppSecret.Enable()
+		//}
 	}))
 	selectorEngine.Validator = func(currentVal string) error {
 		if currentVal == "" {

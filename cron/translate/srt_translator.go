@@ -92,12 +92,12 @@ func (customCron *SrtTranslator) jobTranslator() {
 							continue
 						}
 
-						if len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetTextMaxLen() {
+						if len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxSingleTextLength() {
 							blockChunked = append(blockChunked, tmpBlockStr)
 							tmpBlockStr = ""
 						}
 
-						if len(block.MainTrack) >= currentData.PtrOpts.Translator.GetTextMaxLen() {
+						if len(block.MainTrack) >= currentData.PtrOpts.Translator.GetCfg().GetMaxSingleTextLength() {
 							if tmpBlockStr != "" {
 								blockChunked = append(blockChunked, tmpBlockStr)
 								tmpBlockStr = ""
@@ -106,7 +106,7 @@ func (customCron *SrtTranslator) jobTranslator() {
 							continue
 						}
 
-						if len(block.MainTrack)+len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetTextMaxLen() {
+						if len(block.MainTrack)+len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxSingleTextLength() {
 							blockChunked = append(blockChunked, tmpBlockStr)
 							tmpBlockStr = ""
 						}
