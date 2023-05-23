@@ -18,8 +18,11 @@ require (
 )
 
 require (
+	github.com/flopp/go-findfont v0.1.0
+)
+
+require (
 	fyne.io/systray v1.10.1-0.20230403195833-7dc3c09283d6 // indirect
-	github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fredbi/uri v0.1.0 // indirect
@@ -60,7 +63,6 @@ require (
 	golang.org/x/image v0.3.0 // indirect
 	golang.org/x/mobile v0.0.0-20211207041440-4e6c2922fdee // indirect
 	golang.org/x/net v0.8.0 // indirect
-	gopkg.in/Knetic/govaluate.v3 v3.0.0 // indirect
 	honnef.co/go/js/dom v0.0.0-20210725211120-f030747120f2 // indirect
 )
 

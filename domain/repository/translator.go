@@ -67,6 +67,21 @@ func (customT *Translators) GetNames() []string {
 	return customT.names
 }
 
+func (customT *Translators) GetAllNames() []string {
+	var names []string
+	customT.list.Range(func(idx, translator any) bool {
+		names = append(names, translator.(serviceTranslator.ImplTranslator).GetName())
+		return true
+	})
+
+	if len(names) > 1 {
+		sort.Slice(names, func(i, j int) bool {
+			return names[i] < names[j]
+		})
+	}
+	return names
+}
+
 func (customT *Translators) genNames() {
 	customT.list.Range(func(idx, translator any) bool {
 		if translator.(serviceTranslator.ImplTranslator).IsValid() {

@@ -1,10 +1,10 @@
 package pages
 
 import (
-	"anto/platform/cross_platform_fyne/resource"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"net/url"
 	"sync"
@@ -57,11 +57,11 @@ func (page *PageAbout) OnRender() fyne.CanvasObject {
 
 和异步翻译，间接有效地提高了您的外语视频观看体验。如果有什么意见建议之类的，欢迎反馈~联系方式就在最下面哦~
 `)
-	wxImage := canvas.NewImageFromResource(resource.ResourceWxPay)
+	wxImage := canvas.NewImageFromURI(storage.NewURI("https://speauty.oss-cn-chengdu.aliyuncs.com/anto/wxpay.jpg"))
 	wxImage.SetMinSize(fyne.NewSize(360, 300))
 	wxImage.FillMode = canvas.ImageFillContain
 
-	aLiImage := canvas.NewImageFromResource(resource.ResourceAliPay)
+	aLiImage := canvas.NewImageFromURI(storage.NewURI("https://speauty.oss-cn-chengdu.aliyuncs.com/anto/alipay.jpg"))
 	aLiImage.SetMinSize(fyne.NewSize(360, 300))
 	aLiImage.FillMode = canvas.ImageFillContain
 

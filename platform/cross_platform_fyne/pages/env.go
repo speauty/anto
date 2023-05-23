@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"anto/common"
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -18,9 +19,9 @@ var (
 func APIPageEnv() *PageEnv {
 	oncePageEnv.Do(func() {
 		apiPageEnv = &PageEnv{
-			id:   "page.env",
-			name: "环境",
-			//isDefault: true,
+			id:        "page.env",
+			name:      "环境",
+			isDefault: true,
 		}
 	})
 	return apiPageEnv
@@ -60,8 +61,8 @@ func (page *PageEnv) OnRender() fyne.CanvasObject {
 			)),
 			widget.NewSeparator(),
 			widget.NewLabel(fmt.Sprintf(
-				"应用  名称: %s 版本: %s 模式: %s",
-				"桌面应用", "v1.0.0", "调试",
+				"应用  名称: %s 版本: %s",
+				common.AppName, common.Version,
 			)),
 			widget.NewSeparator(),
 			//widget.NewLabel("统计(待实现)"),

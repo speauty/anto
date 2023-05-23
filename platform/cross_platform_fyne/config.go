@@ -1,6 +1,10 @@
 package cross_platform_fyne
 
-import "fyne.io/fyne/v2"
+import (
+	"anto/common"
+	"fmt"
+	"fyne.io/fyne/v2"
+)
 
 var (
 	appWindowDefaultWidth      float32 = 400
@@ -11,20 +15,20 @@ var (
 )
 
 type Config struct {
-	AppName                    string  `yaml:"app_name"`
-	AppVersion                 string  `yaml:"app_version"`                    // v1.0.1
-	AppMode                    string  `yaml:"app_mode"`                       // debug release
-	AppWindowDefaultWidth      float32 `yaml:"app_window_default_width"`       // 应用窗口默认宽度
-	AppWindowDefaultHeight     float32 `yaml:"app_window_default_height"`      // 应用窗口默认高度
-	AppMainWindowDefaultWidth  float32 `yaml:"app_main_window_default_width"`  // 应用主窗口默认宽度
-	AppMainWindowDefaultHeight float32 `yaml:"app_main_window_default_height"` // 应用主窗口默认高度
+	AppName                    string  `mapstructure:"-"`
+	AppVersion                 string  `mapstructure:"-"` // v1.0.1
+	AppMode                    string  `mapstructure:"-"` // debug release
+	AppWindowDefaultWidth      float32 `mapstructure:"-"` // 应用窗口默认宽度
+	AppWindowDefaultHeight     float32 `mapstructure:"-"` // 应用窗口默认高度
+	AppMainWindowDefaultWidth  float32 `mapstructure:"-"` // 应用主窗口默认宽度
+	AppMainWindowDefaultHeight float32 `mapstructure:"-"` // 应用主窗口默认高度
 }
 
 func (c *Config) Default() *Config {
 	return &Config{
-		AppName:                    "桌面应用(ANTO)",
-		AppVersion:                 "v1.0.0",
-		AppMode:                    "debug",
+		AppName:                    common.AppName,
+		AppVersion:                 common.Version,
+		AppMode:                    "release",
 		AppWindowDefaultWidth:      appWindowDefaultWidth,
 		AppWindowDefaultHeight:     appWindowDefaultHeight,
 		AppMainWindowDefaultWidth:  appMainWindowDefaultWidth,
@@ -46,4 +50,8 @@ func (c *Config) IsDebug() bool {
 
 func (c *Config) IsRelease() bool {
 	return c.AppMode == "release"
+}
+
+func (c *Config) GetMainWindowTitle() string {
+	return fmt.Sprintf("%s@%s %s (免费开源应用)", c.AppName, common.Author, c.AppVersion)
 }

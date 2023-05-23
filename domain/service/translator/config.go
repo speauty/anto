@@ -19,9 +19,9 @@ type ImplConfig interface {
 
 type DefaultConfig struct{}
 
-func (d *DefaultConfig) GetAK() string               { return "" }
-func (d *DefaultConfig) GetSK() string               { return "" }
-func (d *DefaultConfig) GetPK() string               { return "" }
+func (d *DefaultConfig) GetAK() string               { return "不需要" }
+func (d *DefaultConfig) GetSK() string               { return "不需要" }
+func (d *DefaultConfig) GetPK() string               { return "不需要" }
 func (d *DefaultConfig) GetMaxSingleTextLength() int { return 0 }
 func (d *DefaultConfig) GetQPS() int                 { return 0 }
 func (d *DefaultConfig) GetMaxCoroutineNum() int     { return 0 }

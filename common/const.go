@@ -1,16 +1,12 @@
 package common
 
 const (
-	AppName                        = "anto"
+	AppName                        = "Anto"
 	Author                         = "speauty"
-	Version                        = "v3.0.2"
+	Version                        = "v3.8.0"
 	DownloadLatestVersionUrlFormat = "https://github.com/speauty/anto/releases/download/%s/anto.%s.win.exe"
 
 	GoUidLen = 8
-
-	UITitle       = "anto"
-	UIIcon        = "favicon.ico"
-	UIResourceDir = "./"
 
 	CfgYmlDefaultContent = `
 huawei_cloud_nlp: # 华为云机器翻译

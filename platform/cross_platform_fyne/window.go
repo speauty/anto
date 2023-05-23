@@ -67,10 +67,6 @@ func (ag *AppGui) Init(config *Config) {
 	ag.initPages()
 
 	ag.RegisterMainMenus(menus())
-
-	t := &customTheme{}
-	t.SetFonts("simkai.ttf", "")
-	ag.app.Settings().SetTheme(t)
 }
 
 func (ag *AppGui) RegisterMainMenus(fyneMenu *fyne.MainMenu) {
@@ -101,10 +97,12 @@ func (ag *AppGui) Run(ctx context.Context, fnCancel context.CancelFunc) {
 			break
 		}
 	}()
+
 	ag.app.Run()
 }
 
 func (ag *AppGui) Close() {
+	ag.ctxCancelFn()
 	ag.app.Quit()
 }
 
@@ -118,7 +116,7 @@ func (ag *AppGui) initApp() {
 }
 
 func (ag *AppGui) initMainWindow() {
-	mainWindow := ag.app.NewWindow(ag.config.AppName)
+	mainWindow := ag.app.NewWindow(ag.config.GetMainWindowTitle())
 	mainWindow.SetPadded(true)
 	mainWindow.Resize(ag.config.MainWindowSize())
 	mainWindow.CenterOnScreen()
