@@ -9,8 +9,6 @@ require (
 	github.com/google/go-querystring v1.1.0
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.34
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
-	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
-	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
 	github.com/spf13/viper v1.15.0
 	github.com/sqweek/dialog v0.0.0-20220809060634-e981b270ebbf
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.628
