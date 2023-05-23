@@ -1,7 +1,7 @@
-package e_fyne
+package cross_platform_fyne
 
 import (
-	"anto/platform/e_fyne/pages"
+	"anto/platform/cross_platform_fyne/pages"
 	"fyne.io/fyne/v2"
 )
 

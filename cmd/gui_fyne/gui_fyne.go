@@ -2,13 +2,13 @@ package main
 
 import (
 	"anto/bootstrap"
-	"anto/platform/e_fyne"
+	"anto/platform/cross_platform_fyne"
 	"context"
 )
 
 func main() {
 	ctx := context.Background()
 	bootstrap.Boot(ctx)
-	e_fyne.API().Init(nil)
-	e_fyne.API().Run()
+	cross_platform_fyne.API().Init(nil)
+	cross_platform_fyne.API().Run()
 }

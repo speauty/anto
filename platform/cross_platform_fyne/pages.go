@@ -1,4 +1,4 @@
-package e_fyne
+package cross_platform_fyne
 
 import (
 	"fmt"
