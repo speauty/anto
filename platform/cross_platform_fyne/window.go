@@ -104,6 +104,10 @@ func (ag *AppGui) Run(ctx context.Context, fnCancel context.CancelFunc) {
 	ag.app.Run()
 }
 
+func (ag *AppGui) Close() {
+	ag.app.Quit()
+}
+
 func (ag *AppGui) eventClose() {
 	ag.ctxCancelFn()
 	ag.app.Quit()
