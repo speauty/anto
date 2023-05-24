@@ -3,10 +3,10 @@ package resource
 import _ "embed"
 
 //go:embed favicon.ico
-var RFavicon []byte
+var Favicon []byte
 
 //go:embed wxpay.jpg
-var RWxPay []byte
+var WxPay []byte
 
 //go:embed alipay.jpg
-var RALiPay []byte
+var ALiPay []byte

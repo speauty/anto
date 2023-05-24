@@ -25,7 +25,7 @@ type Translators struct {
 	names []*_type.StdComboBoxModel
 }
 
-func (customT *Translators) Register(translators ...serviceTranslator.InterfaceTranslator) {
+func (customT *Translators) Register(translators ...serviceTranslator.ImplTranslator) {
 	tmpRestrictor := restrictor.Singleton()
 	for _, translator := range translators {
 		if _, isExisted := customT.list.Load(translator.GetId()); isExisted {
@@ -45,12 +45,12 @@ func (customT *Translators) Register(translators ...serviceTranslator.InterfaceT
 	customT.genNames2ComboBox()
 }
 
-func (customT *Translators) GetById(id string) serviceTranslator.InterfaceTranslator {
+func (customT *Translators) GetById(id string) serviceTranslator.ImplTranslator {
 	obj, isExisted := customT.list.Load(id)
 	if !isExisted {
 		return nil
 	}
-	return obj.(serviceTranslator.InterfaceTranslator)
+	return obj.(serviceTranslator.ImplTranslator)
 }
 
 func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
@@ -60,10 +60,10 @@ func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
 func (customT *Translators) genNames2ComboBox() {
 	customT.names = []*_type.StdComboBoxModel{}
 	customT.list.Range(func(idx, translator any) bool {
-		if translator.(serviceTranslator.InterfaceTranslator).IsValid() {
+		if translator.(serviceTranslator.ImplTranslator).IsValid() {
 			customT.names = append(customT.names, &_type.StdComboBoxModel{
-				Key:  translator.(serviceTranslator.InterfaceTranslator).GetId(),
-				Name: translator.(serviceTranslator.InterfaceTranslator).GetName(),
+				Key:  translator.(serviceTranslator.ImplTranslator).GetId(),
+				Name: translator.(serviceTranslator.ImplTranslator).GetName(),
 			})
 		}
 		return true

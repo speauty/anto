@@ -25,12 +25,12 @@ func GetAboutUs() *AboutUs {
 		apiAboutUs.id = util.Uid()
 		apiAboutUs.name = "关于我们"
 
-		wxPayData, err := jpeg.Decode(bytes.NewReader(resource.RWxPay))
+		wxPayData, err := jpeg.Decode(bytes.NewReader(resource.WxPay))
 		if err == nil && wxPayData != nil {
 			wxPayImg, _ = walk.NewBitmapFromImage(wxPayData)
 		}
 
-		aliPayData, err := jpeg.Decode(bytes.NewReader(resource.RALiPay))
+		aliPayData, err := jpeg.Decode(bytes.NewReader(resource.ALiPay))
 		if err == nil && aliPayData != nil {
 			aliPayImg, _ = walk.NewBitmapFromImage(aliPayData)
 		}

@@ -1,18 +1,15 @@
-.PHONY: tidy
+.PHONY: tidy deploy_gui_win rs build compress
 
 tidy:
 	go mod tidy
 
+deploy: rs build compress
 
-.PHONY: deploy_gui_win gui_win_rs gui_win_build gui_win_compress
+rs:
+	rsrc -manifest ./cmd/anto/anto.manifest -ico favicon.ico -o ./cmd/anto/rsrc.syso
 
-deploy_gui_win: gui_win_rs gui_win_build gui_win_compress
+build:
+	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o ./bin/anto.win.exe anto/cmd/anto
 
-gui_win_rs:
-	rsrc -manifest ./cmd/gui_win/gui_win.manifest -ico favicon.ico -o ./cmd/gui_win/rsrc.syso
-
-gui_win_build:
-	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o ./bin/anto.win.exe anto/cmd/gui_win
-
-gui_win_compress:
+compress:
 	upx -9 ./bin/anto.win.exe

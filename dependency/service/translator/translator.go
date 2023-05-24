@@ -2,7 +2,7 @@ package translator
 
 import "context"
 
-type InterfaceTranslator interface {
+type ImplTranslator interface {
 	Init(cfg interface{})
 	GetId() string
 	GetShortId() string
