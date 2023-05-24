@@ -20,7 +20,7 @@ var (
 	onceTranslator sync.Once
 )
 
-func Singleton() *Translator {
+func API() *Translator {
 	onceTranslator.Do(func() {
 		apiTranslator = New()
 	})

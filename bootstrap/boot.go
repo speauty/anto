@@ -43,7 +43,7 @@ func Boot(_ context.Context) {
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),
-		youdao.Singleton(), ling_va.Singleton(), baidu.Singleton(),
+		youdao.API(), ling_va.Singleton(), baidu.Singleton(),
 		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
 		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
 		volcengine.Singleton(),
