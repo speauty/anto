@@ -20,7 +20,7 @@ var (
 	onceTranslator sync.Once
 )
 
-func Singleton() *Translator {
+func API() *Translator {
 	onceTranslator.Do(func() {
 		apiTranslator = New()
 	})
@@ -32,9 +32,6 @@ func New() *Translator {
 		id:            "openapi_youdao",
 		name:          "有道智云",
 		api:           "https://openapi.youdao.com/v2/api",
-		qps:           1,
-		procMax:       20,
-		textMaxLen:    5000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -43,33 +40,22 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
+	cfg           translator.ImplConfig
 	api           string
-	qps           int
-	procMax       int
-	textMaxLen    int
 	langSupported []translator.LangPair
 	sep           string
 }
 
-func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "oy" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return nil }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "oy" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool {
-	return customT.cfg != nil && customT.cfg.AppKey != "" && customT.cfg.AppSecret != ""
+	return customT.cfg != nil && customT.cfg.GetAK() != "" && customT.cfg.GetSK() != ""
 }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
@@ -78,7 +64,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 	newReq := &remoteReq{
 		TextQuery: texts,
 		From:      args.FromLang, To: args.ToLang,
-		AppKey: customT.cfg.AppKey, Salt: util.Uid(), SignType: "v3",
+		AppKey: customT.cfg.GetAK(), Salt: util.Uid(), SignType: "v3",
 		CurrentTime: fmt.Sprintf("%d", carbon.Now().Timestamp()),
 	}
 	newReq.Sign = customT.signBuilder(strings.Join(texts, ""), newReq.Salt, newReq.CurrentTime)
@@ -118,7 +104,7 @@ func (customT *Translator) signBuilder(textQuery, salt, currentTime string) stri
 	if tmpLen := len(textQuery); tmpLen > 20 {
 		tmpQuery = fmt.Sprintf("%s%d%s", textQuery[0:10], tmpLen, textQuery[tmpLen-10:])
 	}
-	tmpQuery = fmt.Sprintf("%s%s%s%s%s", customT.cfg.AppKey, tmpQuery, salt, currentTime, customT.cfg.AppSecret)
+	tmpQuery = fmt.Sprintf("%s%s%s%s%s", customT.cfg.GetAK(), tmpQuery, salt, currentTime, customT.cfg.GetSK())
 	newSha := sha256.New()
 	newSha.Write([]byte(tmpQuery))
 

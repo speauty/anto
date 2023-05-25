@@ -20,7 +20,7 @@ var (
 	onceTranslator sync.Once
 )
 
-func Singleton() *Translator {
+func API() *Translator {
 	onceTranslator.Do(func() {
 		apiTranslator = New()
 	})
@@ -31,9 +31,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "tencent_mt",
 		name:          "腾讯云MT",
-		qps:           5,
-		procMax:       20,
-		textMaxLen:    2000,
 		sep:           "\n",
 		isClientOk:    false,
 		langSupported: langSupported,
@@ -43,7 +40,7 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
+	cfg           translator.ImplConfig
 	qps           int
 	procMax       int
 	textMaxLen    int
@@ -53,31 +50,19 @@ type Translator struct {
 	tencentClient *common.Client
 }
 
-func (customT *Translator) Init(cfg interface{}) {
-	customT.cfg = cfg.(*Cfg)
-	if customT.cfg == nil {
-		log.Singleton().ErrorF("引擎: %s, 错误: 未设置必需参数", customT.GetName())
-		return
-	}
+func (customT *Translator) Init(cfg translator.ImplConfig) {
+	customT.cfg = cfg
 	customT.clientBuilder()
 }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "tc" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return nil }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "tc" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool {
-	return customT.isClientOk && customT.cfg.SecretId != "" && customT.cfg.SecretKey != "" && customT.cfg.Region != ""
+	return customT.isClientOk && customT.cfg.GetAK() != "" && customT.cfg.GetSK() != "" && customT.cfg.GetRegion() != ""
 }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
@@ -86,7 +71,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		BaseRequest: &tencentHttp.BaseRequest{},
 		Source:      &args.FromLang,
 		Target:      &args.ToLang,
-		ProjectId:   &customT.cfg.ProjectId,
+		ProjectId:   customT.cfg.(*Config).GetProjectKeyPtr(),
 	}
 	texts := strings.Split(args.TextContent, customT.GetSep())
 	for idx, _ := range texts {
@@ -125,10 +110,10 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 }
 
 func (customT *Translator) clientBuilder() {
-	if customT.cfg.SecretId == "" || customT.cfg.SecretKey == "" || customT.cfg.Region == "" {
+	if customT.cfg.GetAK() == "" || customT.cfg.GetSK() == "" || customT.cfg.GetRegion() == "" {
 		return
 	}
-	tmpClient, tmpErr := common.NewClientWithSecretId(customT.cfg.SecretId, customT.cfg.SecretKey, customT.cfg.Region)
+	tmpClient, tmpErr := common.NewClientWithSecretId(customT.cfg.GetAK(), customT.cfg.GetSK(), customT.cfg.GetRegion())
 	if tmpErr != nil {
 		log.Singleton().ErrorF("引擎: %s, 错误: 初始化客户都安失败(%s)", customT.GetName(), tmpErr)
 		return

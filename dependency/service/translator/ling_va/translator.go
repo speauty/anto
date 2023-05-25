@@ -18,7 +18,7 @@ var (
 	onceTranslator sync.Once
 )
 
-func Singleton() *Translator {
+func API() *Translator {
 	onceTranslator.Do(func() {
 		apiTranslator = New()
 	})
@@ -29,9 +29,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "lingva",
 		name:          "Lingva",
-		qps:           10,
-		procMax:       20,
-		textMaxLen:    1000,
 		sep:           "\n",
 		langSupported: langSupported,
 	}
@@ -40,36 +37,25 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 }
 
-func (customT *Translator) Init(cfg interface{}) { customT.cfg = cfg.(*Cfg) }
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "lv" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return nil }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "lv" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
-func (customT *Translator) IsValid() bool                           { return customT.cfg.DataId != "" }
+func (customT *Translator) IsValid() bool                           { return customT.cfg.GetAK() != "" }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
 
-	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s/", customT.cfg.DataId)
+	var api = fmt.Sprintf("https://lingva.ml/_next/data/%s/", customT.cfg.GetAK())
 	queryUrl := fmt.Sprintf(
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),

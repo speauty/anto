@@ -60,7 +60,8 @@ type SubripTranslate struct {
 	ptrSrtFile *walk.Label
 	ptrSrtDir  *walk.Label
 
-	ptrLog *walk.TextEdit
+	ptrConfigView *walk.TextLabel
+	ptrLog        *walk.TextEdit
 
 	dropFilesEventId int
 }
@@ -84,56 +85,20 @@ func (customPage *SubripTranslate) SetVisible(isVisible bool) {
 }
 
 func (customPage *SubripTranslate) GetWidget() Widget {
-	return StdRootWidget(&customPage.rootWidget,
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText("翻译引擎")),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrEngine).
-					SetModel(apiSubripTranslate.engines).
-					SetBindingMember(comboBoxModel.BindKey()).
-					SetDisplayMember(comboBoxModel.DisplayKey()).
-					SetCurrentIdx(0).
-					SetOnCurrentIdxChangedFn(customPage.eventEngineOnChange),
-				),
+	widgets := []Widget{}
+	widgets = append(widgets, pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(customPage.getFormWidget()...).GetWidgets(),
+			)),
+			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
+				pack.NewWidgetGroup().Append(customPage.getConfigWidget()...).AppendZeroHSpacer().AppendZeroVSpacer().GetWidgets(),
+			)),
+		).AppendZeroHSpacer().GetWidgets(),
+	)))
 
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText(common.LangDirectionFrom.String())),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrFromLang).
-					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
-
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText("    "+common.LangDirectionTo.String())),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrToLang).
-					SetModel(ling_va.Singleton().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
-			).AppendZeroHSpacer().GetWidgets(),
-		)),
-
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText("翻译模式")),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrMode).SetModel(common.ModeDelta.GetModes()).SetCurrentIdx(common.ModeDelta.GetIdx())),
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText("导出轨道")),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrFlagTrackExport).SetModel([]string{"全部轨道", "主轨", "副轨"}).SetCurrentIdx(0)),
-				pack.UILabel(pack.NewUILabelArgs(nil).SetText("导出主轨道")),
-				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrMainExport).SetModel(common.LangDirectionFrom.GetDirections()).SetCurrentIdx(1)),
-			).AppendZeroHSpacer().GetWidgets(),
-		)),
-
-		StdBrowserSelectorWidget("字幕文件", customPage.eventSrtFileOnClicked, &customPage.ptrSrtFile),
-		StdBrowserSelectorWidget("字幕目录", customPage.eventSrtDirOnClicked, &customPage.ptrSrtDir),
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
-				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("清空输出").SetOnClicked(customPage.flushLog)),
-			).AppendZeroHSpacer().GetWidgets(),
-		)),
-
-		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(false).SetWidgets(
-			pack.NewWidgetGroup().Append(
-				pack.UITextEdit(pack.NewUITextEditArgs(&customPage.ptrLog).SetCustomSize(Size{Height: 344}).SetReadOnly(true).SetVScroll(true)),
-			).AppendZeroHSpacer().GetWidgets(),
-		)),
-
-		VSpacer{},
-	)
+	widgets = append(widgets, customPage.getConsoleWidget(), VSpacer{})
+	return StdRootWidget(&customPage.rootWidget, widgets...)
 }
 
 func (customPage *SubripTranslate) Reset() {
@@ -190,7 +155,68 @@ func (customPage *SubripTranslate) Reset() {
 	}
 }
 
+func (customPage *SubripTranslate) getConfigWidget() []Widget {
+	return []Widget{
+		pack.UILabel(pack.NewUILabelArgs(nil).SetText("引擎信息")),
+		pack.UITextLabel(pack.NewUITextLabelArgs(&customPage.ptrConfigView).SetText("暂无")),
+	}
+}
+
+func (customPage *SubripTranslate) getFormWidget() []Widget {
+	return []Widget{
+		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("翻译引擎")),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrEngine).
+					SetModel(apiSubripTranslate.engines).
+					SetBindingMember(comboBoxModel.BindKey()).
+					SetDisplayMember(comboBoxModel.DisplayKey()).
+					SetCurrentIdx(0).
+					SetOnCurrentIdxChangedFn(customPage.eventEngineOnChange),
+				),
+
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText(common.LangDirectionFrom.String())),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrFromLang).
+					SetModel(ling_va.API().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey())),
+
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("    "+common.LangDirectionTo.String())),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrToLang).
+					SetModel(ling_va.API().GetLangSupported()).SetBindingMember(comboBoxModel.BindKey()).SetDisplayMember(comboBoxModel.DisplayKey()).SetCurrentIdx(1)),
+			).AppendZeroHSpacer().GetWidgets(),
+		)),
+
+		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("翻译模式")),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrMode).SetModel(common.ModeDelta.GetModes()).SetCurrentIdx(common.ModeDelta.GetIdx())),
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("导出轨道")),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrFlagTrackExport).SetModel([]string{"全部轨道", "主轨", "副轨"}).SetCurrentIdx(0)),
+				pack.UILabel(pack.NewUILabelArgs(nil).SetText("导出主轨道")),
+				pack.UIComboBox(pack.NewUIComboBoxArgs(&customPage.ptrMainExport).SetModel(common.LangDirectionFrom.GetDirections()).SetCurrentIdx(1)),
+			).AppendZeroHSpacer().GetWidgets(),
+		)),
+
+		StdBrowserSelectorWidget("字幕文件", customPage.eventSrtFileOnClicked, &customPage.ptrSrtFile),
+		StdBrowserSelectorWidget("字幕目录", customPage.eventSrtDirOnClicked, &customPage.ptrSrtDir),
+		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
+			pack.NewWidgetGroup().Append(
+				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
+				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("清空输出").SetOnClicked(customPage.flushLog)),
+			).AppendZeroHSpacer().GetWidgets(),
+		)),
+	}
+}
+
+func (customPage *SubripTranslate) getConsoleWidget() Widget {
+	return pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(false).SetWidgets(
+		pack.NewWidgetGroup().Append(
+			pack.UITextEdit(pack.NewUITextEditArgs(&customPage.ptrLog).SetCustomSize(Size{Height: 344}).SetReadOnly(true).SetVScroll(true)),
+		).AppendZeroHSpacer().GetWidgets(),
+	))
+}
+
 func (customPage *SubripTranslate) eventEngineOnChange() {
+	_ = customPage.ptrConfigView.SetText("")
 	currentId := customPage.engines[customPage.ptrEngine.CurrentIndex()].Key
 	if currentId == "" {
 		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎无效，请重新选择"))
@@ -209,6 +235,10 @@ func (customPage *SubripTranslate) eventEngineOnChange() {
 	}
 	customPage.setLangComboBox(customPage.ptrFromLang, currentEngine.GetLangSupported(), 1)
 	customPage.setLangComboBox(customPage.ptrToLang, currentEngine.GetLangSupported(), 0)
+	_ = customPage.ptrConfigView.SetText(fmt.Sprintf(
+		"名称: %s(%s), 缩写: %s, 配置如下: \n",
+		currentEngine.GetName(), currentEngine.GetId(), currentEngine.GetShortId(),
+	))
 	return
 }
 

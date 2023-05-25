@@ -31,21 +31,22 @@ func Boot(_ context.Context) {
 
 	cfg.Singleton().UI.Title = cfg.Singleton().NewUITitle()
 
-	huawei_cloud_nlp.Singleton().Init(cfg.Singleton().HuaweiCloudNlp)
-	ling_va.Singleton().Init(cfg.Singleton().LingVA)
-	baidu.Singleton().Init(cfg.Singleton().Baidu)
-	tencent_cloud_mt.Singleton().Init(cfg.Singleton().TencentCloudMT)
-	openapi_youdao.Singleton().Init(cfg.Singleton().OpenAPIYouDao)
-	ali_cloud_mt.Singleton().Init(cfg.Singleton().AliCloudMT)
-	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
-	niutrans.Singleton().Init(cfg.Singleton().Niutrans)
+	huawei_cloud_nlp.API().Init(cfg.Singleton().HuaweiCloudNlp)
+	ling_va.API().Init(cfg.Singleton().LingVA)
+	baidu.API().Init(cfg.Singleton().Baidu)
+	tencent_cloud_mt.API().Init(cfg.Singleton().TencentCloudMT)
+	openapi_youdao.API().Init(cfg.Singleton().OpenAPIYouDao)
+	ali_cloud_mt.API().Init(cfg.Singleton().AliCloudMT)
+	caiyunai.API().Init(cfg.Singleton().CaiYunAI)
+	niutrans.API().Init(cfg.Singleton().Niutrans)
 	volcengine.API().Init(cfg.Singleton().VolcEngine)
+	youdao.API().Init(cfg.Singleton().YouDao)
 
 	repository.GetTranslators().Register(
-		huawei_cloud_nlp.Singleton(),
-		youdao.API(), ling_va.Singleton(), baidu.Singleton(),
-		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
-		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
+		huawei_cloud_nlp.API(),
+		youdao.API(), ling_va.API(), baidu.API(),
+		tencent_cloud_mt.API(), openapi_youdao.API(),
+		ali_cloud_mt.API(), caiyunai.API(), niutrans.API(),
 		volcengine.API(),
 	)
 }

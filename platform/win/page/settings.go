@@ -144,7 +144,7 @@ func (customPage *Settings) getLingVAWidget() Widget {
 						SetText(cfg.Singleton().LingVA.DataId).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrLingVAMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().LingVA.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -161,7 +161,7 @@ func (customPage *Settings) getCaiYunAIWidget() Widget {
 						SetText(cfg.Singleton().CaiYunAI.Token).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrCaiYunAIMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().CaiYunAI.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -198,7 +198,7 @@ func (customPage *Settings) getBaiduWidget() Widget {
 						SetText(cfg.Singleton().Baidu.AppKey).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrBaiduMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().Baidu.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().Baidu.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -218,7 +218,7 @@ func (customPage *Settings) getTencentCloudMTWidget() Widget {
 						SetText(cfg.Singleton().TencentCloudMT.SecretKey).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrTencentMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().TencentCloudMT.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().TencentCloudMT.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -238,7 +238,7 @@ func (customPage *Settings) getOpenAPIYouDaoWidget() Widget {
 						SetText(cfg.Singleton().OpenAPIYouDao.AppSecret).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrOpenAPIMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().OpenAPIYouDao.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -258,7 +258,7 @@ func (customPage *Settings) getAliCloudMTWidget() Widget {
 						SetText(cfg.Singleton().AliCloudMT.AKSecret).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrAliCloudMTMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().AliCloudMT.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().AliCloudMT.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -278,7 +278,7 @@ func (customPage *Settings) getHuaweiCloudNlpWidget() Widget {
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudAKProjectId).SetText(cfg.Singleton().HuaweiCloudNlp.ProjectId).SetCustomSize(stdLineEditSize)),
 					pack.UILabel(pack.NewUILabelArgs(nil).SetText("最长请求")),
 					pack.UILineEdit(pack.NewUILineEditArgs(&customPage.ptrHuaweiCloudMaxSingleTextLength).
-						SetText(fmt.Sprintf("%d", cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength)).SetCustomSize(stdNumLineEditSize)),
+						SetText(fmt.Sprintf("%d", cfg.Singleton().HuaweiCloudNlp.GetMaxCharNum())).SetCustomSize(stdNumLineEditSize)),
 				).AppendZeroHSpacer().GetWidgets(),
 			)),
 		).AppendZeroHSpacer().GetWidgets(),
@@ -308,10 +308,6 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("LingVA单次最长请求无效, 请重新设置"))
 			return
 		}
-		if lingVAMaxSingleTextLengthInt != cfg.Singleton().LingVA.MaxSingleTextLength {
-			cfg.Singleton().LingVA.MaxSingleTextLength = lingVAMaxSingleTextLengthInt
-			cntModified++
-		}
 	}
 
 	{
@@ -330,10 +326,6 @@ func (customPage *Settings) eventSync() {
 		if err != nil || baiduSingleTextLengthInt <= 0 {
 			msg.Err(customPage.mainWindow, errors.New("百度翻译单次最长请求无效, 请重新设置"))
 			return
-		}
-		if baiduSingleTextLengthInt != cfg.Singleton().Baidu.MaxSingleTextLength {
-			cfg.Singleton().Baidu.MaxSingleTextLength = baiduSingleTextLengthInt
-			cntModified++
 		}
 	}
 
@@ -354,10 +346,6 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("华为云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if tencentMaxSingleTextLengthInt != cfg.Singleton().TencentCloudMT.MaxSingleTextLength {
-			cfg.Singleton().TencentCloudMT.MaxSingleTextLength = tencentMaxSingleTextLengthInt
-			cntModified++
-		}
 	}
 
 	{
@@ -376,10 +364,6 @@ func (customPage *Settings) eventSync() {
 		if err != nil || openAPIMaxSingleTextLengthInt <= 0 {
 			msg.Err(customPage.mainWindow, errors.New("有道智云翻译单次最长请求无效, 请重新设置"))
 			return
-		}
-		if openAPIMaxSingleTextLengthInt != cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength {
-			cfg.Singleton().OpenAPIYouDao.MaxSingleTextLength = openAPIMaxSingleTextLengthInt
-			cntModified++
 		}
 	}
 
@@ -400,10 +384,6 @@ func (customPage *Settings) eventSync() {
 			msg.Err(customPage.mainWindow, errors.New("阿里云翻译单次最长请求无效, 请重新设置"))
 			return
 		}
-		if aliCloudMTMaxSingleTextLengthInt != cfg.Singleton().AliCloudMT.MaxSingleTextLength {
-			cfg.Singleton().AliCloudMT.MaxSingleTextLength = aliCloudMTMaxSingleTextLengthInt
-			cntModified++
-		}
 	}
 
 	{
@@ -417,10 +397,6 @@ func (customPage *Settings) eventSync() {
 		if err != nil || caiYunAIMaxSingleTextLengthInt <= 0 {
 			msg.Err(customPage.mainWindow, errors.New("彩云小译单次最长请求无效, 请重新设置"))
 			return
-		}
-		if caiYunAIMaxSingleTextLengthInt != cfg.Singleton().CaiYunAI.MaxSingleTextLength {
-			cfg.Singleton().CaiYunAI.MaxSingleTextLength = caiYunAIMaxSingleTextLengthInt
-			cntModified++
 		}
 	}
 
@@ -460,10 +436,6 @@ func (customPage *Settings) eventSync() {
 		if err != nil || huaweiCloudMaxSingleTextLengthInt <= 0 {
 			msg.Err(customPage.mainWindow, errors.New("华为云翻译单次最长请求无效, 请重新设置"))
 			return
-		}
-		if huaweiCloudMaxSingleTextLengthInt != cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength {
-			cfg.Singleton().HuaweiCloudNlp.MaxSingleTextLength = huaweiCloudMaxSingleTextLengthInt
-			cntModified++
 		}
 	}
 

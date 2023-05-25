@@ -21,7 +21,7 @@ var (
 	onceTranslator sync.Once
 )
 
-func Singleton() *Translator {
+func API() *Translator {
 	onceTranslator.Do(func() {
 		apiTranslator = New()
 	})
@@ -32,9 +32,6 @@ func New() *Translator {
 	return &Translator{
 		id:            "ali_cloud_mt",
 		name:          "阿里云MT",
-		qps:           50,
-		procMax:       20,
-		textMaxLen:    3000,
 		sep:           "\n",
 		langSupported: langSupported,
 		isClientOk:    false,
@@ -44,37 +41,26 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
-	cfg           *Cfg
-	qps           int
-	procMax       int
-	textMaxLen    int
+	cfg           translator.ImplConfig
 	langSupported []translator.LangPair
 	sep           string
 	mtClient      *alimt.Client
 	isClientOk    bool
 }
 
-func (customT *Translator) Init(cfg interface{}) {
-	customT.cfg = cfg.(*Cfg)
+func (customT *Translator) Init(cfg translator.ImplConfig) {
+	customT.cfg = cfg
 	customT.clientBuilder()
 }
 
-func (customT *Translator) GetId() string       { return customT.id }
-func (customT *Translator) GetShortId() string  { return "ac" }
-func (customT *Translator) GetName() string     { return customT.name }
-func (customT *Translator) GetCfg() interface{} { return nil }
-func (customT *Translator) GetQPS() int         { return customT.qps }
-func (customT *Translator) GetProcMax() int     { return customT.procMax }
-func (customT *Translator) GetTextMaxLen() int {
-	if customT.cfg.MaxSingleTextLength > 0 {
-		return customT.cfg.MaxSingleTextLength
-	}
-	return customT.textMaxLen
-}
+func (customT *Translator) GetId() string                           { return customT.id }
+func (customT *Translator) GetShortId() string                      { return "ac" }
+func (customT *Translator) GetName() string                         { return customT.name }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
 func (customT *Translator) IsValid() bool {
-	return customT.cfg != nil && customT.cfg.AKId != "" && customT.cfg.AKSecret != "" && customT.isClientOk == true
+	return customT.cfg != nil && customT.cfg.GetAK() != "" && customT.cfg.GetSK() != "" && customT.isClientOk == true
 }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
@@ -124,17 +110,13 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 }
 
 func (customT *Translator) clientBuilder() {
-	if customT.cfg == nil || customT.cfg.AKId == "" || customT.cfg.AKSecret == "" {
+	if customT.cfg == nil || customT.cfg.GetAK() == "" || customT.cfg.GetSK() == "" {
 		return
 	}
 	config := sdk.NewConfig()
 
-	credential := credentials.NewAccessKeyCredential(customT.cfg.AKId, customT.cfg.AKSecret)
-	region := customT.cfg.Region
-	if region == "" {
-		region = "cn-hangzhou"
-	}
-	client, err := alimt.NewClientWithOptions(region, config, credential)
+	credential := credentials.NewAccessKeyCredential(customT.cfg.GetAK(), customT.cfg.GetSK())
+	client, err := alimt.NewClientWithOptions(customT.cfg.GetRegion(), config, credential)
 	if err != nil {
 		log.Singleton().ErrorF("引擎: %s, 错误: 生成客户端失败(%s)", customT.GetName(), err)
 		return

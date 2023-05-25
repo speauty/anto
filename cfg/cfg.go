@@ -10,6 +10,7 @@ import (
 	"anto/dependency/service/translator/openapi_youdao"
 	"anto/dependency/service/translator/tencent_cloud_mt"
 	"anto/dependency/service/translator/volcengine"
+	"anto/dependency/service/translator/youdao"
 	"anto/platform/win/ui"
 	"fmt"
 	"sync"
@@ -25,31 +26,33 @@ func Singleton() *Cfg {
 		apiSingleton = new(Cfg)
 		apiSingleton.App = App{}.Default()
 		apiSingleton.UI = ui.Cfg{}.Default()
-		apiSingleton.HuaweiCloudNlp = huawei_cloud_nlp.Cfg{}.Default()
-		apiSingleton.LingVA = ling_va.Cfg{}.Default()
-		apiSingleton.Baidu = baidu.Cfg{}.Default()
-		apiSingleton.TencentCloudMT = tencent_cloud_mt.Cfg{}.Default()
-		apiSingleton.OpenAPIYouDao = openapi_youdao.Cfg{}.Default()
-		apiSingleton.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
-		apiSingleton.CaiYunAI = caiyunai.Cfg{}.Default()
-		apiSingleton.Niutrans = niutrans.Cfg{}.Default()
-		apiSingleton.VolcEngine = volcengine.Config{}.Default()
+		apiSingleton.HuaweiCloudNlp = new(huawei_cloud_nlp.Config).Default().(*huawei_cloud_nlp.Config)
+		apiSingleton.LingVA = new(ling_va.Config).Default().(*ling_va.Config)
+		apiSingleton.Baidu = new(baidu.Config).Default().(*baidu.Config)
+		apiSingleton.TencentCloudMT = new(tencent_cloud_mt.Config).Default().(*tencent_cloud_mt.Config)
+		apiSingleton.OpenAPIYouDao = new(openapi_youdao.Config).Default().(*openapi_youdao.Config)
+		apiSingleton.AliCloudMT = new(ali_cloud_mt.Config).Default().(*ali_cloud_mt.Config)
+		apiSingleton.CaiYunAI = new(caiyunai.Config).Default().(*caiyunai.Config)
+		apiSingleton.Niutrans = new(niutrans.Config).Default().(*niutrans.Config)
+		apiSingleton.VolcEngine = new(volcengine.Config).Default().(*volcengine.Config)
+		apiSingleton.YouDao = new(youdao.Config).Default().(*youdao.Config)
 	})
 	return apiSingleton
 }
 
 type Cfg struct {
-	App            *App                  `mapstructure:"-"`
-	UI             *ui.Cfg               `mapstructure:"-"`
-	HuaweiCloudNlp *huawei_cloud_nlp.Cfg `mapstructure:"huawei_cloud_nlp"`
-	LingVA         *ling_va.Cfg          `mapstructure:"ling_va"`
-	Baidu          *baidu.Cfg            `mapstructure:"baidu"`
-	TencentCloudMT *tencent_cloud_mt.Cfg `mapstructure:"tencent_cloud_mt"`
-	OpenAPIYouDao  *openapi_youdao.Cfg   `mapstructure:"openapi_youdao"`
-	AliCloudMT     *ali_cloud_mt.Cfg     `mapstructure:"ali_cloud_mt"`
-	CaiYunAI       *caiyunai.Cfg         `mapstructure:"caiyun_ai"`
-	Niutrans       *niutrans.Cfg         `mapstructure:"niutrans"`
-	VolcEngine     *volcengine.Config    `mapstructure:"volc_engine"`
+	App            *App                     `mapstructure:"-"`
+	UI             *ui.Cfg                  `mapstructure:"-"`
+	HuaweiCloudNlp *huawei_cloud_nlp.Config `mapstructure:"huawei_cloud_nlp"`
+	LingVA         *ling_va.Config          `mapstructure:"ling_va"`
+	Baidu          *baidu.Config            `mapstructure:"baidu"`
+	TencentCloudMT *tencent_cloud_mt.Config `mapstructure:"tencent_cloud_mt"`
+	OpenAPIYouDao  *openapi_youdao.Config   `mapstructure:"openapi_youdao"`
+	AliCloudMT     *ali_cloud_mt.Config     `mapstructure:"ali_cloud_mt"`
+	CaiYunAI       *caiyunai.Config         `mapstructure:"caiyun_ai"`
+	Niutrans       *niutrans.Config         `mapstructure:"niutrans"`
+	VolcEngine     *volcengine.Config       `mapstructure:"volc_engine"`
+	YouDao         *youdao.Config           `mapstructure:"youdao"`
 }
 
 func (customC *Cfg) NewUITitle() string {
