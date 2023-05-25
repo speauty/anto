@@ -30,7 +30,7 @@ func API() *Translator {
 func New() *Translator {
 	return &Translator{
 		id:            "tencent_mt",
-		name:          "腾讯云MT",
+		name:          "腾讯云",
 		sep:           "\n",
 		isClientOk:    false,
 		langSupported: langSupported,

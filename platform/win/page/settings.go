@@ -233,6 +233,13 @@ func (customPage *Settings) eventSubmit() {
 			return
 		}
 	}
+	if customPage.ptrRegionWrapper.Visible() {
+		if err := currentEngine.GetCfg().SetRegion(customPage.ptrRegionInput.Text()); err != nil {
+			_ = customPage.ptrPKInput.SetFocus()
+			msg.Err(customPage.mainWindow, err)
+			return
+		}
+	}
 	if customPage.ptrMaxCharNumWrapper.Visible() {
 		maxCharNumVal, err := strconv.Atoi(customPage.ptrMaxCharNumInput.Text())
 		if err != nil {

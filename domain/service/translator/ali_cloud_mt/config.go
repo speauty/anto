@@ -2,6 +2,7 @@ package ali_cloud_mt
 
 import (
 	"anto/domain/service/translator"
+	"fmt"
 	"github.com/spf13/viper"
 )
 
@@ -26,6 +27,7 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 	tagAndVal := config.JoinAllTagAndValue(API(), config, "mapstructure")
 
 	for tag, val := range tagAndVal {
+		fmt.Println(tag, val)
 		currentViper.Set(tag, val)
 	}
 	return nil

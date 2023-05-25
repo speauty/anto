@@ -31,7 +31,7 @@ func API() *Translator {
 func New() *Translator {
 	return &Translator{
 		id:            "ali_cloud_mt",
-		name:          "阿里云MT",
+		name:          "阿里云",
 		sep:           "\n",
 		langSupported: langSupported,
 		isClientOk:    false,

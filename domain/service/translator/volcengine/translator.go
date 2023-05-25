@@ -37,7 +37,7 @@ func API() *Translator {
 func New() *Translator {
 	return &Translator{
 		id:            "volc_engine",
-		name:          "火山翻译",
+		name:          "火山引擎",
 		sep:           "\n",
 		langSupported: langSupported,
 	}

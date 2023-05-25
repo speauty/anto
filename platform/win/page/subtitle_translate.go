@@ -93,7 +93,7 @@ func (customPage *SubtitleTranslate) GetWidget() Widget {
 	widgets = append(widgets, pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(false).SetWidgets(
 		pack.NewWidgetGroup().Append(
 			pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutVBox(true).SetWidgets(
-				pack.NewWidgetGroup().Append(customPage.getFormWidget()...).GetWidgets(),
+				pack.NewWidgetGroup().Append(customPage.getFormWidget()...).AppendZeroVSpacer().AppendZeroHSpacer().GetWidgets(),
 			)),
 			pack.UIComposite(pack.NewUICompositeArgs(nil).
 				SetLayoutVBox(true).SetAlignment(AlignHNearVNear).
@@ -163,6 +163,7 @@ func (customPage *SubtitleTranslate) Reset() {
 
 func (customPage *SubtitleTranslate) getConfigWidget() []Widget {
 	return []Widget{
+		pack.UILabel(pack.NewUILabelArgs(nil).SetText("友情提示: 支持文件和目录拖放哦")),
 		pack.UILabel(pack.NewUILabelArgs(nil).SetText("引擎信息")),
 		pack.UITextLabel(pack.NewUITextLabelArgs(&customPage.ptrConfigView).SetText("暂无")),
 	}
@@ -177,7 +178,7 @@ func (customPage *SubtitleTranslate) getFormWidget() []Widget {
 					SetModel(apiSubtitleTranslate.engines).
 					SetBindingMember(comboBoxModel.BindKey()).
 					SetDisplayMember(comboBoxModel.DisplayKey()).
-					SetCurrentIdx(0).
+					SetCurrentIdx(-1).
 					SetOnCurrentIdxChangedFn(customPage.eventEngineOnChange),
 				),
 
