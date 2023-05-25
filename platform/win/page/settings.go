@@ -90,7 +90,12 @@ func (customPage *Settings) GetWidget() Widget {
 	)
 }
 
-func (customPage *Settings) Reset() {}
+func (customPage *Settings) Reset() {
+	customPage.currentEngineId = ""
+	if customPage.ptrCurrentEngineCombo != nil {
+		_ = customPage.ptrCurrentEngineCombo.SetCurrentIndex(-1)
+	}
+}
 
 func (customPage *Settings) getTranslationConfigWidget() Widget {
 	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetCustomSize(Size{Width: 180}).SetWidgets(
@@ -145,6 +150,10 @@ func (customPage *Settings) builderFormItemInputWidget(ptrWrapper **walk.Composi
 }
 
 func (customPage *Settings) eventCurrentEngineComboOnChanged() {
+	if customPage.ptrCurrentEngineCombo.CurrentIndex() == -1 {
+		customPage.resetFormInputs()
+		return
+	}
 	currentId := customPage.engines[customPage.ptrCurrentEngineCombo.CurrentIndex()].Key
 	if currentId == "" {
 		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎无效，请重新选择"))
