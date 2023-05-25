@@ -3,14 +3,11 @@ package translator
 import "context"
 
 type ImplTranslator interface {
-	Init(cfg interface{})
+	Init(cfg ImplConfig)
 	GetId() string
 	GetShortId() string
 	GetName() string
-	GetCfg() interface{}
-	GetQPS() int
-	GetProcMax() int
-	GetTextMaxLen() int
+	GetCfg() ImplConfig
 	GetLangSupported() []LangPair
 	GetSep() string
 	IsValid() bool

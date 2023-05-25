@@ -39,13 +39,13 @@ func Boot(_ context.Context) {
 	ali_cloud_mt.Singleton().Init(cfg.Singleton().AliCloudMT)
 	caiyunai.Singleton().Init(cfg.Singleton().CaiYunAI)
 	niutrans.Singleton().Init(cfg.Singleton().Niutrans)
-	volcengine.Singleton().Init(cfg.Singleton().VolcEngine)
+	volcengine.API().Init(cfg.Singleton().VolcEngine)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.Singleton(),
 		youdao.API(), ling_va.Singleton(), baidu.Singleton(),
 		tencent_cloud_mt.Singleton(), openapi_youdao.Singleton(),
 		ali_cloud_mt.Singleton(), caiyunai.Singleton(), niutrans.Singleton(),
-		volcengine.Singleton(),
+		volcengine.API(),
 	)
 }

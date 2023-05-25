@@ -107,3 +107,10 @@ func (defaultConfig *DefaultConfig) ValidatorNum(num int) error {
 	}
 	return nil
 }
+
+func (defaultConfig *DefaultConfig) ValidatorStr(str string) error {
+	if str == ConfigInvalidStr {
+		return errors.New("当前字符串无效")
+	}
+	return nil
+}

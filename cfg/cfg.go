@@ -33,7 +33,7 @@ func Singleton() *Cfg {
 		apiSingleton.AliCloudMT = ali_cloud_mt.Cfg{}.Default()
 		apiSingleton.CaiYunAI = caiyunai.Cfg{}.Default()
 		apiSingleton.Niutrans = niutrans.Cfg{}.Default()
-		apiSingleton.VolcEngine = volcengine.Cfg{}.Default()
+		apiSingleton.VolcEngine = volcengine.Config{}.Default()
 	})
 	return apiSingleton
 }
@@ -49,7 +49,7 @@ type Cfg struct {
 	AliCloudMT     *ali_cloud_mt.Cfg     `mapstructure:"ali_cloud_mt"`
 	CaiYunAI       *caiyunai.Cfg         `mapstructure:"caiyun_ai"`
 	Niutrans       *niutrans.Cfg         `mapstructure:"niutrans"`
-	VolcEngine     *volcengine.Cfg       `mapstructure:"volc_engine"`
+	VolcEngine     *volcengine.Config    `mapstructure:"volc_engine"`
 }
 
 func (customC *Cfg) NewUITitle() string {
