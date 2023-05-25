@@ -21,8 +21,9 @@ func GetTranslators() *Translators {
 }
 
 type Translators struct {
-	list  sync.Map
-	names []*_type.StdComboBoxModel
+	list     sync.Map
+	names    []*_type.StdComboBoxModel
+	namesAll []*_type.StdComboBoxModel
 }
 
 func (customT *Translators) Register(translators ...serviceTranslator.ImplTranslator) {
@@ -57,9 +58,18 @@ func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
 	return customT.names
 }
 
+func (customT *Translators) GetNamesAll() []*_type.StdComboBoxModel {
+	return customT.namesAll
+}
+
 func (customT *Translators) genNames2ComboBox() {
 	customT.names = []*_type.StdComboBoxModel{}
+	customT.namesAll = []*_type.StdComboBoxModel{}
 	customT.list.Range(func(idx, translator any) bool {
+		customT.namesAll = append(customT.namesAll, &_type.StdComboBoxModel{
+			Key:  translator.(serviceTranslator.ImplTranslator).GetId(),
+			Name: translator.(serviceTranslator.ImplTranslator).GetName(),
+		})
 		if translator.(serviceTranslator.ImplTranslator).IsValid() {
 			customT.names = append(customT.names, &_type.StdComboBoxModel{
 				Key:  translator.(serviceTranslator.ImplTranslator).GetId(),
@@ -68,7 +78,9 @@ func (customT *Translators) genNames2ComboBox() {
 		}
 		return true
 	})
-
+	sort.Slice(customT.namesAll, func(i, j int) bool {
+		return customT.namesAll[i].Key < customT.namesAll[j].Key
+	})
 	if len(customT.names) > 1 {
 		sort.Slice(customT.names, func(i, j int) bool {
 			return customT.names[i].Key < customT.names[j].Key

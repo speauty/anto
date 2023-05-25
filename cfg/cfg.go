@@ -13,6 +13,7 @@ import (
 	"anto/domain/service/translator/youdao"
 	"anto/platform/win/ui"
 	"fmt"
+	"github.com/spf13/viper"
 	"sync"
 )
 
@@ -53,6 +54,8 @@ type Cfg struct {
 	Niutrans       *niutrans.Config         `mapstructure:"niutrans"`
 	VolcEngine     *volcengine.Config       `mapstructure:"volc_engine"`
 	YouDao         *youdao.Config           `mapstructure:"youdao"`
+
+	currentViper *viper.Viper `mapstructure:"-"`
 }
 
 func (customC *Cfg) NewUITitle() string {

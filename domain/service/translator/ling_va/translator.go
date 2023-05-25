@@ -27,7 +27,7 @@ func API() *Translator {
 
 func New() *Translator {
 	return &Translator{
-		id:            "lingva",
+		id:            "ling_va",
 		name:          "Lingva",
 		sep:           "\n",
 		langSupported: langSupported,
