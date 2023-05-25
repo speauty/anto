@@ -26,3 +26,31 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 	}
 	return nil
 }
+
+func (config *Config) GetQPS() int             { return config.QPS }
+func (config *Config) GetMaxCharNum() int      { return config.MaxCharNum }
+func (config *Config) GetMaxCoroutineNum() int { return config.MaxCoroutineNum }
+
+func (config *Config) SetQPS(num int) error {
+	if err := config.ValidatorNum(num); err != nil {
+		return err
+	}
+	config.QPS = num
+	return nil
+}
+
+func (config *Config) SetMaxCharNum(num int) error {
+	if err := config.ValidatorNum(num); err != nil {
+		return err
+	}
+	config.MaxCharNum = num
+	return nil
+}
+
+func (config *Config) SetMaxCoroutineNum(num int) error {
+	if err := config.ValidatorNum(num); err != nil {
+		return err
+	}
+	config.MaxCoroutineNum = num
+	return nil
+}

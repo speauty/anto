@@ -14,13 +14,13 @@ const (
 
 // ImplConfig 引擎配置接口
 type ImplConfig interface {
-	AK() string // access-key or app-key or data-id and so on
-	SK() string
-	ProjectKey() string
-	Region() string
-	QPS() int
-	MaxCharNum() int
-	MaxCoroutineNum() int
+	GetAK() string // access-key or app-key or data-id and so on
+	GetSK() string
+	GetProjectKey() string
+	GetRegion() string
+	GetQPS() int
+	GetMaxCharNum() int
+	GetMaxCoroutineNum() int
 
 	SetAK(ak string) error
 	SetSK(sk string) error
@@ -37,19 +37,19 @@ type ImplConfig interface {
 // DefaultConfig 默认配置结构体, 供具体引擎配置嵌入使用
 type DefaultConfig struct{}
 
-func (defaultConfig *DefaultConfig) AK() string { return ConfigInvalidStr }
+func (defaultConfig *DefaultConfig) GetAK() string { return ConfigInvalidStr }
 
-func (defaultConfig *DefaultConfig) SK() string { return ConfigInvalidStr }
+func (defaultConfig *DefaultConfig) GetSK() string { return ConfigInvalidStr }
 
-func (defaultConfig *DefaultConfig) ProjectKey() string { return ConfigInvalidStr }
+func (defaultConfig *DefaultConfig) GetProjectKey() string { return ConfigInvalidStr }
 
-func (defaultConfig *DefaultConfig) Region() string { return ConfigInvalidStr }
+func (defaultConfig *DefaultConfig) GetRegion() string { return ConfigInvalidStr }
 
-func (defaultConfig *DefaultConfig) QPS() int { return ConfigInvalidInt }
+func (defaultConfig *DefaultConfig) GetQPS() int { return ConfigInvalidInt }
 
-func (defaultConfig *DefaultConfig) MaxCharNum() int { return ConfigInvalidInt }
+func (defaultConfig *DefaultConfig) GetMaxCharNum() int { return ConfigInvalidInt }
 
-func (defaultConfig *DefaultConfig) MaxCoroutineNum() int { return ConfigInvalidInt }
+func (defaultConfig *DefaultConfig) GetMaxCoroutineNum() int { return ConfigInvalidInt }
 
 func (defaultConfig *DefaultConfig) SetAK(_ string) error { return nil }
 
@@ -99,4 +99,11 @@ func (defaultConfig *DefaultConfig) JoinAllTagAndValue(engine ImplTranslator, co
 		result[fmt.Sprintf("%s.%s", engineId, tagVal)] = configVal.Field(i).Interface()
 	}
 	return result
+}
+
+func (defaultConfig *DefaultConfig) ValidatorNum(num int) error {
+	if num <= 0 {
+		return errors.New("当前数值无效, 必须大于0")
+	}
+	return nil
 }
