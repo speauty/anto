@@ -39,6 +39,7 @@ func New() *Translator {
 type Translator struct {
 	id            string
 	name          string
+	cfg           translator.ImplConfig
 	qps           int
 	procMax       int
 	textMaxLen    int
@@ -46,12 +47,12 @@ type Translator struct {
 	sep           string
 }
 
-func (customT *Translator) Init(_ interface{}) {}
+func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
 
 func (customT *Translator) GetId() string                           { return customT.id }
 func (customT *Translator) GetShortId() string                      { return "dl" }
 func (customT *Translator) GetName() string                         { return customT.name }
-func (customT *Translator) GetCfg() interface{}                     { return nil }
+func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetQPS() int                             { return customT.qps }
 func (customT *Translator) GetProcMax() int                         { return customT.procMax }
 func (customT *Translator) GetTextMaxLen() int                      { return customT.textMaxLen }
