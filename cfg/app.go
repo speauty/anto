@@ -2,7 +2,6 @@ package cfg
 
 import (
 	_const "anto/common"
-	"fmt"
 )
 
 type App struct {
@@ -15,8 +14,4 @@ func (customA App) Default() *App {
 		Author:  _const.Author,
 		Version: _const.Version,
 	}
-}
-
-func (customA App) GetDownloadUrl() string {
-	return fmt.Sprintf(_const.DownloadLatestVersionUrlFormat, customA.Version, customA.Version)
 }

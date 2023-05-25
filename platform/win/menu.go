@@ -1,14 +1,13 @@
 package win
 
 import (
-	"anto/cfg"
+	"anto/common"
 	"anto/lib/log"
 	page2 "anto/platform/win/page"
 	"anto/platform/win/ui"
 	"anto/platform/win/ui/msg"
 	"errors"
 	"fmt"
-	"github.com/golang-module/carbon"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"go.uber.org/zap"
@@ -43,44 +42,22 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 		Menu{
 			Text: "文件",
 			Items: []MenuItem{
-				Action{
-					Text: "设置",
-					OnTriggered: func() {
-						currentPage := page2.GetSettings()
-						customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
-					},
-				},
+				Action{Text: "设置", OnTriggered: customM.eventSettings},
 				Separator{},
-				Action{
-					AssignTo:    &customM.actionDownloadHandle,
-					Text:        "下载最新版",
-					OnTriggered: customM.eventActionDownloadLatestVersion,
-				},
+				Action{AssignTo: &customM.actionDownloadHandle, Text: "下载新版", OnTriggered: customM.eventActionDownloadLatestVersion},
+				Action{Text: "清除日志", OnTriggered: customM.eventActionDelLog},
 				Separator{},
-				Action{
-					Text: "清除日志", OnTriggered: customM.eventActionDelLog,
-				},
-				Separator{},
-				Action{
-					Text: "退出", OnTriggered: customM.eventActionQuit,
-				},
+				Action{Text: "退出", OnTriggered: customM.eventActionQuit},
 			},
 		},
-		Action{
-			Text: "字幕翻译",
-			OnTriggered: func() {
-				currentPage := page2.GetSubripTranslate()
-				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
-			},
-		},
-		Action{
-			Text: "关于我们",
-			OnTriggered: func() {
-				currentPage := page2.GetAboutUs()
-				customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
-			},
-		},
+		Action{Text: "字幕翻译", OnTriggered: customM.eventSubtitleTranslate},
+		Action{Text: "关于我们", OnTriggered: customM.eventActionAboutUS},
 	}
+}
+
+func (customM *TTMenu) eventSettings() {
+	currentPage := page2.GetSettings()
+	customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 }
 
 func (customM *TTMenu) eventActionDownloadLatestVersion() {
@@ -96,7 +73,7 @@ func (customM *TTMenu) eventActionDownloadLatestVersion() {
 			defer func() {
 				_ = customM.actionDownloadHandle.SetEnabled(true)
 			}()
-			resp, err := http.Get(cfg.Singleton().App.GetDownloadUrl())
+			resp, err := http.Get(common.DownloadLatestVersionUrl)
 			if err != nil {
 				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
 				return
@@ -109,13 +86,16 @@ func (customM *TTMenu) eventActionDownloadLatestVersion() {
 				msg.Err(mainWindow, errors.New("下载最新版本异常, 错误: 暂未找到"))
 				return
 			}
-			fileName := fmt.Sprintf("anto.%s.%s.win.exe", cfg.Singleton().App.Version, carbon.Now().Layout(carbon.ShortDateLayout))
+			fileName := filepath.Base(common.DownloadLatestVersionUrl)
+
 			if err := os.WriteFile(fileName, appBytes, os.ModePerm); err != nil {
 				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
 				return
 			}
-			msg.Info(mainWindow, fmt.Sprintf("下载最新版本成功[%s], 关闭当前应用, 双击打开对应exe文件即可", fileName))
+			msg.Info(mainWindow, fmt.Sprintf("下载最新版本成功[%s], 关闭当前应用, 双击打开对应可执行文件即可", fileName))
 		}()
+	} else {
+		_ = customM.actionDownloadHandle.SetEnabled(true)
 	}
 }
 
@@ -148,6 +128,16 @@ func (customM *TTMenu) eventActionQuit() {
 	if isOk {
 		_ = mainWindow.Close()
 	}
+}
+
+func (customM *TTMenu) eventActionAboutUS() {
+	currentPage := page2.GetAboutUs()
+	customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
+}
+
+func (customM *TTMenu) eventSubtitleTranslate() {
+	currentPage := page2.GetSubripTranslate()
+	customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 }
 
 func (customM *TTMenu) eventGoPage(pageId string, name string) {
