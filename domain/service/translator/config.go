@@ -98,7 +98,6 @@ func (defaultConfig *DefaultConfig) JoinAllTagAndValue(engine ImplTranslator, co
 		// @todo 可以直接在这里IO的, 但是想了一下还是交给具体配置处理, 毕竟功能还是要分开, 该方法只负责联合标签和具体值
 		result[fmt.Sprintf("%s.%s", engineId, tagVal)] = configVal.Field(i).Interface()
 	}
-	fmt.Println(result)
 	return result
 }
 
