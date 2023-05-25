@@ -4,7 +4,7 @@ import (
 	"anto/common"
 	"anto/cron/reader"
 	"anto/cron/translate"
-	"anto/dependency/service/translator"
+	"anto/domain/service/translator"
 )
 
 type StrDetectorData struct {
