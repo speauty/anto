@@ -210,7 +210,8 @@ func (customPage *SubtitleTranslate) getFormWidget() []Widget {
 		pack.UIComposite(pack.NewUICompositeArgs(nil).SetLayoutHBox(true).SetWidgets(
 			pack.NewWidgetGroup().Append(
 				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("翻译").SetOnClicked(customPage.eventBtnTranslate)),
-				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("清空输出").SetOnClicked(customPage.flushLog)),
+				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("清空字幕").SetOnClicked(customPage.eventFlushSrt)),
+				pack.UIPushBtn(pack.NewUIPushBtnArgs(nil).SetText("清空输出").SetOnClicked(customPage.eventFlushLog)),
 			).AppendZeroHSpacer().GetWidgets(),
 		)),
 	}
@@ -327,6 +328,11 @@ func (customPage *SubtitleTranslate) eventBtnTranslate() {
 	return
 }
 
+func (customPage *SubtitleTranslate) eventFlushSrt() {
+	_ = customPage.ptrSrtFile.SetText("")
+	_ = customPage.ptrSrtDir.SetText("")
+}
+
 func (customPage *SubtitleTranslate) setLangComboBox(ptr *walk.ComboBox, model interface{}, idx int) {
 	_ = ptr.SetModel(model)
 	_ = ptr.SetCurrentIndex(idx)
@@ -340,7 +346,7 @@ func (customPage *SubtitleTranslate) appendToLog(msg string) {
 	}
 }
 
-func (customPage *SubtitleTranslate) flushLog() {
+func (customPage *SubtitleTranslate) eventFlushLog() {
 	_ = customPage.ptrLog.SetText("")
 }
 
