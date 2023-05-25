@@ -77,7 +77,7 @@
 
 ### 应用预览
 
-![应用启动](./assets/startup.jpg)
+![应用启动](./assets/images/startup.jpg)
 
-![设置界面](./assets/settings.jpg)
+![设置界面](./assets/images/settings.jpg)
 
