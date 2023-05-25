@@ -46,15 +46,17 @@ func GetSubripTranslate() *SubtitleTranslate {
 }
 
 type SubtitleTranslate struct {
-	id          string
-	name        string
-	chanLog     chan string
-	engines     []*common.StdComboBoxModel
-	mainWindow  *walk.MainWindow
-	rootWidget  *walk.Composite
-	ptrEngine   *walk.ComboBox
-	ptrFromLang *walk.ComboBox
-	ptrToLang   *walk.ComboBox
+	id         string
+	name       string
+	chanLog    chan string
+	engines    []*common.StdComboBoxModel
+	mainWindow *walk.MainWindow
+	rootWidget *walk.Composite
+
+	currentEngineId string
+	ptrEngine       *walk.ComboBox
+	ptrFromLang     *walk.ComboBox
+	ptrToLang       *walk.ComboBox
 
 	ptrMode       *walk.ComboBox
 	ptrMainExport *walk.ComboBox
@@ -223,7 +225,6 @@ func (customPage *SubtitleTranslate) getConsoleWidget() Widget {
 }
 
 func (customPage *SubtitleTranslate) eventEngineOnChange() {
-	_ = customPage.ptrConfigView.SetText("")
 	currentId := customPage.engines[customPage.ptrEngine.CurrentIndex()].Key
 	if currentId == "" {
 		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎无效，请重新选择"))
@@ -232,6 +233,11 @@ func (customPage *SubtitleTranslate) eventEngineOnChange() {
 		customPage.setLangComboBox(customPage.ptrToLang, nil, -1)
 		return
 	}
+	if customPage.currentEngineId == currentId {
+		return
+	}
+	_ = customPage.ptrConfigView.SetText("")
+
 	currentEngine := repository.GetTranslators().GetById(currentId)
 	if customPage.mainWindow != nil && currentEngine == nil {
 		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎未注册，请重新选择"))
@@ -266,6 +272,7 @@ func (customPage *SubtitleTranslate) eventEngineOnChange() {
 		len(currentEngine.GetLangSupported()),
 	)
 	_ = customPage.ptrConfigView.SetText(configViewText)
+	customPage.currentEngineId = currentId
 	return
 }
 

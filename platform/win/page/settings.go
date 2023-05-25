@@ -42,8 +42,8 @@ type Settings struct {
 	mainWindow *walk.MainWindow
 	rootWidget *walk.Composite
 
-	engines []*common.StdComboBoxModel
-
+	engines               []*common.StdComboBoxModel
+	currentEngineId       string
 	ptrCurrentEngineCombo *walk.ComboBox
 
 	ptrAKWrapper *walk.Composite
@@ -90,8 +90,7 @@ func (customPage *Settings) GetWidget() Widget {
 	)
 }
 
-func (customPage *Settings) Reset() {
-}
+func (customPage *Settings) Reset() {}
 
 func (customPage *Settings) getTranslationConfigWidget() Widget {
 	return pack.UIGroupBox(pack.NewUIGroupBoxArgs(nil).SetTitle("翻译引擎").SetLayoutVBox(false).SetCustomSize(Size{Width: 180}).SetWidgets(
@@ -152,6 +151,9 @@ func (customPage *Settings) eventCurrentEngineComboOnChanged() {
 		_ = customPage.ptrCurrentEngineCombo.SetCurrentIndex(-1)
 		return
 	}
+	if customPage.currentEngineId == currentId {
+		return
+	}
 	currentEngine := repository.GetTranslators().GetById(currentId)
 	if customPage.mainWindow != nil && currentEngine == nil {
 		msg.Err(customPage.mainWindow, fmt.Errorf("当前翻译引擎未注册，请重新选择"))
@@ -195,6 +197,8 @@ func (customPage *Settings) eventCurrentEngineComboOnChanged() {
 		customPage.ptrMaxCoroutineNumWrapper.SetVisible(true)
 		_ = customPage.ptrMaxCoroutineNumInput.SetText(strconv.Itoa(currentEngine.GetCfg().GetMaxCoroutineNum()))
 	}
+
+	customPage.currentEngineId = currentId
 }
 
 func (customPage *Settings) eventSubmit() {
