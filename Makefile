@@ -3,13 +3,15 @@
 tidy:
 	go mod tidy
 
+BinName=anto-v3.4.2-windows.exe
+
 deploy: rs build compress
 
 rs:
 	rsrc -manifest ./cmd/anto/anto.manifest -ico favicon.ico -o ./cmd/anto/rsrc.syso
 
 build:
-	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o ./bin/anto.win.exe anto/cmd/anto
+	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o "./bin/${BinName}" anto/cmd/anto
 
 compress:
-	upx -9 ./bin/anto.win.exe
+	upx -9 "./bin/${BinName}"

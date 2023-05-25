@@ -26,12 +26,13 @@ func Singleton() *Gui {
 }
 
 type Gui struct {
-	ctx         context.Context
-	ctxCancelFn context.CancelFunc
-	win         *walk.MainWindow
-	cfg         *Cfg
-	menus       []MenuItem
-	pageCtl     *PageCtl
+	ctx          context.Context
+	ctxCancelFn  context.CancelFunc
+	win          *walk.MainWindow
+	notification *walk.NotifyIcon
+	cfg          *Cfg
+	menus        []MenuItem
+	pageCtl      *PageCtl
 }
 
 func (customG *Gui) Init(cfg *Cfg) error {
@@ -40,6 +41,8 @@ func (customG *Gui) Init(cfg *Cfg) error {
 	if err := customG.initMainWindow(); err != nil {
 		return err
 	}
+
+	customG.initNotification()
 
 	customG.setWindowFlag()
 	customG.setWindowCenter()

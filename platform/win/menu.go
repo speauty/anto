@@ -75,7 +75,12 @@ func (customM *TTMenu) eventActionDownloadLatestVersion() {
 			}()
 			resp, err := http.Get(common.DownloadLatestVersionUrl)
 			if err != nil {
-				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
+				tmpErr := fmt.Errorf("下载最新版本异常, 错误: %s", err)
+				if ui.Singleton().Notification() != nil {
+					_ = ui.Singleton().Notification().ShowError("", tmpErr.Error())
+				} else {
+					msg.Err(mainWindow, tmpErr)
+				}
 				return
 			}
 			defer func() {
@@ -83,16 +88,31 @@ func (customM *TTMenu) eventActionDownloadLatestVersion() {
 			}()
 			appBytes, _ := io.ReadAll(resp.Body)
 			if resp.StatusCode == http.StatusNotFound {
-				msg.Err(mainWindow, errors.New("下载最新版本异常, 错误: 暂未找到"))
+				tmpErr := errors.New("下载最新版本异常, 错误: 暂未找到")
+				if ui.Singleton().Notification() != nil {
+					_ = ui.Singleton().Notification().ShowError("", tmpErr.Error())
+				} else {
+					msg.Err(mainWindow, tmpErr)
+				}
 				return
 			}
 			fileName := filepath.Base(common.DownloadLatestVersionUrl)
 
 			if err := os.WriteFile(fileName, appBytes, os.ModePerm); err != nil {
-				msg.Err(mainWindow, fmt.Errorf("下载最新版本异常, 错误: %s", err))
+				tmpErr := fmt.Errorf("下载最新版本异常, 错误: %s", err)
+				if ui.Singleton().Notification() != nil {
+					_ = ui.Singleton().Notification().ShowError("", tmpErr.Error())
+				} else {
+					msg.Err(mainWindow, tmpErr)
+				}
 				return
 			}
-			msg.Info(mainWindow, fmt.Sprintf("下载最新版本成功[%s], 关闭当前应用, 双击打开对应可执行文件即可", fileName))
+			strMsg := fmt.Sprintf("下载最新版本成功[%s], 关闭当前应用, 双击打开对应可执行文件即可", fileName)
+			if ui.Singleton().Notification() != nil {
+				_ = ui.Singleton().Notification().ShowInfo("", strMsg)
+			} else {
+				msg.Info(mainWindow, strMsg)
+			}
 		}()
 	} else {
 		_ = customM.actionDownloadHandle.SetEnabled(true)
