@@ -33,9 +33,14 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 	return nil
 }
 
-func (config *Config) GetAK() string     { return config.AKId }
-func (config *Config) GetSK() string     { return config.AKSecret }
-func (config *Config) GetRegion() string { return config.Region }
+func (config *Config) GetAK() string { return config.AKId }
+func (config *Config) GetSK() string { return config.AKSecret }
+func (config *Config) GetRegion() string {
+	if config.Region != "" {
+		return config.Region
+	}
+	return "cn-hangzhou"
+}
 
 func (config *Config) GetQPS() int             { return config.QPS }
 func (config *Config) GetMaxCharNum() int      { return config.MaxCharNum }

@@ -5,10 +5,10 @@ tidy:
 
 BinName=anto-v3.4.2-windows.exe
 
-deploy: rs build compress
+deploy: rs build
 
 rs:
-	rsrc -manifest ./cmd/anto/anto.manifest -ico favicon.ico -o ./cmd/anto/rsrc.syso
+	rsrc -manifest ./cmd/anto/anto.manifest -ico ./resource/favicon.ico -o ./cmd/anto/rsrc.syso
 
 build:
 	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o "./bin/${BinName}" anto/cmd/anto
