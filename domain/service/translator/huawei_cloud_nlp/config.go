@@ -32,9 +32,14 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 	return nil
 }
 
-func (config *Config) GetAK() string         { return config.AKId }
-func (config *Config) GetSK() string         { return config.SkKey }
-func (config *Config) GetRegion() string     { return config.Region }
+func (config *Config) GetAK() string { return config.AKId }
+func (config *Config) GetSK() string { return config.SkKey }
+func (config *Config) GetRegion() string {
+	if config.Region != "" {
+		return config.Region
+	}
+	return "cn-north-4"
+}
 func (config *Config) GetProjectKey() string { return config.ProjectId }
 
 func (config *Config) GetQPS() int             { return config.QPS }
