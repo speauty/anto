@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	_const "anto/common"
+	"anto/cfg"
 	"anto/resource"
 	"fmt"
 	"os"
@@ -35,11 +35,12 @@ func (customRB *ResourceBuilder) installCfgYml() {
 	}
 	fd, err := os.Create(filename)
 	if err != nil {
-		panic(fmt.Errorf("创建YML配置文件失败, 错误: %s", err))
+		panic(fmt.Errorf("创建配置文件失败, 错误: %s", err))
 	}
+	fd.Close()
 
-	if _, err = fd.Write([]byte(_const.CfgYmlDefaultContent)); err != nil {
-		panic(fmt.Errorf("写入YML默认配置失败, 错误: %s", err))
+	if err := cfg.Singleton().InitConfig(); err != nil {
+		panic(fmt.Errorf("写入默认配置失败, 错误: %s", err))
 	}
 }
 

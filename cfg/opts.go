@@ -8,18 +8,15 @@ import (
 func (customC *Cfg) GetViper() *viper.Viper {
 	if customC.currentViper == nil {
 		customC.currentViper = viper.New()
+		customC.currentViper.AddConfigPath("./")
+		customC.currentViper.SetConfigType("yml")
+		customC.currentViper.SetConfigName("cfg")
 	}
 	return customC.currentViper
 }
 
-func (customC *Cfg) Load(cfgFilePath string) error {
-	if cfgFilePath == "" {
-		cfgFilePath = "./"
-	}
+func (customC *Cfg) Load() error {
 	currentViper := customC.GetViper()
-	currentViper.AddConfigPath(cfgFilePath)
-	currentViper.SetConfigType("yml")
-	currentViper.SetConfigName("cfg")
 	currentViper.AutomaticEnv()
 
 	if err := currentViper.ReadInConfig(); err != nil {
@@ -30,6 +27,23 @@ func (customC *Cfg) Load(cfgFilePath string) error {
 		return fmt.Errorf("当前配置解析失败, 错误: %s", err)
 	}
 	return nil
+}
+
+func (customC *Cfg) InitConfig() error {
+	currentViper := customC.GetViper()
+
+	_ = customC.HuaweiCloudNlp.SyncDisk(currentViper)
+	_ = customC.LingVA.SyncDisk(currentViper)
+	_ = customC.Baidu.SyncDisk(currentViper)
+	_ = customC.TencentCloudMT.SyncDisk(currentViper)
+	_ = customC.OpenAPIYouDao.SyncDisk(currentViper)
+	_ = customC.AliCloudMT.SyncDisk(currentViper)
+	_ = customC.CaiYunAI.SyncDisk(currentViper)
+	_ = customC.Niutrans.SyncDisk(currentViper)
+	_ = customC.VolcEngine.SyncDisk(currentViper)
+	_ = customC.YouDao.SyncDisk(currentViper)
+
+	return customC.Sync()
 }
 
 func (customC *Cfg) Sync() error {
