@@ -35,6 +35,7 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 
 func (config *Config) GetAK() string            { return config.SecretId }
 func (config *Config) GetSK() string            { return config.SecretKey }
+func (config *Config) GetRegion() string        { return config.Region }
 func (config *Config) GetProjectKey() string    { return strconv.Itoa(int(config.ProjectId)) }
 func (config *Config) GetProjectKeyPtr() *int64 { return &config.ProjectId }
 
