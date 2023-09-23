@@ -58,7 +58,7 @@ func (customT *Translator) GetName() string                         { return cus
 func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
-func (customT *Translator) IsValid() bool                           { return true }
+func (customT *Translator) IsValid() bool                           { return false }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
@@ -68,7 +68,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		url.QueryEscape(args.TextContent),
 	)
 
-	respBytes, err := translator.RequestSimpleGet(ctx, customT, urlQueried)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, urlQueried, false, nil, nil)
 	if err != nil {
 		return nil, err
 	}

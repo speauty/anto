@@ -51,7 +51,6 @@ func (customM *TTMenu) GetMenus() []MenuItem {
 			},
 		},
 		Action{Text: "字幕翻译", OnTriggered: customM.eventSubtitleTranslate},
-		Action{Text: "关于我们", OnTriggered: customM.eventActionAboutUS},
 	}
 }
 
@@ -148,11 +147,6 @@ func (customM *TTMenu) eventActionQuit() {
 	if isOk {
 		_ = mainWindow.Close()
 	}
-}
-
-func (customM *TTMenu) eventActionAboutUS() {
-	currentPage := page2.GetAboutUs()
-	customM.eventGoPage(currentPage.GetId(), currentPage.GetName())
 }
 
 func (customM *TTMenu) eventSubtitleTranslate() {

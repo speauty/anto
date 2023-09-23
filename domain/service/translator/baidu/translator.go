@@ -68,7 +68,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		url.QueryEscape(args.TextContent), args.FromLang, args.ToLang,
 		customT.cfg.GetAK(), salt, sign,
 	)
-	respBytes, err := translator.RequestSimpleGet(ctx, customT, urlQueried)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, urlQueried, false, nil, nil)
 	if err != nil {
 		return nil, err
 	}

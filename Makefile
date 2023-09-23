@@ -3,7 +3,7 @@
 tidy:
 	go mod tidy
 
-BinName=anto-v3.4.2-windows.exe
+BinName=anto-v3.4.5-windows.exe
 
 deploy: rs build
 

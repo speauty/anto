@@ -34,6 +34,7 @@ func New() *Translator {
 	}
 }
 
+// Translator LingVA翻译已崩溃, 当前处于不可用状态, 所以直接禁用
 type Translator struct {
 	id            string
 	name          string
@@ -50,7 +51,7 @@ func (customT *Translator) GetName() string                         { return cus
 func (customT *Translator) GetCfg() translator.ImplConfig           { return customT.cfg }
 func (customT *Translator) GetLangSupported() []translator.LangPair { return customT.langSupported }
 func (customT *Translator) GetSep() string                          { return customT.sep }
-func (customT *Translator) IsValid() bool                           { return customT.cfg.GetAK() != "" }
+func (customT *Translator) IsValid() bool                           { return false }
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
@@ -60,7 +61,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		"%s/%s/%s/%s.json", api,
 		args.FromLang, args.ToLang, url.PathEscape(args.TextContent),
 	)
-	respBytes, err := translator.RequestSimpleGet(ctx, customT, queryUrl)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, queryUrl, false, nil, nil)
 	if err != nil {
 		return nil, err
 	}

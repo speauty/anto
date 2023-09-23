@@ -70,7 +70,7 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 	newReq.Sign = customT.signBuilder(strings.Join(texts, ""), newReq.Salt, newReq.CurrentTime)
 	params, _ := query.Values(newReq)
 	urlQueried := fmt.Sprintf("%s?%s", customT.api, params.Encode())
-	respBytes, err := translator.RequestSimpleGet(ctx, customT, urlQueried)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, urlQueried, false, nil, nil)
 	if err != nil {
 		return nil, err
 	}

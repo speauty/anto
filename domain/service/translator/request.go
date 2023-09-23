@@ -3,36 +3,30 @@ package translator
 import (
 	"anto/lib/log"
 	"anto/lib/restrictor"
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/imroc/req/v3"
 	"io"
-	"net/http"
 )
 
-func RequestSimpleGet(ctx context.Context, engine ImplTranslator, url string) ([]byte, error) {
-
-	req, _ := http.NewRequest(http.MethodGet, url, nil)
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept", "application/json")
-	return RequestSimpleHttp(ctx, engine, req)
-}
-
-func RequestSimplePost(ctx context.Context, engine ImplTranslator, httpUrl string, bodyParams interface{}) ([]byte, error) {
-	reqBytes, _ := json.Marshal(bodyParams)
-	req, _ := http.NewRequest(http.MethodPost, httpUrl, bytes.NewReader(reqBytes))
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set("accept", "application/json")
-	return RequestSimpleHttp(ctx, engine, req)
-}
-
-func RequestSimpleHttp(ctx context.Context, engine ImplTranslator, r *http.Request) ([]byte, error) {
+func RequestSimpleHttp(ctx context.Context, engine ImplTranslator, url string, isPost bool, body interface{}, headers map[string]string) ([]byte, error) {
 	if err := restrictor.Singleton().Wait(engine.GetId(), ctx); err != nil {
 		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
 	}
-
-	httpResp, err := new(http.Client).Do(r)
+	request := req.C().
+		SetCommonHeaders(map[string]string{"content-type": "application/json", "accept": "application/json"}).
+		SetCommonHeaders(headers).SetCommonRetryCount(3).
+		R()
+	if isPost && body != nil {
+		request.SetBody(body)
+	}
+	var httpResp *req.Response
+	var err error
+	if isPost {
+		httpResp, err = request.Post(url)
+	} else {
+		httpResp, err = request.Get(url)
+	}
 	defer func() {
 		if httpResp != nil && httpResp.Body != nil {
 			_ = httpResp.Body.Close()

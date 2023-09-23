@@ -62,7 +62,7 @@ type Cfg struct {
 
 func (customC *Cfg) NewUITitle() string {
 	return fmt.Sprintf(
-		"%s-%s(作者: %s 邮箱: speauty@163.com)",
-		customC.UI.Title, customC.App.Version, customC.App.Author,
+		"%s-%s speauty@163.com",
+		customC.UI.Title, customC.App.Version,
 	)
 }

@@ -4,12 +4,10 @@ import (
 	"anto/domain/service/translator"
 	"anto/lib/log"
 	"anto/lib/util"
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/golang-module/carbon"
-	"net/http"
 	"strings"
 	"sync"
 )
@@ -63,10 +61,9 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 	req.TransType = fmt.Sprintf("%s2%s", args.FromLang, args.ToLang)
 
 	reqBytes, _ := json.Marshal(req)
-	httpReq, _ := http.NewRequest(http.MethodPost, api, bytes.NewReader(reqBytes))
-	httpReq.Header.Set("content-type", "application/json")
-	httpReq.Header.Set("x-authorization", fmt.Sprintf("token %s", customT.cfg.GetAK()))
-	respBytes, err := translator.RequestSimpleHttp(ctx, customT, httpReq)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, api, true, reqBytes, map[string]string{
+		"x-authorization": fmt.Sprintf("token %s", customT.cfg.GetAK()),
+	})
 	if err != nil {
 		return nil, err
 	}

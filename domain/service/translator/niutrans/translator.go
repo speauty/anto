@@ -60,7 +60,8 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 		From:    args.FromLang,
 		To:      args.ToLang,
 	}
-	respBytes, err := translator.RequestSimplePost(ctx, customT, apiTranslate, tr)
+	reqBytes, _ := json.Marshal(tr)
+	respBytes, err := translator.RequestSimpleHttp(ctx, customT, apiTranslate, true, reqBytes, nil)
 	if err != nil {
 		return nil, err
 	}
