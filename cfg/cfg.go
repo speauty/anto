@@ -4,6 +4,7 @@ import (
 	"anto/domain/service/translator/ali_cloud_mt"
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
+	"anto/domain/service/translator/g_deepl_x"
 	"anto/domain/service/translator/huawei_cloud_nlp"
 	"anto/domain/service/translator/ling_va"
 	"anto/domain/service/translator/niutrans"
@@ -55,6 +56,7 @@ type Cfg struct {
 	Niutrans       *niutrans.Config         `mapstructure:"niutrans"`
 	VolcEngine     *volcengine.Config       `mapstructure:"volc_engine"`
 	YouDao         *youdao.Config           `mapstructure:"youdao"`
+	GDeeplX        *g_deepl_x.Config        `mapstructure:"g_deepl_x"`
 	//ChatGPT        *chatgpt.Config          `mapstructure:"chat_gpt"`
 
 	currentViper *viper.Viper `mapstructure:"-"`

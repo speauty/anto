@@ -3,10 +3,12 @@ module anto
 go 1.21
 
 require (
+	github.com/OwO-Network/gdeeplx v0.0.1
 	github.com/aliyun/alibaba-cloud-sdk-go v1.62.267
 	github.com/golang-module/carbon v1.7.3
 	github.com/google/go-querystring v1.1.0
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.34
+	github.com/imroc/req/v3 v3.42.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
@@ -18,6 +20,7 @@ require (
 )
 
 require (
+	github.com/abadojack/whatlanggo v1.0.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
@@ -31,7 +34,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/imroc/req/v3 v3.42.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/jonboulle/clockwork v0.3.0 // indirect
@@ -48,6 +50,9 @@ require (
 	github.com/quic-go/quic-go v0.38.1 // indirect
 	github.com/refraction-networking/utls v1.5.3 // indirect
 	github.com/rogpeppe/go-internal v1.6.1 // indirect
+	github.com/tidwall/gjson v1.14.4 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	go.mongodb.org/mongo-driver v1.11.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
