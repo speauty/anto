@@ -5,6 +5,7 @@ import (
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
 	"anto/domain/service/translator/g_deepl_x"
+	"anto/domain/service/translator/google_cloud"
 	"anto/domain/service/translator/huawei_cloud_nlp"
 	"anto/domain/service/translator/ling_va"
 	"anto/domain/service/translator/niutrans"
@@ -38,7 +39,7 @@ func Singleton() *Cfg {
 		apiSingleton.Niutrans = new(niutrans.Config).Default().(*niutrans.Config)
 		apiSingleton.VolcEngine = new(volcengine.Config).Default().(*volcengine.Config)
 		apiSingleton.YouDao = new(youdao.Config).Default().(*youdao.Config)
-		//apiSingleton.ChatGPT = new(chatgpt.Config).Default().(*chatgpt.Config)
+		apiSingleton.GoogleCloud = new(google_cloud.Config).Default().(*google_cloud.Config)
 	})
 	return apiSingleton
 }
@@ -57,7 +58,7 @@ type Cfg struct {
 	VolcEngine     *volcengine.Config       `mapstructure:"volc_engine"`
 	YouDao         *youdao.Config           `mapstructure:"youdao"`
 	GDeeplX        *g_deepl_x.Config        `mapstructure:"g_deepl_x"`
-	//ChatGPT        *chatgpt.Config          `mapstructure:"chat_gpt"`
+	GoogleCloud    *google_cloud.Config     `mapstructure:"google_cloud"`
 
 	currentViper *viper.Viper `mapstructure:"-"`
 }
