@@ -7,16 +7,24 @@ import (
 	"fmt"
 	"github.com/imroc/req/v3"
 	"io"
+	"strings"
 )
 
 func RequestSimpleHttp(ctx context.Context, engine ImplTranslator, url string, isPost bool, body interface{}, headers map[string]string) ([]byte, error) {
 	if err := restrictor.Singleton().Wait(engine.GetId(), ctx); err != nil {
 		return nil, fmt.Errorf("限流异常, 错误: %s", err.Error())
 	}
-	request := req.C().
-		SetCommonHeaders(map[string]string{"content-type": "application/json", "accept": "application/json"}).
-		SetCommonHeaders(headers).SetCommonRetryCount(3).
-		R()
+	if headers == nil {
+		headers = make(map[string]string)
+	}
+	headers["content-type"] = "application/json"
+	headers["accept"] = "application/json"
+
+	client := req.C().SetCommonHeaders(headers).SetCommonRetryCount(3)
+	if strings.Contains(url, "api.openai.com") {
+		client.SetProxyURL("http://127.0.0.1:7890")
+	}
+	request := client.R()
 	if isPost && body != nil {
 		request.SetBody(body)
 	}

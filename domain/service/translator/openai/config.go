@@ -1,4 +1,4 @@
-package chatgpt
+package openai
 
 import (
 	"anto/domain/service/translator"
@@ -8,7 +8,7 @@ import (
 type Config struct {
 	*translator.DefaultConfig
 	AppKey          string `mapstructure:"app_key"`
-	Model           string `mapstructure:"model"`
+	ProjectKey      string `mapstructure:"project_key"`
 	QPS             int    `mapstructure:"qps"`
 	MaxCharNum      int    `mapstructure:"max_single_text_length"`
 	MaxCoroutineNum int    `mapstructure:"max_coroutine_num"`
@@ -16,13 +16,13 @@ type Config struct {
 
 func (config *Config) Default() translator.ImplConfig {
 	return &Config{
-		AppKey: "", Model: "",
-		MaxCharNum: 1000, QPS: 1, MaxCoroutineNum: 1,
+		AppKey: "", ProjectKey: "gpt-3.5-turbo",
+		MaxCharNum: 1000, QPS: 50, MaxCoroutineNum: 20,
 	}
 }
 
 func (config *Config) SyncDisk(currentViper *viper.Viper) error {
-	tagAndVal := config.JoinAllTagAndValue(nil, config, "mapstructure")
+	tagAndVal := config.JoinAllTagAndValue(API(), config, "mapstructure")
 
 	for tag, val := range tagAndVal {
 		currentViper.Set(tag, val)
@@ -30,10 +30,8 @@ func (config *Config) SyncDisk(currentViper *viper.Viper) error {
 	return nil
 }
 
-func (config *Config) GetAK() string { return config.AppKey }
-
-func (config *Config) GetProjectKey() string { return config.Model }
-
+func (config *Config) GetAK() string           { return config.AppKey }
+func (config *Config) GetProjectKey() string   { return config.ProjectKey }
 func (config *Config) GetQPS() int             { return config.QPS }
 func (config *Config) GetMaxCharNum() int      { return config.MaxCharNum }
 func (config *Config) GetMaxCoroutineNum() int { return config.MaxCoroutineNum }
@@ -46,11 +44,11 @@ func (config *Config) SetAK(str string) error {
 	return nil
 }
 
-func (config *Config) SetProjectKey(str string) error {
-	if err := config.ValidatorStr(str); err != nil {
-		return err
+func (config *Config) SetProjectKey(projectKey string) error {
+	if projectKey == "" {
+		projectKey = "gpt-3.5-turbo"
 	}
-	config.Model = str
+	config.ProjectKey = projectKey
 	return nil
 }
 
