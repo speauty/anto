@@ -4,6 +4,8 @@ import (
 	"anto/domain/service/translator/ali_cloud_mt"
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
+	"anto/domain/service/translator/deepl"
+	"anto/domain/service/translator/deepl_pro"
 	"anto/domain/service/translator/g_deepl_x"
 	"anto/domain/service/translator/google_cloud"
 	"anto/domain/service/translator/huawei_cloud_nlp"
@@ -42,6 +44,8 @@ func Singleton() *Cfg {
 		apiSingleton.YouDao = new(youdao.Config).Default().(*youdao.Config)
 		apiSingleton.GoogleCloud = new(google_cloud.Config).Default().(*google_cloud.Config)
 		apiSingleton.OpenAI = new(openai.Config).Default().(*openai.Config)
+		apiSingleton.DeepL = new(deepl.Config).Default().(*deepl.Config)
+		apiSingleton.DeepLPro = new(deepl_pro.Config).Default().(*deepl_pro.Config)
 	})
 	return apiSingleton
 }
@@ -62,6 +66,8 @@ type Cfg struct {
 	GDeeplX        *g_deepl_x.Config        `mapstructure:"g_deepl_x"`
 	GoogleCloud    *google_cloud.Config     `mapstructure:"google_cloud"`
 	OpenAI         *openai.Config           `mapstructure:"openai"`
+	DeepL          *deepl.Config            `mapstructure:"deepl"`
+	DeepLPro       *deepl_pro.Config        `mapstructure:"deepl_pro"`
 
 	currentViper *viper.Viper `mapstructure:"-"`
 }

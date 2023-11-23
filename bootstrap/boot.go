@@ -7,6 +7,8 @@ import (
 	"anto/domain/service/translator/ali_cloud_mt"
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
+	"anto/domain/service/translator/deepl"
+	"anto/domain/service/translator/deepl_pro"
 	"anto/domain/service/translator/g_deepl_x"
 	"anto/domain/service/translator/google_cloud"
 	"anto/domain/service/translator/huawei_cloud_nlp"
@@ -43,12 +45,14 @@ func Boot(_ context.Context) {
 	g_deepl_x.API().Init(cfg.Singleton().YouDao)
 	google_cloud.API().Init(cfg.Singleton().GoogleCloud)
 	openai.API().Init(cfg.Singleton().OpenAI)
+	deepl.API().Init(cfg.Singleton().DeepL)
+	deepl_pro.API().Init(cfg.Singleton().DeepLPro)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.API(), baidu.API(),
 		tencent_cloud_mt.API(), openapi_youdao.API(),
 		ali_cloud_mt.API(), caiyunai.API(), niutrans.API(),
 		volcengine.API(), g_deepl_x.API(),
-		google_cloud.API(), openai.API(),
+		google_cloud.API(), openai.API(), deepl.API(), deepl_pro.API(),
 	)
 }
