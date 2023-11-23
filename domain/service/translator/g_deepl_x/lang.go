@@ -17,7 +17,7 @@ var langSupported = []translator.LangPair{
 	{"BG", "保加利亚语"},
 	{"CS", "捷克语"},
 	{"DA", "丹麦语"},
-	{"DA", "希腊语"},
+	{"EL", "希腊语"},
 	{"EL", "丹麦语"},
 	{"ET", "爱沙尼亚语"},
 	{"FI", "芬兰语"},
