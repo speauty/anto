@@ -17,7 +17,7 @@ type Config struct {
 func (config *Config) Default() translator.ImplConfig {
 	return &Config{
 		AppKey: "", ProjectKey: "gpt-3.5-turbo",
-		MaxCharNum: 1000, QPS: 50, MaxCoroutineNum: 20,
+		MaxCharNum: 2000, QPS: 1, MaxCoroutineNum: 1,
 	}
 }
 
@@ -53,10 +53,7 @@ func (config *Config) SetProjectKey(projectKey string) error {
 }
 
 func (config *Config) SetQPS(num int) error {
-	if err := config.ValidatorNum(num); err != nil {
-		return err
-	}
-	config.QPS = num
+	config.QPS = 1
 	return nil
 }
 
@@ -64,14 +61,14 @@ func (config *Config) SetMaxCharNum(num int) error {
 	if err := config.ValidatorNum(num); err != nil {
 		return err
 	}
+	if num > 2000 {
+		num = 2000
+	}
 	config.MaxCharNum = num
 	return nil
 }
 
 func (config *Config) SetMaxCoroutineNum(num int) error {
-	if err := config.ValidatorNum(num); err != nil {
-		return err
-	}
-	config.MaxCoroutineNum = num
+	config.MaxCoroutineNum = 1
 	return nil
 }

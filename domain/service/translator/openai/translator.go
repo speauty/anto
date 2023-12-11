@@ -35,11 +35,14 @@ func New() *Translator {
 }
 
 type Translator struct {
-	id            string
-	name          string
-	cfg           translator.ImplConfig
-	langSupported []translator.LangPair
-	sep           string
+	id              string
+	name            string
+	cfg             translator.ImplConfig
+	langSupported   []translator.LangPair
+	sep             string
+	currentFromLang string
+	currentToLang   string
+	currentMessages *translateRequest
 }
 
 func (customT *Translator) Init(cfg translator.ImplConfig) { customT.cfg = cfg }
@@ -54,20 +57,45 @@ func (customT *Translator) IsValid() bool                           { return cus
 
 func (customT *Translator) Translate(ctx context.Context, args *translator.TranslateArgs) (*translator.TranslateRes, error) {
 	timeStart := carbon.Now()
-	tr := &translateRequest{
-		Model: customT.cfg.GetProjectKey(), Messages: []MessageItem{},
+	prompt := fmt.Sprintf(
+		"You are an excellent simultaneous translator in both %s and %s. I will provide you with %s line by line, and you will translate it into %s line by line. The number of lines in both %s and %s is the same. Do you understand?",
+		customT.currentFromLang, args.ToLang, customT.currentFromLang, args.ToLang, customT.currentFromLang, args.ToLang,
+	)
+	// 初始化
+	if customT.currentMessages == nil || customT.currentMessages.Model == "" {
+		customT.currentMessages = new(translateRequest)
+		customT.currentMessages.Model = customT.cfg.GetProjectKey()
+		customT.currentMessages.Messages = []MessageItem{}
 	}
-	tr.Messages = append(tr.Messages, MessageItem{
-		Role: "system",
-		Content: fmt.Sprintf(
-			"You will be provided with a sentence in %s, and your task is to translate it into %s. Separate sentences with line breaks \n",
-			args.FromLang, args.ToLang,
-		),
-	}, MessageItem{
-		Role:    "user",
-		Content: args.TextContent,
+	// 预置条件, 语种必须保持一致, 否则就视为新开
+	if customT.currentFromLang == "" || customT.currentToLang == "" || customT.currentFromLang != args.FromLang || customT.currentToLang != args.ToLang {
+		if len(customT.currentMessages.Messages) > 0 {
+			customT.currentMessages.Messages = []MessageItem{}
+		}
+		customT.currentMessages.Messages = append(customT.currentMessages.Messages, MessageItem{
+			Role: "system", Content: prompt,
+		})
+	}
+	customT.currentMessages.Messages = append(customT.currentMessages.Messages, MessageItem{
+		Role: "user", Content: args.TextContent,
 	})
-	reqBytes, _ := json.Marshal(tr)
+	cntTokens := 0
+	for _, message := range customT.currentMessages.Messages {
+		cntTokens += len(message.Content)
+	}
+
+	if cntTokens < 2048 {
+
+	} else {
+		customT.currentMessages.Messages = []MessageItem{}
+		customT.currentMessages.Messages = append(customT.currentMessages.Messages, MessageItem{
+			Role: "system", Content: prompt,
+		}, MessageItem{
+			Role: "user", Content: args.TextContent,
+		})
+	}
+
+	reqBytes, _ := json.Marshal(customT.currentMessages)
 	headers := map[string]string{
 		"Authorization": fmt.Sprintf("Bearer %s", customT.cfg.GetAK()),
 	}
@@ -88,11 +116,12 @@ func (customT *Translator) Translate(ctx context.Context, args *translator.Trans
 
 	srcTexts := strings.Split(args.TextContent, customT.GetSep())
 	tgtTexts := strings.Split(resp.Choices[0].Message.Content, customT.GetSep())
+	ret := new(translator.TranslateRes)
 	if len(srcTexts) != len(tgtTexts) {
-		return nil, translator.ErrSrcAndTgtNotMatched
+		ret.TimeUsed = int(carbon.Now().DiffAbsInSeconds(timeStart))
+		return ret, nil
 	}
 
-	ret := new(translator.TranslateRes)
 	for textIdx, textTarget := range tgtTexts {
 		ret.Results = append(ret.Results, &translator.TranslateResBlock{
 			Id: srcTexts[textIdx], TextTranslated: textTarget,
