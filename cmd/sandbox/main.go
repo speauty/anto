@@ -1,15 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"github.com/OwO-Network/gdeeplx"
+	"github.com/imroc/req/v3"
 )
 
 func main() {
-	result, err := gdeeplx.Translate("Hello World!", "EN", "ZH", 0)
+	testClient := req.C()
+	testClient.SetProxyURL("sock5://hello:1415456@165.154.3.235:4532")
+
+	res, err := testClient.R().Get("https://www.google.com")
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		return
+		panic(err)
 	}
-	fmt.Println(result)
+	print(res.Status)
 }

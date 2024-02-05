@@ -14,6 +14,7 @@ import (
 	"anto/domain/service/translator/huawei_cloud_nlp"
 	"anto/domain/service/translator/niutrans"
 	"anto/domain/service/translator/openai"
+	"anto/domain/service/translator/openai_sweet"
 	"anto/domain/service/translator/openapi_youdao"
 	"anto/domain/service/translator/tencent_cloud_mt"
 	"anto/domain/service/translator/volcengine"
@@ -45,6 +46,7 @@ func Boot(_ context.Context) {
 	g_deepl_x.API().Init(cfg.Singleton().YouDao)
 	google_cloud.API().Init(cfg.Singleton().GoogleCloud)
 	openai.API().Init(cfg.Singleton().OpenAI)
+	openai_sweet.API().Init(cfg.Singleton().OpenAISweet)
 	deepl.API().Init(cfg.Singleton().DeepL)
 	deepl_pro.API().Init(cfg.Singleton().DeepLPro)
 
@@ -54,5 +56,6 @@ func Boot(_ context.Context) {
 		ali_cloud_mt.API(), caiyunai.API(), niutrans.API(),
 		volcengine.API(), g_deepl_x.API(),
 		google_cloud.API(), openai.API(), deepl.API(), deepl_pro.API(),
+		openai_sweet.API(),
 	)
 }

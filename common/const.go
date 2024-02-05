@@ -3,7 +3,7 @@ package common
 const (
 	AppName                  = "anto"
 	Author                   = "speauty"
-	Version                  = "v3.5.0"
+	Version                  = "v3.6.0"
 	DownloadLatestVersionUrl = "http://kodo.app.speauty.cn/anto-latest-windows.exe"
 
 	GoUidLen = 8
