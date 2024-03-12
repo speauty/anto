@@ -4,6 +4,7 @@ import (
 	"anto/cfg"
 	"anto/common"
 	"anto/domain/repository"
+	"anto/domain/service/translator/ai_baidu"
 	"anto/domain/service/translator/ali_cloud_mt"
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
@@ -49,6 +50,7 @@ func Boot(_ context.Context) {
 	openai_sweet.API().Init(cfg.Singleton().OpenAISweet)
 	deepl.API().Init(cfg.Singleton().DeepL)
 	deepl_pro.API().Init(cfg.Singleton().DeepLPro)
+	ai_baidu.API().Init(cfg.Singleton().AiBaidu)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.API(), baidu.API(),
@@ -56,6 +58,6 @@ func Boot(_ context.Context) {
 		ali_cloud_mt.API(), caiyunai.API(), niutrans.API(),
 		volcengine.API(), g_deepl_x.API(),
 		google_cloud.API(), openai.API(), deepl.API(), deepl_pro.API(),
-		openai_sweet.API(),
+		openai_sweet.API(), ai_baidu.API(),
 	)
 }

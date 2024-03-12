@@ -1,6 +1,7 @@
 package cfg
 
 import (
+	"anto/domain/service/translator/ai_baidu"
 	"anto/domain/service/translator/ali_cloud_mt"
 	"anto/domain/service/translator/baidu"
 	"anto/domain/service/translator/caiyunai"
@@ -48,6 +49,7 @@ func Singleton() *Cfg {
 		apiSingleton.OpenAISweet = new(openai_sweet.Config).Default().(*openai_sweet.Config)
 		apiSingleton.DeepL = new(deepl.Config).Default().(*deepl.Config)
 		apiSingleton.DeepLPro = new(deepl_pro.Config).Default().(*deepl_pro.Config)
+		apiSingleton.AiBaidu = new(ai_baidu.Config).Default().(*ai_baidu.Config)
 	})
 	return apiSingleton
 }
@@ -71,6 +73,7 @@ type Cfg struct {
 	OpenAISweet    *openai_sweet.Config     `mapstructure:"openai_sweet"`
 	DeepL          *deepl.Config            `mapstructure:"deepl"`
 	DeepLPro       *deepl_pro.Config        `mapstructure:"deepl_pro"`
+	AiBaidu        *ai_baidu.Config         `mapstructure:"ai_baidu"`
 
 	currentViper *viper.Viper `mapstructure:"-"`
 }

@@ -42,6 +42,7 @@ func (customC *Cfg) InitConfig() error {
 	_ = customC.Niutrans.SyncDisk(currentViper)
 	_ = customC.VolcEngine.SyncDisk(currentViper)
 	_ = customC.YouDao.SyncDisk(currentViper)
+	_ = customC.AiBaidu.SyncDisk(currentViper)
 
 	return customC.Sync()
 }
