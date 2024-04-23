@@ -11,6 +11,7 @@ import (
 	"anto/domain/service/translator/google_cloud"
 	"anto/domain/service/translator/huawei_cloud_nlp"
 	"anto/domain/service/translator/ling_va"
+	"anto/domain/service/translator/microsoft_edge"
 	"anto/domain/service/translator/niutrans"
 	"anto/domain/service/translator/openai"
 	"anto/domain/service/translator/openai_sweet"
@@ -50,6 +51,7 @@ func Singleton() *Cfg {
 		apiSingleton.DeepL = new(deepl.Config).Default().(*deepl.Config)
 		apiSingleton.DeepLPro = new(deepl_pro.Config).Default().(*deepl_pro.Config)
 		apiSingleton.AiBaidu = new(ai_baidu.Config).Default().(*ai_baidu.Config)
+		apiSingleton.MicrosoftEdge = new(microsoft_edge.Config).Default().(*microsoft_edge.Config)
 	})
 	return apiSingleton
 }
@@ -74,6 +76,7 @@ type Cfg struct {
 	DeepL          *deepl.Config            `mapstructure:"deepl"`
 	DeepLPro       *deepl_pro.Config        `mapstructure:"deepl_pro"`
 	AiBaidu        *ai_baidu.Config         `mapstructure:"ai_baidu"`
+	MicrosoftEdge  *microsoft_edge.Config   `mapstructure:"microsoft_edge"`
 
 	currentViper *viper.Viper `mapstructure:"-"`
 }
