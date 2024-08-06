@@ -20,6 +20,7 @@ import (
 	"anto/domain/service/translator/openapi_youdao"
 	"anto/domain/service/translator/tencent_cloud_mt"
 	"anto/domain/service/translator/volcengine"
+	"anto/domain/service/translator/xfyun"
 	"anto/lib/log"
 	"context"
 )
@@ -53,6 +54,7 @@ func Boot(_ context.Context) {
 	deepl_pro.API().Init(cfg.Singleton().DeepLPro)
 	ai_baidu.API().Init(cfg.Singleton().AiBaidu)
 	microsoft_edge.API().Init(cfg.Singleton().MicrosoftEdge)
+	xfyun.API().Init(cfg.Singleton().XFYun)
 
 	repository.GetTranslators().Register(
 		huawei_cloud_nlp.API(), baidu.API(),
@@ -61,5 +63,6 @@ func Boot(_ context.Context) {
 		volcengine.API(), g_deepl_x.API(),
 		google_cloud.API(), openai.API(), deepl.API(), deepl_pro.API(),
 		openai_sweet.API(), ai_baidu.API(), microsoft_edge.API(),
+		xfyun.API(),
 	)
 }

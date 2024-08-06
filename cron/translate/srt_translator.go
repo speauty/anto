@@ -86,40 +86,49 @@ func (customCron *SrtTranslator) jobTranslator() {
 					}
 
 					var blockChunked []string
-					tmpBlockStr := ""
-					for _, block := range currentData.PrtSrt.Blocks {
-						if block.SubTrack != "" && currentData.PtrOpts.TranslateMode == common.ModeDelta {
-							continue
-						}
+					if currentData.PtrOpts.Translator.GetSep() != "" {
+						tmpBlockStr := ""
+						for _, block := range currentData.PrtSrt.Blocks {
+							if block.SubTrack != "" && currentData.PtrOpts.TranslateMode == common.ModeDelta {
+								continue
+							}
 
-						if len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
-							blockChunked = append(blockChunked, tmpBlockStr)
-							tmpBlockStr = ""
-						}
-
-						if len(block.MainTrack) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
-							if tmpBlockStr != "" {
+							if len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
 								blockChunked = append(blockChunked, tmpBlockStr)
 								tmpBlockStr = ""
 							}
-							blockChunked = append(blockChunked, block.MainTrack)
-							continue
-						}
 
-						if len(block.MainTrack)+len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
+							if len(block.MainTrack) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
+								if tmpBlockStr != "" {
+									blockChunked = append(blockChunked, tmpBlockStr)
+									tmpBlockStr = ""
+								}
+								blockChunked = append(blockChunked, block.MainTrack)
+								continue
+							}
+
+							if len(block.MainTrack)+len(tmpBlockStr) >= currentData.PtrOpts.Translator.GetCfg().GetMaxCharNum() {
+								blockChunked = append(blockChunked, tmpBlockStr)
+								tmpBlockStr = ""
+							}
+
+							if tmpBlockStr == "" {
+								tmpBlockStr = block.MainTrack
+							} else {
+								tmpBlockStr = fmt.Sprintf("%s%s%s", tmpBlockStr, currentData.PtrOpts.Translator.GetSep(), block.MainTrack)
+							}
+						}
+						if tmpBlockStr != "" {
 							blockChunked = append(blockChunked, tmpBlockStr)
 							tmpBlockStr = ""
 						}
-
-						if tmpBlockStr == "" {
-							tmpBlockStr = block.MainTrack
-						} else {
-							tmpBlockStr = fmt.Sprintf("%s%s%s", tmpBlockStr, currentData.PtrOpts.Translator.GetSep(), block.MainTrack)
+					} else {
+						for _, block := range currentData.PrtSrt.Blocks {
+							if block.SubTrack != "" && currentData.PtrOpts.TranslateMode == common.ModeDelta {
+								continue
+							}
+							blockChunked = append(blockChunked, block.MainTrack)
 						}
-					}
-					if tmpBlockStr != "" {
-						blockChunked = append(blockChunked, tmpBlockStr)
-						tmpBlockStr = ""
 					}
 
 					if len(blockChunked) == 0 {

@@ -18,6 +18,7 @@ import (
 	"anto/domain/service/translator/openapi_youdao"
 	"anto/domain/service/translator/tencent_cloud_mt"
 	"anto/domain/service/translator/volcengine"
+	"anto/domain/service/translator/xfyun"
 	"anto/domain/service/translator/youdao"
 	"anto/platform/win/ui"
 	"fmt"
@@ -52,6 +53,7 @@ func Singleton() *Cfg {
 		apiSingleton.DeepLPro = new(deepl_pro.Config).Default().(*deepl_pro.Config)
 		apiSingleton.AiBaidu = new(ai_baidu.Config).Default().(*ai_baidu.Config)
 		apiSingleton.MicrosoftEdge = new(microsoft_edge.Config).Default().(*microsoft_edge.Config)
+		apiSingleton.XFYun = new(xfyun.Config).Default().(*xfyun.Config)
 	})
 	return apiSingleton
 }
@@ -77,6 +79,7 @@ type Cfg struct {
 	DeepLPro       *deepl_pro.Config        `mapstructure:"deepl_pro"`
 	AiBaidu        *ai_baidu.Config         `mapstructure:"ai_baidu"`
 	MicrosoftEdge  *microsoft_edge.Config   `mapstructure:"microsoft_edge"`
+	XFYun          *xfyun.Config            `mapstructure:"xfyun"`
 
 	currentViper *viper.Viper `mapstructure:"-"`
 }
