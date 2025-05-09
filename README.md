@@ -15,56 +15,6 @@
 
 加油~
 
-
-
-### 框架目录
-
-主要采用`lxn/walk`框架实现的，受限于框架仅支持Windows，最近试过用`fyne`重写，其实主要功能都写完了，但是，有很多小问题，还是弃了。以下是项目的整体目录：
-
-```shell
-├─.idea 	# Goland的项目记录，已忽略                     
-├─.run  	# Goland的Run/Debug配置，其中包含一个运行的配置，我日常开发使用的
-├─bin   	# 编译目录，已忽略                     
-│  ├─assets	# 依赖的静态资源目录
-│  └─logs	# 运行日志目录
-├─bootstrap	# 一些初始化安装实现目录
-├─cfg		# 配置目录，采用spf13/viper加载yml配置文件（默认是可执行文件同级目录下的cfg.yml）
-├─common 	# 公共目录，现在放了一些数据结构定义
-├─cron		# 内置任务
-│  ├─detector 	# SRT检测
-│  ├─reader 	# SRT读取
-│  ├─translate 	# SRT翻译
-│  └─writer 	# SRT写入
-├─dependency 	# 依赖目录
-│  ├─repository # 服务管理仓库
-│  └─service 	# 依赖的服务
-│      └─translator 			# 翻译服务
-│          ├─ali_cloud_mt    	# 阿里云翻译
-│          ├─baidu 				# 百度翻译
-│          ├─caiyunai       	# 彩云小译 
-│          ├─deepl 				# DeepL翻译
-│          ├─huawei_cloud_nlp 	# 华为云翻译
-│          ├─ling_va 			# LingVA翻译
-│          ├─niutrans 			# 小牛翻译
-│          ├─openapi_youdao 	# 有道智云翻译
-│          ├─tencent_cloud_mt 	# 腾讯云翻译
-│          └─youdao 			# 有道翻译
-├─lib 		# 核心库
-│  ├─log 	# 日志类实现, 二次包装zap
-│  ├─nohup 	# 常驻进程模拟
-│  ├─srt 	# SRT解析等
-│  └─util 	# 工具函数
-└─platform 		# 平台
-    └─win 		# windows
-        ├─page 	# 页面
-        └─ui 	# UI包装
-            ├─handle 	# 操作包装
-            ├─msg 		# 弹窗
-            └─pack 		# 组件包装
-```
-
-
-
 ### 任务列表
 
 - [x] 集成lxn/walk桌面GUI库（才把fyne清理了，那个编译运行太慢了，而且Win下，依赖环境有点。。。），这个要抽一波，不然用起来，小难受；
