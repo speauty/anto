@@ -20,7 +20,7 @@ func RequestSimpleHttp(ctx context.Context, engine ImplTranslator, url string, i
 	headers["content-type"] = "application/json"
 	headers["accept"] = "application/json"
 
-	client := req.C().DevMode().SetCommonHeaders(headers).SetCommonRetryCount(3)
+	client := req.C().SetCommonHeaders(headers).SetCommonRetryCount(3)
 	if strings.Contains(url, "api.openai.com") {
 		client.SetProxyURL("http://127.0.0.1:7890")
 	}

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/golang-module/carbon"
 	"os"
+	"path/filepath"
 	"runtime"
 	"sync"
 )
@@ -94,11 +95,27 @@ func (customCron *SrtWriter) jobWriter() {
 						continue
 					}
 
-					if err = os.WriteFile(currentData.FileNameSaved, bytesEncoded, os.ModePerm); err != nil {
-						customCron.log().ErrorF("写入文件失败(%s => %s), 错误: %s", currentData.PrtSrt.FileName, currentData.FileNameSaved, err)
-						chanMsg <- fmt.Sprintf("写入文件失败(%s => %s)", currentData.PrtSrt.FileName, currentData.FileNameSaved)
+					dirSrt := filepath.Dir(currentData.FileNameSaved)
+					if err = os.MkdirAll(dirSrt, os.ModePerm); err != nil {
+						customCron.log().ErrorF("创建目录[%s]失败, 错误: %s", dirSrt, err)
+						chanMsg <- fmt.Sprintf("%s创建失败", dirSrt)
 						continue
 					}
+
+					fd, err := os.OpenFile(currentData.FileNameSaved, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+					if err != nil {
+						customCron.log().ErrorF("创建文件[%s]失败, 错误: %s", currentData.FileNameSaved, err)
+						chanMsg <- fmt.Sprintf("%s创建失败", currentData.FileNameSaved)
+						_ = fd.Close()
+						continue
+					}
+					if _, err = fd.Write(bytesEncoded); err != nil {
+						customCron.log().ErrorF("写入文件失败(%s => %s), 错误: %s", currentData.PrtSrt.FileName, currentData.FileNameSaved, err)
+						chanMsg <- fmt.Sprintf("写入文件失败(%s => %s)", currentData.PrtSrt.FileName, currentData.FileNameSaved)
+						_ = fd.Close()
+						continue
+					}
+					_ = fd.Close()
 					chanMsg <- fmt.Sprintf(
 						"写入文件成功, 源件: %s, 目标文件: %s, 写入字节数: %d, 耗时(s): %d",
 						currentData.PrtSrt.FileName, currentData.FileNameSaved, len(bytesEncoded),

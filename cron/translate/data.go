@@ -6,7 +6,7 @@ import (
 	"anto/domain/service/translator"
 	"anto/lib/srt"
 	"fmt"
-	"strings"
+	"path/filepath"
 )
 
 type SrtTranslateData struct {
@@ -29,7 +29,7 @@ func (customData *SrtTranslateData) toSrtWriterData() *writer.SrtWriterData {
 func (customData *SrtTranslateData) fileNameSavedBuilder() string {
 	newFileName := customData.PrtSrt.FilePath[0 : len(customData.PrtSrt.FilePath)-4]
 	newFileName = fmt.Sprintf(
-		"%s.%s.%s.%s2%s.srt", newFileName, _const.AppName, customData.PtrOpts.Translator.GetShortId(), strings.ToLower(customData.PtrOpts.FromLang), strings.ToLower(customData.PtrOpts.ToLang),
+		"%s/%s/%s.srt", filepath.Dir(newFileName), _const.AppName, filepath.Base(newFileName),
 	)
 	return newFileName
 }
