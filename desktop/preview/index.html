@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>anto · Flutter Windows Preview</title>
+  <style>
+    :root { --bg:#f5f7fb; --panel:#fff; --line:#e8ebf2; --ink:#202638; --muted:#7c8498; --brand:#5b5ee8; --brand-2:#7477f2; --soft:#eef0ff; --green:#2ca77a; --amber:#d9902f; --shadow:0 16px 42px rgba(41,49,82,.10); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:linear-gradient(135deg,#f8f9fd 0%,#f1f3fa 100%); color:var(--ink); font:14px/1.5 Inter,"Segoe UI","Microsoft YaHei",sans-serif; overflow-x:hidden; }
+    .shell { display:flex; width:100vw; height:100vh; overflow:hidden; }
+    .sidebar { width:224px; padding:26px 16px; background:#20243b; color:#c8cce0; display:flex; flex-direction:column; }
+    .brand { display:flex; align-items:center; padding:0 12px 28px; }
+    .brand-logo { display:block; width:132px; height:auto; }
+    .section-label { padding:0 12px 9px; color:#777d9c; font-size:11px; letter-spacing:1.1px; text-transform:uppercase; }
+    .nav { display:grid; gap:6px; }
+    .nav button { border:0; border-radius:10px; padding:11px 12px; color:#b9bed3; background:transparent; text-align:left; cursor:pointer; font:inherit; display:flex; align-items:center; gap:11px; }
+    .nav button:hover { background:#2b304c; color:#fff; }
+    .nav button.active { background:linear-gradient(90deg,#5e61e9,#6669ed); color:#fff; box-shadow:0 7px 16px rgba(83,86,224,.26); }
+    .nav-icon { width:19px; text-align:center; opacity:.9; }
+    .sidebar-bottom { margin-top:auto; padding:13px 12px; color:#858ba7; border-top:1px solid #343951; font-size:12px; }
+    .main { flex:1; min-width:0; overflow:auto; padding:34px 40px 50px; }
+    .topbar { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px; }
+    h1 { margin:0; font-size:28px; line-height:1.15; letter-spacing:-.6px; }
+    .subtitle { margin-top:7px; color:var(--muted); }
+    .top-actions { display:flex; align-items:center; gap:10px; }
+    .avatar { width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:#dedfff; color:#4e51c9; font-weight:700; }
+    .status { display:flex; align-items:center; gap:7px; color:#59627a; font-size:12px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 4px #def4eb; }
+    .grid { display:grid; grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr); gap:20px; align-items:start; }
+    .card { min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); }
+    .card-pad { padding:22px; }
+    .card-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:17px; font-weight:700; font-size:15px; }
+    .card-title small { color:var(--muted); font-weight:500; }
+    .dropzone { min-height:185px; border:1.5px dashed #bdc2f4; border-radius:13px; background:linear-gradient(135deg,#f8f8ff,#f1f2ff); display:grid; place-items:center; text-align:center; cursor:pointer; }
+    .drop-icon { width:48px; height:48px; display:grid; place-items:center; margin:auto auto 10px; border-radius:14px; background:#e1e2ff; color:var(--brand); font-size:24px; }
+    .dropzone strong { display:block; font-size:15px; }
+    .dropzone span { display:block; margin-top:4px; color:var(--muted); font-size:12px; }
+    .fields { display:grid; grid-template-columns:1fr 1fr; gap:13px; margin-top:17px; }
+    label { display:block; color:#717991; font-size:12px; margin-bottom:6px; }
+    select, input { width:100%; height:39px; padding:0 11px; border:1px solid #dfe3ee; border-radius:9px; color:var(--ink); background:#fff; font:inherit; outline:none; }
+    select:focus, input:focus { border-color:#999bf2; box-shadow:0 0 0 3px #ededff; }
+    .button-row { display:flex; justify-content:flex-end; gap:9px; margin-top:18px; }
+    button.primary, button.ghost { border:0; border-radius:9px; padding:10px 16px; cursor:pointer; font:600 13px inherit; }
+    button.primary { color:white; background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 7px 15px rgba(91,94,232,.22); }
+    button.ghost { background:#f0f1f7; color:#606980; }
+    .queue { display:grid; gap:10px; }
+    .queue-row { display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:11px; align-items:center; padding:12px 0; border-bottom:1px solid #eff0f5; }
+    .queue-row:last-child { border-bottom:0; padding-bottom:0; }
+    .file-icon { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:#f0f1ff; color:#5d60dc; }
+    .file-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; font-size:13px; }
+    .file-meta { margin-top:3px; color:var(--muted); font-size:11px; }
+    .pill { padding:4px 8px; border-radius:20px; font-size:11px; font-weight:650; white-space:nowrap; }
+    .pill.green { color:#27805f; background:#e2f5ed; }.pill.amber { color:#a66a1d; background:#fff0dc; }.pill.gray { color:#747c8f; background:#f0f1f5; }
+    .row-actions { display:flex; align-items:center; gap:7px; }
+    .open-dir { border:1px solid #dfe2ef; border-radius:8px; padding:5px 8px; color:#5d61d8; background:#fafaff; cursor:pointer; font:600 11px inherit; white-space:nowrap; }
+    .open-dir:hover { border-color:#aeb1f2; background:#f0f1ff; }
+    .toast { position:fixed; right:28px; bottom:26px; padding:12px 16px; border:1px solid #dfe2ef; border-radius:10px; color:#4e566c; background:#fff; box-shadow:var(--shadow); opacity:0; transform:translateY(8px); pointer-events:none; transition:.2s ease; }
+    .toast.show { opacity:1; transform:none; }
+    .progress { height:5px; margin-top:8px; background:#eceef6; border-radius:10px; overflow:hidden; }.progress i { display:block; height:100%; border-radius:10px; background:linear-gradient(90deg,#6769ec,#8d8ff5); }
+    .settings { display:none; max-width:900px; }.settings.active, .workspace.active { display:block; }
+    .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .setting-card { padding:20px; }.setting-card h3 { margin:0 0 4px; font-size:15px; }.setting-card p { margin:0 0 17px; color:var(--muted); font-size:12px; }
+    .setting-fields { display:grid; gap:13px; }.switch-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f0f1f5; }.switch { width:36px; height:20px; border-radius:20px; background:#5f62e7; padding:3px; }.switch i { display:block; width:14px; height:14px; margin-left:16px; border-radius:50%; background:#fff; }
+    .page { animation:fade .2s ease; } @keyframes fade { from{opacity:.3;transform:translateY(3px)} to{opacity:1;transform:none} }
+    @media (max-width: 1080px) {
+      .sidebar { width:196px; padding-left:12px; padding-right:12px; }
+      .main { padding:28px 24px 40px; }
+      .grid { grid-template-columns:minmax(0,1fr); }
+      .settings-grid { grid-template-columns:minmax(0,1fr); }
+    }
+    @media (max-width: 700px) {
+      .shell { min-height:100vh; height:auto; align-items:stretch; }
+      .sidebar { width:76px; padding:18px 10px; }
+      .brand { justify-content:center; padding:0 0 22px; }
+      .brand-logo { width:38px; height:38px; object-fit:cover; object-position:left; }
+      .section-label, .nav button:not(.active) .nav-icon + *, .sidebar-bottom { display:none; }
+      .nav button { justify-content:center; padding:12px 8px; }
+      .nav button.active { justify-content:center; }
+      .nav-icon { width:auto; }
+      .main { padding:22px 14px 30px; }
+      .fields { grid-template-columns:minmax(0,1fr); }
+      .queue-row { grid-template-columns:34px minmax(0,1fr); }
+      .queue-row > .pill, .queue-row > .row-actions { grid-column:2; justify-self:start; }
+      .topbar { margin-bottom:18px; }
+      .card-pad { padding:16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><img class="brand-logo" src="anto-logo.svg" alt="anto" /></div>
+      <div class="section-label">工作台</div>
+      <nav class="nav">
+        <button class="active" data-page="workspace"><span class="nav-icon">⌁</span>字幕翻译</button>
+        <button data-page="queue"><span class="nav-icon">☷</span>任务队列</button>
+        <button data-page="settings"><span class="nav-icon">⚙</span>设置</button>
+      </nav>
+      <div class="sidebar-bottom">Go Core 已连接<br><span style="color:#5fc79b">●</span> 本地服务运行中</div>
+    </aside>
+    <main class="main">
+      <section id="workspace" class="page workspace active">
+        <div class="topbar"></div>
+        <div class="grid">
+          <div class="card card-pad">
+            <div class="card-title"><span>新建翻译任务</span><small>支持 .srt</small></div>
+            <div class="dropzone"><div><div class="drop-icon">↑</div><strong>拖入 SRT 文件或选择文件</strong><span>支持多个文件，也可以选择一个目录</span></div></div>
+            <div class="fields"><div><label>源语言</label><select><option>English · en</option><option>日本語 · ja</option></select></div><div><label>目标语言</label><select><option>简体中文 · zh</option><option>繁體中文 · zh-TW</option></select></div><div><label>翻译引擎</label><select><option>Microsoft Edge</option><option>OpenAI</option><option>DeepL</option></select></div><div><label>翻译模式</label><select><option>增量翻译</option><option>全量翻译</option></select></div></div>
+            <div class="button-row"><button class="ghost">清空</button><button class="primary">开始翻译</button></div>
+          </div>
+          <div class="card card-pad"><div class="card-title"><span>最近任务</span><small>查看全部 →</small></div><div class="queue">
+            <div class="queue-row"><div class="file-icon">▤</div><div><div class="file-name">The_Cherno_Episode_12.srt</div><div class="file-meta">副轨导出 · Microsoft Edge<div class="progress"><i style="width:76%"></i></div></div></div><span class="pill amber">翻译中</span></div>
+            <div class="queue-row"><div class="file-icon">▤</div><div><div class="file-name">OpenGL_Introduction.srt</div><div class="file-meta">副轨导出 · 2 分钟前</div></div><div class="row-actions"><span class="pill green">已完成</span><button class="open-dir" data-dir="D:/字幕/anto" title="打开生成目录">▣ 打开</button></div></div>
+            <div class="queue-row"><div class="file-icon">▤</div><div><div class="file-name">Cpp_Basics_06.srt</div><div class="file-meta">双轨导出 · 昨天</div></div><span class="pill gray">已取消</span></div>
+          </div></div>
+        </div>
+      </section>
+      <section id="queue" class="page" style="display:none"><div class="topbar"><div></div><button class="primary">新建任务</button></div><div class="card card-pad"><div class="card-title"><span>任务记录</span><small>3 个任务</small></div><div class="queue"><div class="queue-row"><div class="file-icon">▤</div><div><div class="file-name">The_Cherno_Episode_12.srt</div><div class="file-meta">English → 简体中文 · 76%</div><div class="progress"><i style="width:76%"></i></div></div><span class="pill amber">翻译中</span></div><div class="queue-row"><div class="file-icon">▤</div><div><div class="file-name">OpenGL_Introduction.srt</div><div class="file-meta">English → 简体中文 · 输出至 anto/</div></div><div class="row-actions"><span class="pill green">已完成</span><button class="open-dir" data-dir="D:/字幕/anto" title="打开生成目录">▣ 打开</button></div></div></div></div></section>
+      <section id="settings" class="page settings"><div class="topbar"><div></div><button class="primary">保存设置</button></div><div class="settings-grid"><div class="card setting-card"><h3>翻译服务</h3><p>配置 API 和默认翻译引擎。</p><div class="setting-fields"><div><label>默认翻译引擎</label><select><option>Microsoft Edge</option><option>OpenAI</option><option>DeepL</option></select></div><div><label>API 密钥</label><input type="password" value="sk-••••••••••••••••" /></div><div><label>并发数量</label><input value="5" /></div><button class="ghost">测试连接</button></div></div><div class="card setting-card"><h3>输出设置</h3><p>控制翻译后的字幕文件格式。</p><div class="setting-fields"><div><label>输出目录</label><input value="与源文件同目录 / anto" /></div><div><label>导出轨道</label><select><option>副轨</option><option>主轨</option><option>双轨</option></select></div><div class="switch-row"><span>保留原始字幕文件</span><span class="switch"><i></i></span></div><div class="switch-row"><span>翻译完成后提示</span><span class="switch"><i></i></span></div></div></div><div class="card setting-card"><h3>应用设置</h3><p>调整客户端运行方式。</p><div class="setting-fields"><div class="switch-row"><span>启动时自动连接 Go Core</span><span class="switch"><i></i></span></div><div class="switch-row"><span>关闭窗口时最小化到托盘</span><span class="switch"><i></i></span></div><div><label>日志级别</label><select><option>信息</option><option>调试</option><option>错误</option></select></div></div></div></div></section>
+    </main>
+  </div>
+  <script>
+    const toast = document.createElement('div'); toast.className = 'toast'; document.body.appendChild(toast);
+    document.querySelectorAll('.open-dir').forEach(button => button.addEventListener('click', () => {
+      toast.textContent = '预览：将打开 ' + button.dataset.dir;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }));
+    const buttons = document.querySelectorAll('.nav button');
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      buttons.forEach(item => item.classList.remove('active')); btn.classList.add('active');
+      document.querySelectorAll('.page').forEach(page => { page.style.display = 'none'; page.classList.remove('active'); });
+      const page = document.getElementById(btn.dataset.page); page.style.display = 'block'; page.classList.add('active');
+    }));
+  </script>
+</body>
+</html>

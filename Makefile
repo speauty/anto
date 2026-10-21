@@ -1,17 +1,9 @@
-.PHONY: tidy deploy_gui_win rs build compress
+.PHONY: tidy build core_build
 
 tidy:
 	go mod tidy
 
-BinName=anto-v3.7.0-windows.exe
-
-deploy: rs build
-
-rs:
-	rsrc -manifest ./cmd/anto/anto.manifest -ico ./resource/favicon.ico -o ./cmd/anto/rsrc.syso
-
 build:
-	go build -gcflags='-l -N' -ldflags='-w -s -H=windowsgui' -o "./bin/${BinName}" anto/cmd/anto
+	go build -o ./bin/anto-core.exe ./cmd/anto-core
 
-compress:
-	upx -9 "./bin/${BinName}"
+core_build: build

@@ -1,33 +1,19 @@
-## ANTO-不专业字幕翻译的Windows桌面应用
+# ANTO 字幕翻译助手
 
-> 作为一名临时搬运工，搞个字幕翻译工具，一点也不过分~是吧
->
+ANTO 是 Windows 字幕翻译应用。`desktop/` 是 Flutter 客户端，`cmd/anto-core/` 和 `core/` 提供本地 Go 服务。目前支持“机器翻译-阿里云”“机器翻译-腾讯云”“机器翻译-百度云”“彩云小译”“DeepL Pro”“AI 翻译-DeepSeek”和“批量翻译-有道智云”引擎。
 
+## 使用
 
+从发布目录运行 `anto-ui.exe`。`anto-ui.exe`、`anto-core.exe`、`cfg.yml`、`data/` 和 `flutter_windows.dll` 必须位于同一目录。客户端启动 Core 后，通过回环地址上的随机端口和一次性 Token 与其通信。
 
-### 写在前面
+在设置页配置所选引擎：阿里云填写 AccessKey ID、AccessKey Secret 和地区；腾讯云填写 SecretId、SecretKey 和地区；百度云填写 App ID、密钥并选择已开通的服务版本；彩云小译需在开放平台单独申请 API Token；DeepL Pro 使用已有 Pro 或当前付费 API 套餐的 API Key；DeepSeek 填写 API Key，可调整服务地址、模型名和翻译提示词；有道智云需开通批量翻译服务并填写应用 ID、应用密钥。DeepSeek 的服务地址也可填写自建兼容 Chat Completions 的服务，例如 `http://127.0.0.1:8000/v1`；本机自建服务可不填 API Key。选择 SRT 文件或输入目录、语言和翻译模式后，点击“开始翻译”。任务成功加入队列后，表单会重置。默认输出目录为源文件所在目录的 `anto/` 子目录。
 
-我是21年底才接触到油管搬运。不知出于什么原因，看了UP主[@神经元猫](https://space.bilibili.com/364152971/?spm_id_from=333.999.0.0)搬运翻译的[Cherno C++ 中文](https://space.bilibili.com/364152971/channel/collectiondetail?sid=13909)，感觉[TheCherno](https://github.com/TheCherno)挺有趣的，就萌生了搬运他的OpenGL教程，然后就是游戏引擎等。刚开始，特别费人，使用剪映的智能字幕进行音频识别并导出SRT字幕。
+设置页的“测试连接”会检查所选引擎接入点的网络连通性，不调用翻译接口，也不验证密钥。百度云、彩云小译、DeepL Pro、DeepSeek 和有道智云无需选择地区。
 
-由于分段很乱，需要人工调整，然后挨个翻译。遇到陌生单词，还要去查一下。但是吧，后来觉得效率低得令人发指。既然有智能字幕，那么就有智能翻译，然后，就了解到了各种机器翻译。看着每月的免费额度，完全可以操作一下。那么，就开始着手这款应用的研发。并不复杂，初版几天就搞定了，主要还是对框架不太熟悉，而且有些场景不太了解，大多都是后面慢慢完善。
+## 开发
 
-用，是能用了，但是，应该还有很大提升的空间。比如，有朋友提到的AI翻译，以及通知和托盘等。
+Go Core：在仓库根目录运行 `go test ./...`、`go build -o ./bin/anto-core.exe ./cmd/anto-core`。
 
-加油~
+Flutter：在 `desktop/` 运行 `flutter pub get`、`flutter analyze`、`flutter test`、`flutter build windows --release`。发布时将 Core 和 `cfg.yml` 复制到 `desktop/build/windows/x64/runner/Release/`。
 
-### 任务列表
-
-- [x] 集成lxn/walk桌面GUI库（才把fyne清理了，那个编译运行太慢了，而且Win下，依赖环境有点。。。），这个要抽一波，不然用起来，小难受；
-- [x] 实现静态界面（还是不大会多窗口模式，估计会照旧采用Widget的显示来模拟多页面，也可能还是单页）；
-  - [x] 常用配置本地缓存（文件），就我最近的使用体验来看，不想再输密钥了；
-  - [x] 增加全量和增量翻译模式区分，防止重复翻译，浪费资源；
-  - [x] 增加批量翻译模式（挂机，一直跑），那个列表有点小烦，后面没有单独放置操作的列；
-- [x] 实现srt文件解析和压缩（这块好搞，我感觉都写了好几次了）；
-- [x] 接入上游翻译服务（如果有什么好的免费的服务，也可以给我说）；
-
-### 应用预览
-
-![应用启动](./assets/images/startup.jpg)
-
-![设置界面](./assets/images/settings.jpg)
-
+本地 API 见 [docs/core-api.md](docs/core-api.md)。

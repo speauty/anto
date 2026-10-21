@@ -2,6 +2,7 @@ package caiyunai
 
 import (
 	"anto/domain/service/translator"
+
 	"github.com/spf13/viper"
 )
 
@@ -14,56 +15,47 @@ type Config struct {
 }
 
 func (config *Config) Default() translator.ImplConfig {
-	// 这是官网给出的测试Token, 随便造
-	return &Config{
-		Token:      "3975l6lr5pcbvidl6jl2",
-		MaxCharNum: 5000, QPS: 10, MaxCoroutineNum: 5,
-	}
+	// These are conservative application defaults, not provider limits.
+	return &Config{Token: "", QPS: 1, MaxCharNum: 1000, MaxCoroutineNum: 1}
 }
 
 func (config *Config) SyncDisk(currentViper *viper.Viper) error {
-	tagAndVal := config.JoinAllTagAndValue(API(), config, "mapstructure")
-
-	for tag, val := range tagAndVal {
-		currentViper.Set(tag, val)
+	for key, value := range config.JoinAllTagAndValue(API(), config, "mapstructure") {
+		currentViper.Set(key, value)
 	}
 	return nil
 }
 
-func (config *Config) GetAK() string { return config.Token }
-
+func (config *Config) GetAK() string           { return config.Token }
 func (config *Config) GetQPS() int             { return config.QPS }
 func (config *Config) GetMaxCharNum() int      { return config.MaxCharNum }
 func (config *Config) GetMaxCoroutineNum() int { return config.MaxCoroutineNum }
 
-func (config *Config) SetAK(str string) error {
-	if err := config.ValidatorStr(str); err != nil {
+func (config *Config) SetAK(value string) error {
+	if err := config.ValidatorStr(value); err != nil {
 		return err
 	}
-	config.Token = str
+	config.Token = value
 	return nil
 }
-
-func (config *Config) SetQPS(num int) error {
-	if err := config.ValidatorNum(num); err != nil {
+func (config *Config) SetQPS(value int) error {
+	if err := config.ValidatorNum(value); err != nil {
 		return err
 	}
-	config.QPS = num
+	config.QPS = value
 	return nil
 }
-
-func (config *Config) SetMaxCharNum(num int) error {
-	if err := config.ValidatorNum(num); err != nil {
+func (config *Config) SetMaxCharNum(value int) error {
+	if err := config.ValidatorNum(value); err != nil {
 		return err
 	}
-	config.MaxCharNum = num
+	config.MaxCharNum = value
 	return nil
 }
-
-func (config *Config) SetMaxCoroutineNum(num int) error {
-	if err := config.ValidatorNum(num); err != nil {
+func (config *Config) SetMaxCoroutineNum(value int) error {
+	if err := config.ValidatorNum(value); err != nil {
 		return err
 	}
-	config.MaxCoroutineNum = num
+	config.MaxCoroutineNum = value
 	return nil
 }

@@ -5,12 +5,12 @@ import (
 )
 
 var langSupported = []translator.LangPair{
-	{"zh", "中文"},
-	{"en", "英语"},
-	{"ja", "日语"},
-	{"ko", "韩语"},
-	{"ru", "俄语"},
-	{"fr", "法语"},
-	{"de", "德语"},
-	{"ar", "阿拉伯语"},
+	{Key: "zh", Name: "中文"},
+	{Key: "en", Name: "英语"},
+	{Key: "ja", Name: "日语"},
+	{Key: "ko", Name: "韩语"},
+	{Key: "ru", Name: "俄语"},
+	{Key: "fr", Name: "法语"},
+	{Key: "de", Name: "德语"},
+	{Key: "ar", Name: "阿拉伯语"},
 }
