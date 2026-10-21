@@ -1,7 +1,6 @@
 package repository
 
 import (
-	_type "anto/common"
 	serviceTranslator "anto/domain/service/translator"
 	"anto/lib/restrictor"
 	"sort"
@@ -22,8 +21,13 @@ func GetTranslators() *Translators {
 
 type Translators struct {
 	list     sync.Map
-	names    []*_type.StdComboBoxModel
-	namesAll []*_type.StdComboBoxModel
+	names    []*TranslatorName
+	namesAll []*TranslatorName
+}
+
+type TranslatorName struct {
+	Key  string
+	Name string
 }
 
 func (customT *Translators) Register(translators ...serviceTranslator.ImplTranslator) {
@@ -54,24 +58,24 @@ func (customT *Translators) GetById(id string) serviceTranslator.ImplTranslator 
 	return obj.(serviceTranslator.ImplTranslator)
 }
 
-func (customT *Translators) GetNames() []*_type.StdComboBoxModel {
+func (customT *Translators) GetNames() []*TranslatorName {
 	return customT.names
 }
 
-func (customT *Translators) GetNamesAll() []*_type.StdComboBoxModel {
+func (customT *Translators) GetNamesAll() []*TranslatorName {
 	return customT.namesAll
 }
 
 func (customT *Translators) genNames2ComboBox() {
-	customT.names = []*_type.StdComboBoxModel{}
-	customT.namesAll = []*_type.StdComboBoxModel{}
+	customT.names = []*TranslatorName{}
+	customT.namesAll = []*TranslatorName{}
 	customT.list.Range(func(idx, translator any) bool {
-		customT.namesAll = append(customT.namesAll, &_type.StdComboBoxModel{
+		customT.namesAll = append(customT.namesAll, &TranslatorName{
 			Key:  translator.(serviceTranslator.ImplTranslator).GetId(),
 			Name: translator.(serviceTranslator.ImplTranslator).GetName(),
 		})
 		if translator.(serviceTranslator.ImplTranslator).IsValid() {
-			customT.names = append(customT.names, &_type.StdComboBoxModel{
+			customT.names = append(customT.names, &TranslatorName{
 				Key:  translator.(serviceTranslator.ImplTranslator).GetId(),
 				Name: translator.(serviceTranslator.ImplTranslator).GetName(),
 			})

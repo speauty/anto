@@ -32,19 +32,13 @@ func (customC *Cfg) Load() error {
 func (customC *Cfg) InitConfig() error {
 	currentViper := customC.GetViper()
 
-	_ = customC.HuaweiCloudNlp.SyncDisk(currentViper)
-	_ = customC.LingVA.SyncDisk(currentViper)
-	_ = customC.Baidu.SyncDisk(currentViper)
-	_ = customC.TencentCloudMT.SyncDisk(currentViper)
-	_ = customC.OpenAPIYouDao.SyncDisk(currentViper)
 	_ = customC.AliCloudMT.SyncDisk(currentViper)
-	_ = customC.CaiYunAI.SyncDisk(currentViper)
-	_ = customC.Niutrans.SyncDisk(currentViper)
-	_ = customC.VolcEngine.SyncDisk(currentViper)
-	_ = customC.YouDao.SyncDisk(currentViper)
-	_ = customC.AiBaidu.SyncDisk(currentViper)
-	_ = customC.MicrosoftEdge.SyncDisk(currentViper)
-	_ = customC.XFYun.SyncDisk(currentViper)
+	_ = customC.TencentCloudMT.SyncDisk(currentViper)
+	_ = customC.BaiduCloudMT.SyncDisk(currentViper)
+	_ = customC.CaiyunAI.SyncDisk(currentViper)
+	_ = customC.DeepLPro.SyncDisk(currentViper)
+	_ = customC.DeepSeek.SyncDisk(currentViper)
+	_ = customC.YoudaoBatch.SyncDisk(currentViper)
 
 	return customC.Sync()
 }

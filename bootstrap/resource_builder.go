@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"anto/cfg"
-	"anto/resource"
 	"fmt"
 	"os"
 )
@@ -11,7 +10,6 @@ type ResourceBuilder struct {
 }
 
 func (customRB *ResourceBuilder) Install() {
-	customRB.installICO()
 	customRB.installDirLogs()
 	customRB.installCfgYml()
 }
@@ -41,21 +39,5 @@ func (customRB *ResourceBuilder) installCfgYml() {
 
 	if err := cfg.Singleton().InitConfig(); err != nil {
 		panic(fmt.Errorf("写入默认配置失败, 错误: %s", err))
-	}
-}
-
-func (customRB *ResourceBuilder) installICO() {
-	filename := "favicon.ico"
-	_, err := os.Stat(filename)
-	if err == nil {
-		return
-	}
-	fd, err := os.Create(filename)
-	if err != nil {
-		panic(fmt.Errorf("创建图标文件失败, 错误: %s", err))
-	}
-
-	if _, err = fd.Write(resource.Favicon); err != nil {
-		panic(fmt.Errorf("写入图标文件失败, 错误: %s", err))
 	}
 }
